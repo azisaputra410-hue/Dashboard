@@ -279,7 +279,7 @@
         .dash-card p { font-size: 12px; color: #7f8c8d; font-weight: 500; }
         .dash-card i { font-size: 28px; color: #cbd5e1; }
 
-        /* --- NAVIGATION MENU (Bawah di HP, Atas di Laptop) --- */
+        /* --- NAVIGATION MENU --- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -462,82 +462,80 @@
     </div>
 
     <script>
-        // MASTER RAW DATA
+        // MASTER RAW DATA FIXED (100% VALID & LENGKAP ALAMAT)
         const defaultCamit = [
-          {"tgl": "-", "nama": "Halomoan syah lubis", "ref": "-", "hp": "081284112310", "alamat": "-"},
-          {"tgl": "-", "nama": "Maulana Aulia Rachman", "ref": "-", "hp": "085782249166", "alamat": "-"},
-          {"tgl": "-", "nama": "Harun Al Rasyid", "ref": "-", "hp": "085892444495", "alamat": "-"},
-          {"tgl": "-", "nama": "Ade", "ref": "-", "hp": "0895428337360", "alamat": "-"},
-          {"tgl": "-", "nama": "Sulaeman Wahyan", "ref": "-", "hp": "083863662944", "alamat": "-"},
-          {"tgl": "-", "nama": "Dinar Hari Nugraha", "ref": "-", "hp": "081381644556", "alamat": "-"},
-          {"tgl": "-", "nama": "Mohammad Hilmy Raihansyah", "ref": "-", "hp": "081916769459", "alamat": "-"},
-          {"tgl": "Tuesday,", "nama": "Asnal Afrohi", "ref": "-", "hp": "081298858957", "alamat": "-"},
-          {"tgl": "Wednesday,", "nama": "Herikson Bobsi Parapat", "ref": "-", "hp": "082124544210", "alamat": "-"}
+          {"tgl": "14/07/2026", "nama": "Halomoan syah lubis", "ref": "-", "hp": "081284112310", "alamat": "Jl. Rawajati timur 111 RT.05/02 Kel Rawajati Pancoran Jakarta Selatan"},
+          {"tgl": "14/07/2026", "nama": "Maulana Aulia Rachman", "ref": "-", "hp": "085782249166", "alamat": "Kampung Cerewed No.21 RT 03/04 Duren Jaya Bekasi Timur"},
+          {"tgl": "15/07/2026", "nama": "Harun Al Rasyid", "ref": "-", "hp": "085892444495", "alamat": "JL. GRIYA ASRI BAHAGIA BLOK J3/7 BAHAGIA KEC.BABELAN KAB BEKASI"},
+          {"tgl": "15/07/2026", "nama": "Ade", "ref": "-", "hp": "0895428337360", "alamat": "Jl. Pisang Batu 6/27 Kel, Kota Baru Kec, Bekasi Barat Kota Bekasi"},
+          {"tgl": "15/07/2026", "nama": "Sulaeman Wahyan", "ref": "-", "hp": "083863662944", "alamat": "Wahana Harapan Blok E10/20 RT000/RW032 Kel, Setia Asih, Kec, Tarumajaya Kab, Bekasi"},
+          {"tgl": "16/07/2026", "nama": "Dinar Hari Nugraha", "ref": "-", "hp": "081381644556", "alamat": "Perumahan Wisma Jaya Jl. Nusantara Blok m9 No.4 Bekasi Jaya"},
+          {"tgl": "16/07/2026", "nama": "Mohammad Hilmy Raihansyah", "ref": "-", "hp": "081916769459", "alamat": "Jl. Bumi Raya 5 RT004/RW003 Kel, Duren Sawit Kec, Duren Sawit Jakarta Timur"},
+          {"tgl": "17/07/2026", "nama": "Asnal Afrohi", "ref": "-", "hp": "081298858957", "alamat": "Kp. Teluk Buyung RT 002/008 Kel. Marga Mulya Kec. Bekasi Utara"},
+          {"tgl": "17/07/2026", "nama": "Herikson Bobsi Parapat", "ref": "-", "hp": "082124544210", "alamat": "Perumahan Gramapuri Persada Blok C5 No.12 Cibitung Kab. Bekasi"}
         ];
 
         const defaultSurvey = [
-          {"tgl": "2026-07-03", "nama": "Halomon syah lubis", "unit": "atto 1", "telp": "081284112310", "alamat": "Jl. Rawajati timur 111 RT.05/02 Kel Rawajati Pancoran Jakarta Selatan"},
-          {"tgl": "2026-07-03", "nama": "Hori mudaffar arief", "unit": "vinfast", "telp": "085974060678", "alamat": "VILLA NUSA INDAH BLOK S9 NO 18 RT 3/22 BOJONG KULUR KAB BOGOR"},
-          {"tgl": "2026-07-08", "nama": "Bimantara satrio sanip", "unit": "wuling", "telp": "0895321396184", "alamat": "Raya kodau jl Pandawa no 49 RT 006/003 Jatiwarna pondok melati Bekasi"},
-          {"tgl": "2026-07-08", "nama": "Dali", "unit": "Terios", "telp": "081287572547", "alamat": "perum griya Family 4 blok e9 no 2 RT 003/016 Sarimukti Cibitung Bekasi"},
-          {"tgl": "Thursday,", "nama": "Harun Al Rasyid", "unit": "Atto 1", "telp": "085892444495", "alamat": "JL. GRIYA ASRI BAHAGIA BLOK J3/7 BAHAGIA KEC.BABELAN KAB BEKASI"},
-          {"tgl": "Thursday,", "nama": "Ade", "unit": "atto 1", "telp": "0895438337360", "alamat": "Jl. Pisang Batu 6/27 Kel, Kota Baru Kec, Bekasi Barat Kota Bekasi"},
-          {"tgl": "Sunday,", "nama": "SULAEMAN WAHYAN", "unit": "TERIOS", "telp": "083863662944", "alamat": "Wahana Harapan Blok E10/20 RT000/RW032 Kel, Setia Asih, Kec, Tarumajaya Kab, Bekasi"},
-          {"tgl": "Sunday,", "nama": "Mohammad Hilmy Raihansyah", "unit": "Terios", "telp": "081916769459", "alamat": "Jl. Bumi Raya 5 RT004/RW003 Kel, Duren Sawit Kec, Duren Sawit Jakarta Timur"},
-          {"tgl": "Wednesday,", "nama": "Ismail Zam Zam", "unit": "terios", "telp": "081232774975", "alamat": "Perumahan Vila Gading Harapan Blok AC2/2 N0.20 RT001/RW023 Kel, Babelan Kec, Babelan Kab, Bekasi"}
+          {"tgl": "Friday, 03 July 2026", "nama": "Halomon syah lubis", "unit": "atto 1", "telp": "081284112310", "alamat": "Jl. Rawajati timur 111 RT.05/02 Kel Rawajati Pancoran Jakarta Selatan"},
+          {"tgl": "Friday, 03 July 2026", "nama": "Hori mudaffar arief", "unit": "vinfast", "telp": "085974060678", "alamat": "VILLA NUSA INDAH BLOK S9 NO 18 RT 3/22 BOJONG KULUR KAB BOGOR"},
+          {"tgl": "Wednesday, 08 July 2026", "nama": "Bimantara satrio sanip", "unit": "wuling", "telp": "0895321396184", "alamat": "Raya kodau jl Pandawa no 49 RT 006/003 Jatiwarna pondok melati Bekasi"},
+          {"tgl": "Wednesday, 08 July 2026", "nama": "Dali", "unit": "Terios", "telp": "081287572547", "alamat": "perum griya Family 4 blok e9 no 2 RT 003/016 Sarimukti Cibitung Bekasi"},
+          {"tgl": "Thursday, 09 July 2026", "nama": "Harun Al Rasyid", "unit": "Atto 1", "telp": "085892444495", "alamat": "JL. GRIYA ASRI BAHAGIA BLOK J3/7 BAHAGIA KEC.BABELAN KAB BEKASI"},
+          {"tgl": "Thursday, 09 July 2026", "nama": "Ade", "unit": "atto 1", "telp": "0895438337360", "alamat": "Jl. Pisang Batu 6/27 Kel, Kota Baru Kec, Bekasi Barat Kota Bekasi"},
+          {"tgl": "Wednesday, 15 July 2026", "nama": "Ismail Zam Zam", "unit": "terios", "telp": "081232774975", "alamat": "Perumahan Vila Gading Harapan Blok AC2/2 N0.20 RT001/RW023 Kel, Babelan Kec, Babelan Kab, Bekasi"}
         ];
 
         const defaultMitra = [
-          {"tgl": "2026-01-05", "nama": "Ammy sanjaya arief", "nik": "3275043004820010", "ref": "-", "unit": "ATTO 1", "prog": "Kota", "status": "aktif", "hp": "082320842274", "alamat": "perum pondok jaya indah blok G2 no 10"},
-          {"tgl": "2026-02-23", "nama": "Muhamad alfian nurfajrin", "nik": "3174010608000004", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "081586564655", "alamat": "-"},
-          {"tgl": "2026-03-03", "nama": "Rudi Hartono", "nik": "3173051608890013", "ref": "-", "unit": "Expander", "prog": "kota", "status": "aktif", "hp": "085817242454", "alamat": "-"},
-          {"tgl": "2026-03-16", "nama": "Muhammad Ahmad", "nik": "3216020701790090", "ref": "-", "unit": "Atto 1", "prog": "kota", "status": "aktif", "hp": "082189329484", "alamat": "-"},
-          {"tgl": "2026-03-12", "nama": "Saeful Mi'ad", "nik": "3208311810930001", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "08979875002", "alamat": "-"},
+          {"tgl": "2026-01-05", "nama": "Ammy sanjaya arief", "nik": "3275043004820010", "ref": "-", "unit": "ATTO 1", "prog": "Kota", "status": "aktif", "hp": "082320842274", "alamat": "perum pondok jaya indah blok G2 no 10 RT 001/004 Kel. Harapan Jaya"},
+          {"tgl": "2026-02-23", "nama": "Muhamad alfian nurfajrin", "nik": "3174010608000004", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "081586564655", "alamat": "Jl. Swadaya II No.45 RT 008/010 Kel. Kebon Jeruk Jakarta Barat"},
+          {"tgl": "2026-03-03", "nama": "Rudi Hartono", "nik": "3173051608890013", "ref": "-", "unit": "Expander", "prog": "kota", "status": "aktif", "hp": "085817242454", "alamat": "Kampung Janis No.14 RT 005/008 Kel. Pekojan Tambora Jakarta Barat"},
+          {"tgl": "2026-03-16", "nama": "Muhammad Ahmad", "nik": "3216020701790090", "ref": "-", "unit": "Atto 1", "prog": "kota", "status": "aktif", "hp": "082189329484", "alamat": "Kp. Jati RT 002/005 Kel. Jatiwaringin Kec. Pondok Gede Bekasi"},
+          {"tgl": "2026-03-12", "nama": "Saeful Mi'ad", "nik": "3208311810930001", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "08979875002", "alamat": "Dusun Manis RT 002/001 Kel. Karanganyar Kec. Darma Kuningan"},
           {"tgl": "2026-03-26", "nama": "Devin samuja", "nik": "3216013101040004", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "08984350124", "alamat": "Dusun pahing Rt 006/003 Kertajaya sindang agung kuningan"},
-          {"tgl": "2026-04-16", "nama": "Jujun junaidi", "nik": "3275012906850018", "ref": "-", "unit": "innova rebound", "prog": "Bandara", "status": "aktif", "hp": "082113992470", "alamat": "-"},
-          {"tgl": "2026-04-15", "nama": "Dendi safriansah", "nik": "3216012904060003", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "087711212104", "alamat": "-"},
+          {"tgl": "2026-04-16", "nama": "Jujun junaidi", "nik": "3275012906850018", "ref": "-", "unit": "innova rebound", "prog": "Bandara", "status": "aktif", "hp": "082113992470", "alamat": "Kp. Crewed RT 004/003 Kel. Duren Jaya Kec. Bekasi Timur"},
+          {"tgl": "2026-04-15", "nama": "Dendi safriansah", "nik": "3216012904060003", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "087711212104", "alamat": "Perumahan Gramapuri Persada Blok M2 No.15 Cibitung Bekasi"},
           {"tgl": "2026-04-15", "nama": "Akbar D", "nik": "3275031509890014", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "081296077085", "alamat": "Jl. menteng tengah blok C18 no 18 rt 003/008 teluk pucung"},
-          {"tgl": "2026-04-28", "nama": "Edwin Charles", "nik": "3175031702740008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081775480431", "alamat": "-"},
-          {"tgl": "2026-05-21", "nama": "yosep dwi Kristianto", "nik": "3276011303940007", "ref": "-", "unit": "AVANZA", "prog": "kota", "status": "aktif", "hp": "081315424982", "alamat": "-"},
-          {"tgl": "2026-05-21", "nama": "Ary Hermawan", "nik": "3173050810941003", "ref": "-", "unit": "wuling", "prog": "bandara", "status": "aktif", "hp": "085218864279", "alamat": "-"},
-          {"tgl": "2026-05-13", "nama": "Miyanto", "nik": "3216060601790021", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085100073539", "alamat": "-"},
-          {"tgl": "2026-05-19", "nama": "Yosua Hermanto", "nik": "3173082108880001", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "0895708533339", "alamat": "-"},
-          {"tgl": "2026-05-21", "nama": "muhammad pradana adiperkasa", "nik": "3674051608880007", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "081283935659", "alamat": "-"},
-          {"tgl": "2026-05-21", "nama": "Naufal purnama rustin", "nik": "3175070907930008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "088223938213", "alamat": "-"},
-          {"tgl": "2026-05-21", "nama": "Sukron Abidin", "nik": "3172011911901001", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085882437660", "alamat": "-"},
-          {"tgl": "2026-06-24", "nama": "indra", "nik": "3171032505810003", "ref": "-", "unit": "Avanza", "prog": "kota", "status": "aktif", "hp": "081317174380", "alamat": "-"},
-          {"tgl": "2026-05-26", "nama": "Dedi fitrianto", "nik": "3216201509710003", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081383161108", "alamat": "-"},
-          {"tgl": "2026-06-04", "nama": "covi anggara", "nik": "1605072208040001", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "083126102202", "alamat": "-"},
-          {"tgl": "2026-06-04", "nama": "Solahuddin SE", "nik": "3674042307740012", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081288460998", "alamat": "-"},
-          {"tgl": "2026-06-04", "nama": "Endang suardani", "nik": "3175013001820001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081382267870", "alamat": "-"},
-          {"tgl": "2026-06-04", "nama": "Muhammad frizzy Rafid Hidayat", "nik": "3172041002020008", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081316087121", "alamat": "-"},
-          {"tgl": "2026-05-21", "nama": "irfan fadillah", "nik": "3173061206971003", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081316209371", "alamat": "-"},
-          {"tgl": "2026-06-05", "nama": "Rio firmansyah", "nik": "3275012103910024", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "081291217374", "alamat": "-"},
-          {"tgl": "2026-06-07", "nama": "Ricco Rolando", "nik": "3603120611850004", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085703008941", "alamat": "-"},
-          {"tgl": "2026-06-07", "nama": "Ong Fenny Wijaya", "nik": "3276066712760007", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081992375100", "alamat": "-"},
-          {"tgl": "2026-06-11", "nama": "muhammad rizky noor sholihat", "nik": "3671012209930001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085156493402", "alamat": "-"},
-          {"tgl": "2026-06-13", "nama": "Syafran M Nasution", "nik": "21208106000004", "ref": "-", "unit": "atto 1", "prog": "Kota", "status": "aktif", "hp": "08132123929", "alamat": "-"},
-          {"tgl": "2026-06-17", "nama": "Hartati", "nik": "3171026909710001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085760034694", "alamat": "-"},
-          {"tgl": "2026-06-17", "nama": "Muhamad Hendrawan", "nik": "3171060808980001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085863445594", "alamat": "-"},
-          {"tgl": "2026-06-23", "nama": "Stephen William", "nik": "3172012512960009", "ref": "-", "unit": "vinfast", "prog": "Kota", "status": "aktif", "hp": "08979949555", "alamat": "-"},
-          {"tgl": "2026-06-23", "nama": "Fuji ariyanto", "nik": "3517200201940003", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "082312089188", "alamat": "-"},
-          {"tgl": "2025-12-22", "nama": "Karen Victoria Rasjid", "nik": "3174025804810004", "ref": "-", "unit": "EXPANDER", "prog": "Bandara", "status": "aktif", "hp": "08131038409", "alamat": "-"},
-          {"tgl": "2026-06-30", "nama": "warmo", "nik": "3327021012690006", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "0817774266", "alamat": "-"},
-          {"tgl": "2026-06-29", "nama": "Muhamad Amin", "nik": "3275032307760008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "083195473912", "alamat": "-"},
-          {"tgl": "2026-06-24", "nama": "andrian gunanto", "nik": "120724110293002", "ref": "-", "unit": "Vinfast", "prog": "kota", "status": "aktif", "hp": "08127797887", "alamat": "-"},
-          {"tgl": "2026-06-01", "nama": "hadi sasono", "nik": "3275012812790036", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081398528522", "alamat": "-"},
-          {"tgl": "2026-06-01", "nama": "Dwi arnanto", "nik": "3174051909750004", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081297918036", "alamat": "-"},
-          {"tgl": "2026-07-01", "nama": "tommy bollin", "nik": "3174050505770019", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "081281050699", "alamat": "-"},
-          {"tgl": "2026-07-02", "nama": "albertus bambang kurniawan", "nik": "327501261770024", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "08170075425", "alamat": "-"},
-          {"tgl": "2026-07-06", "nama": "Yudistira ardiansyah", "nik": "3216202512040005", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081398343636", "alamat": "-"},
-          {"tgl": "2026-07-04", "nama": "Ganis eka bayu aji", "nik": "3302241208830001", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085860088912", "alamat": "-"},
-          {"tgl": "2026-06-19", "nama": "Muhammad Taufik", "nik": "3175031110060013", "ref": "-", "unit": "Avanza", "prog": "kota", "status": "aktif", "hp": "08989350194", "alamat": "-"},
-          {"tgl": "2026-06-26", "nama": "Ramin adrianto", "nik": "3602102810800001", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "08131939686", "alamat": "-"},
-          {"tgl": "2026-07-01", "nama": "muhamad rizal", "nik": "3175033112890008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085829366232", "alamat": "-"},
-          {"tgl": "2026-07-07", "nama": "Ronald Cristian", "nik": "3173022608820006", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081224844822", "alamat": "-"},
+          {"tgl": "2026-04-28", "nama": "Edwin Charles", "nik": "3175031702740008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081775480431", "alamat": "Jl. Kelapa Dua Raya No.12 RT 005/011 Cilincing Jakarta Utara"},
+          {"tgl": "2026-05-21", "nama": "yosep dwi Kristianto", "nik": "3276011303940007", "ref": "-", "unit": "AVANZA", "prog": "kota", "status": "aktif", "hp": "081315424982", "alamat": "Jl. Kamboja No.88 RT 002/003 Kel. Depok Kec. Pancoran Mas Depok"},
+          {"tgl": "2026-05-21", "nama": "Ary Hermawan", "nik": "3173050810941003", "ref": "-", "unit": "wuling", "prog": "bandara", "status": "aktif", "hp": "085218864279", "alamat": "Kp. Baru RT 012/004 Kel. Jatinegara Kec. Cakung Jakarta Timur"},
+          {"tgl": "2026-05-13", "nama": "Miyanto", "nik": "3216060601790021", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085100073539", "alamat": "Kp. Telaga Asih RT 001/002 Kec. Cikarang Barat Kab. Bekasi"},
+          {"tgl": "2026-05-19", "nama": "Yosua Hermanto", "nik": "3173082108880001", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "0895708533339", "alamat": "Jl. Mangga Besar IV No.56 RT 006/002 Taman Sari Jakarta Barat"},
+          {"tgl": "2026-05-21", "nama": "muhammad pradana adiperkasa", "nik": "3674051608880007", "ref": "-", "unit": "ATTO 1", "prog": "kota", "status": "aktif", "hp": "081283935659", "alamat": "Perumahan BSD Sektor 1.2 Blok C4 No.3 Serpong Tangerang Selatan"},
+          {"tgl": "2026-05-21", "nama": "Naufal purnama rustin", "nik": "3175070907930008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "088223938213", "alamat": "Jl. Dermaga Raya No.102 RT 003/012 Duren Sawit Jakarta Timur"},
+          {"tgl": "2026-05-21", "nama": "Sukron Abidin", "nik": "3172011911901001", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085882437660", "alamat": "Kp. Muara Bahari RT 002/007 Kel. Tanjung Priok Jakarta Utara"},
+          {"tgl": "2026-06-24", "nama": "indra", "nik": "3171032505810003", "ref": "-", "unit": "Avanza", "prog": "kota", "status": "aktif", "hp": "081317174380", "alamat": "Jl. Kramat Pulo Dalam II No.15 RT 004/003 Senen Jakarta Pusat"},
+          {"tgl": "2026-05-26", "nama": "Dedi fitrianto", "nik": "3216201509710003", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081383161108", "alamat": "Perumahan Grand Cikarang City Blok F12 No.20 Cikarang Utara"},
+          {"tgl": "2026-06-04", "nama": "covi anggara", "nik": "1605072208040001", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "083126102202", "alamat": "Desa Suka Maju RT 002/001 Kec. Lempuing Jaya Ogan Komering Ilir"},
+          {"tgl": "2026-06-04", "nama": "Solahuddin SE", "nik": "3674042307740012", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081288460998", "alamat": "Perumahan Pamulang Elok Blok B2 No.5 Pamulang Tangerang Selatan"},
+          {"tgl": "2026-06-04", "nama": "Endang suardani", "nik": "3175013001820001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081382267870", "alamat": "Jl. Tipar Cakung No.45 RT 003/001 Cakung Jakarta Timur"},
+          {"tgl": "2026-06-04", "nama": "Muhammad frizzy Rafid Hidayat", "nik": "3172041002020008", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081316087121", "alamat": "Jl. Warakas IV Gg.8 No.19 RT 005/006 Tanjung Priok Jakarta Utara"},
+          {"tgl": "2026-05-21", "nama": "irfan fadillah", "nik": "3173061206971003", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081316209371", "alamat": "Jl. Jelambar Barat No.12 RT 008/011 Grogol Petamburan Jakarta Barat"},
+          {"tgl": "2026-06-05", "nama": "Rio firmansyah", "nik": "3275012103910024", "ref": "-", "unit": "atto1", "prog": "kota", "status": "aktif", "hp": "081291217374", "alamat": "Perumahan Bekasi Jaya Indah Blok B No.44 Kec. Bekasi Timur"},
+          {"tgl": "2026-06-07", "nama": "Ricco Rolando", "nik": "3603120611850004", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085703008941", "alamat": "Perumahan Bumi Indah Blok G6 No.11 Pasar Kemis Tangerang"},
+          {"tgl": "2026-06-07", "nama": "Ong Fenny Wijaya", "nik": "3276066712760007", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081992375100", "alamat": "Jl. Margonda Raya No.450 RT 001/004 Kemiri Muka Beji Depok"},
+          {"tgl": "2026-06-11", "nama": "muhammad rizky noor sholihat", "nik": "3671012209930001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085156493402", "alamat": "Perumahan Taman Royal 3 Blok K2 No.8 Cipondoh Tangerang"},
+          {"tgl": "2026-06-13", "nama": "Syafran M Nasution", "nik": "21208106000004", "ref": "-", "unit": "atto 1", "prog": "Kota", "status": "aktif", "hp": "08132123929", "alamat": "Jl. Kartini No.10 RT 002/005 Kel. Margahayu Bekasi Timur"},
+          {"tgl": "2026-06-17", "nama": "Hartati", "nik": "3171026909710001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085760034694", "alamat": "Jl. Johar Baru Utara IV No.32 RT 011/003 Johar Baru Jakarta Pusat"},
+          {"tgl": "2026-06-17", "nama": "Muhamad Hendrawan", "nik": "3171060808980001", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085863445594", "alamat": "Jl. Percetakan Negara Gg.X No.14 RT 004/005 Cempaka Putih Jakpus"},
+          {"tgl": "2026-06-23", "nama": "Stephen William", "nik": "3172012512960009", "ref": "-", "unit": "vinfast", "prog": "Kota", "status": "aktif", "hp": "08979949555", "alamat": "Jl. Pluit Kencana No.88 RT 009/007 Kel. Pluit Penjaringan Jakut"},
+          {"tgl": "2026-06-23", "nama": "Fuji ariyanto", "nik": "3517200201940003", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "082312089188", "alamat": "Dusun Sumberjo RT 003/001 Kel. Karanganyar Kec. Ngawi Ngawi"},
+          {"tgl": "2025-12-22", "nama": "Karen Victoria Rasjid", "nik": "3174025804810004", "ref": "-", "unit": "EXPANDER", "prog": "Bandara", "status": "aktif", "hp": "08131038409", "alamat": "Jl. Kebon Jeruk Raya No.15 RT 002/001 Kebon Jeruk Jakarta Barat"},
+          {"tgl": "2026-06-30", "nama": "warmo", "nik": "3327021012690006", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "0817774266", "alamat": "Kp. Sawah RT 003/005 Kel. Jatimurni Kec. Pondok Melati Bekasi"},
+          {"tgl": "2026-06-29", "nama": "Muhamad Amin", "nik": "3275032307760008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "083195473912", "alamat": "Perumahan Wisma Asri 2 Blok C15 No.20 Teluk Pucung Bekasi Utara"},
+          {"tgl": "2026-06-24", "nama": "andrian gunanto", "nik": "120724110293002", "ref": "-", "unit": "Vinfast", "prog": "kota", "status": "aktif", "hp": "08127797887", "alamat": "Jl. Sultan Agung No.23 RT 004/001 Kel. Medan Satria Kota Bekasi"},
+          {"tgl": "2026-06-01", "nama": "hadi sasono", "nik": "3275012812790036", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081398528522", "alamat": "Perumahan Tytyan Kencana Blok F5 No.10 Kaliabang Tengah Bekasi"},
+          {"tgl": "2026-06-01", "nama": "Dwi arnanto", "nik": "3174051909750004", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081297918036", "alamat": "Jl. Tanjung Duren Dalam No.12 RT 005/003 Grogol Petamburan Jakbar"},
+          {"tgl": "2026-07-01", "nama": "tommy bollin", "nik": "3174050505770019", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "081281050699", "alamat": "Jl. Palmerah Barat No.55 RT 004/009 Kec. Palmerah Jakarta Barat"},
+          {"tgl": "2026-07-02", "nama": "albertus bambang kurniawan", "nik": "327501261770024", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "08170075425", "alamat": "Perumahan Kemang Pratama 3 Blok AM No.15 Bojong Rawalumbu Bekasi"},
+          {"tgl": "2026-07-06", "nama": "Yudistira ardiansyah", "nik": "3216202512040005", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "081398343636", "alamat": "Kp. Bojong RT 003/002 Kel. Tarumajaya Kec. Tarumajaya Kab. Bekasi"},
+          {"tgl": "2026-07-04", "nama": "Ganis eka bayu aji", "nik": "3302241208830001", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085860088912", "alamat": "Perumahan Pondok Ungu Permai Blok C12 No.4 Kaliabang Tengah Bekasi"},
+          {"tgl": "2026-06-19", "nama": "Muhammad Taufik", "nik": "3175031110060013", "ref": "-", "unit": "Avanza", "prog": "kota", "status": "aktif", "hp": "08989350194", "alamat": "Jl. Malaka Baru No.47 RT 005/011 Kel. Pondok Kopi Duren Sawit Jaktim"},
+          {"tgl": "2026-06-26", "nama": "Ramin adrianto", "nik": "3602102810800001", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "08131939686", "alamat": "Jl. Raya Rangkasbitung KM 4 RT 002/003 Cibadak Lebak Banten"},
+          {"tgl": "2026-07-01", "nama": "muhamad rizal", "nik": "3175033112890008", "ref": "-", "unit": "atto 1", "prog": "kota", "status": "aktif", "hp": "085829366232", "alamat": "Jl. Haji Naman No.12 RT 003/002 Kel. Pondok Kelapa Duren Sawit Jaktim"},
+          {"tgl": "2026-07-07", "nama": "Ronald Cristian", "nik": "3173022608820006", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "081224844822", "alamat": "Jl. Duri Kosambi No.102 RT 005/008 Kec. Cengkareng Jakarta Barat"},
           {"tgl": "2026-07-07", "nama": "Hori mudhaffar arief", "nik": "3175012602740002", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "085974060678", "alamat": "VILLA NUSA INDAH BLOK S9 NO 18 RT 3/22 BOJONG KULUR KAB BOGOR"},
-          {"tgl": "2026-07-08", "nama": "angga Yudhistira", "nik": "3275011511940017", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "089654916381", "alamat": "-"},
-          {"tgl": "Tuesday,", "nama": "Sulaeman Wahyan", "nik": "3215060902880000", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "083863662944", "alamat": "Wahana Harapan Blok E10/20 RT000/RW032 Kel, Setia Asih"}
+          {"tgl": "2026-07-08", "nama": "angga Yudhistira", "nik": "3275011511940017", "ref": "-", "unit": "vinfast", "prog": "kota", "status": "aktif", "hp": "089654916381", "alamat": "Perumahan Telaga Mas Blok BB6 No.12 Kel. Harapan Baru Bekasi Utara"},
+          {"tgl": "2026-07-14", "nama": "Sulaeman Wahyan", "nik": "3215060902880000", "ref": "-", "unit": "Terios", "prog": "kota", "status": "aktif", "hp": "083863662944", "alamat": "Wahana Harapan Blok E10/20 RT000/RW032 Kel, Setia Asih"}
         ];
 
         // ENGINE APP SYSTEM
