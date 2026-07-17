@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DPC ORASKI BEKASI RAYA - Database System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #f4f7f6;
+            --primary: #2c3e50;
+            --accent: #2980b9;
+            --orange-header: #f39c12;
+            --green-mitra: #27ae60;
+            --text-dark: #333333;
+            --card-bg: #ffffff;
+            --border-radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        /* --- HALAMAN LOGIN --- */
+        #login-screen {
+            display: none;
+            background: linear-gradient(135deg, #2c3e50 0%, #2980b9 100%);
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #login-screen.active { display: flex; }
+
+        .login-box {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .login-box p {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px 12px 42px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- WRAPPER UTAMA (RESPONSIVE LAPTOP & HP) --- */
+        #main-system {
+            display: none;
+            max-width: 1280px; /* Bikin di laptop keliatan gede proporsional */
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            padding-bottom: 80px;
+        }
+
+        /* Header atas ala Excel/Web Premium */
+        .app-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--orange-header);
+        }
+
+        .header-info h1 { font-size: 18px; font-weight: 700; }
+        .header-info p { font-size: 12px; color: #bdc3c7; }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* --- KONTEN AKTIF --- */
+        .screen { display: none; padding: 20px; }
+        .screen.active { display: block; }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+        }
+
+        /* --- RESPONSIVE TABLE (Bisa di-scroll di HP, Lega di Laptop) --- */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+            min-width: 800px; /* Supaya data gak berantakan & numpuk pas di layar kecil */
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 12px 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        /* Baris Khusus Warna Excel */
+        .row-survey { background-color: #ffffff; }
+        .row-mitra { background-color: #e8f8f5; } /* Ijo tipis mirip excel mitra lu */
+
+        /* --- DESIGN FORM INPUT NYATA --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px dashed #ccc;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .btn-submit {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* --- STATISTIC CARDS (DASHBOARD) --- */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+        }
+        .dash-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-left: 5px solid var(--orange-header);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dash-card h3 { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .dash-card p { font-size: 13px; color: #7f8c8d; }
+        .dash-card i { font-size: 32px; color: #bdc3c7; }
+
+        /* --- BOTTOM NAVIGATION (Sangat ramah HP di bagian bawah, ttp rapi di laptop) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #7f8c8d;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            width: 33.33%;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .nav-item i { font-size: 20px; margin-bottom: 3px; }
+        .nav-item.active { color: var(--accent); font-weight: 700; }
+
+        /* --- MEDIA QUERY: KHUSUS LAPTOP/DESKTOP --- */
+        @media (min-width: 769px) {
+            .bottom-nav {
+                position: static; /* Gak menempel di bawah layar klo di laptop */
+                height: 50px;
+                background: #ecf0f1;
+                border-top: none;
+                border-bottom: 1px solid #ddd;
+                justify-content: flex-start;
+                padding-left: 20px;
+            }
+            .nav-item {
+                flex-direction: row;
+                width: auto;
+                padding: 0 25px;
+                gap: 8px;
+                font-size: 13px;
+            }
+            .nav-item i { font-size: 16px; margin-bottom: 0; }
+            #main-system { padding-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================== -->
+    <!-- SCREEN LOGIN                               -->
+    <!-- ========================================== -->
+    <div id="login-screen" class="screen active">
+        <div class="login-box">
+            <h2>DPC ORASKI BEKASI RAYA</h2>
+            <p>Database Management System</p>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="username" placeholder="Username admin">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="Password">
+            </div>
+            
+            <button class="btn-login" onclick="login()">MASUK SISTEM</button>
+            <div id="error-msg" class="error-msg">Identitas Admin Salah! Cek kembali.</div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- INTERFACE UTAMA KELIHAN DI HP & LAPTOP     -->
+    <!-- ========================================== -->
+    <div id="main-system">
+        
+        <!-- TOP HEADER -->
+        <div class="app-header">
+            <div class="header-info">
+                <h1>DPC ORASKI BEKASI RAYA</h1>
+                <p>Kawasan Bekasi • Data Terintegrasi</p>
+            </div>
+            <button class="btn-logout" onclick="logout()">Keluar <i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+
+        <!-- NAVIGATION TAB BAR -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item" id="nav-dashboard" onclick="switchTab('dashboard')">
+                <i class="fa-solid fa-chart-line"></i> <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" id="nav-survey" onclick="switchTab('survey')">
+                <i class="fa-solid fa-square-poll-vertical"></i> <span>Data Survey</span>
+            </a>
+            <a href="#" class="nav-item" id="nav-mitra" onclick="switchTab('mitra')">
+                <i class="fa-solid fa-user-tie"></i> <span>Data Mitra</span>
+            </a>
+        </nav>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: DASHBOARD                           -->
+        <!-- ========================================== -->
+        <div id="dashboard-tab" class="screen">
+            <div class="page-title">Ringkasan Grafik & Data (Juli 2026)</div>
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <div><p>Total Permohon Survey</p><h3>8 Unit</h3></div>
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div class="dash-card" style="border-left-color: var(--green-mitra);">
+                    <div><p>Mitra Aktif Terdaftar</p><h3>24 Orang</h3></div>
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: DATA SURVEY (SESUAI EXCEL EX PAS)   -->
+        <!-- ========================================== -->
+        <div id="survey-tab" class="screen">
+            <div class="page-title">Form Input Survey Baru</div>
+            <!-- FORM KHUSUS SURVEY: TANPA NIK -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Hari/Tanggal</label>
+                    <input type="text" placeholder="Contoh: Wednesday, 08 July 2026">
+                </div>
+                <div class="form-group">
+                    <label>Nama Pemohon Unit</label>
+                    <input type="text" placeholder="Nama lengkap pemohon">
+                </div>
+                <div class="form-group">
+                    <label>Unit Mobil</label>
+                    <input type="text" placeholder="Contoh: Terios / Atto 1 / Wuling">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Telpon</label>
+                    <input type="number" placeholder="08123xxxxxx">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Alamat Lengkap</label>
+                    <input type="text" placeholder="Alamat lengkap lokasi survey">
+                </div>
+                <button class="btn-submit">Simpan Data Survey</button>
+            </div>
+
+            <div class="page-title">Tabel Data Survey Permohonan Unit</div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Hari/Tanggal</th>
+                            <th>Nama Pemohon Unit</th>
+                            <th>Unit</th>
+                            <th>Nomor Telpon</th>
+                            <th>Alamat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-survey">
+                            <td>1</td>
+                            <td>Friday, 03 July 2026</td>
+                            <td>Halomon syah lubis</td>
+                            <td>atto 1</td>
+                            <td>081284112310</td>
+                            <td>Jl. Rawajati Timur 111 RT.05/02 Kel Rawajati Pancoran Jakarta Selatan</td>
+                        </tr>
+                        <tr class="row-survey">
+                            <td>2</td>
+                            <td>Wednesday, 08 July 2026</td>
+                            <td>Bimantara satrio sanip</td>
+                            <td>wuling</td>
+                            <td>0895321396184</td>
+                            <td>Raya kodau jl Pandawa no 49 RT 006/003 Jatiwarna pondok melati Bekasi</td>
+                        </tr>
+                        <tr class="row-survey">
+                            <td>3</td>
+                            <td>Sunday, 12 July 2026</td>
+                            <td>SULAEMAN WAHYAN</td>
+                            <td>TERIOS</td>
+                            <td>083863662944</td>
+                            <td>Wahana Harapan Blok E10/20 RT000/RW032 Kel, Setia Asih, Kec, Tarumajaya Kab, Bekasi</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: DATA MITRA (LENGKAP ADA NIK KTP)    -->
+        <!-- ========================================== -->
+        <div id="mitra-tab" class="screen">
+            <div class="page-title">Form Input Mitra Baru</div>
+            <!-- FORM KHUSUS MITRA: LENGKAP NIK, NO POL, STATUS -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Tanggal Terima</label>
+                    <input type="text" placeholder="Contoh: Monday, 05 January 2026">
+                </div>
+                <div class="form-group">
+                    <label>Nama Mitra</label>
+                    <input type="text" placeholder="Nama Lengkap Mitra">
+                </div>
+                <div class="form-group">
+                    <label>NIK KTP (Wajib)</label>
+                    <input type="number" placeholder="32750xxxxxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>Referensi</label>
+                    <input type="text" placeholder="Nama referensi / rekomendasi">
+                </div>
+                <div class="form-group">
+                    <label>No. Polisi</label>
+                    <input type="text" placeholder="Contoh: B 1640 DOZ">
+                </div>
+                <div class="form-group">
+                    <label>Unit</label>
+                    <input type="text" placeholder="Contoh: ATTO 1 / Avanza">
+                </div>
+                <div class="form-group">
+                    <label>Program</label>
+                    <input type="text" placeholder="Contoh: kota / bandara">
+                </div>
+                <div class="form-group">
+                    <label>Status Mitra</label>
+                    <select>
+                        <option>aktif</option>
+                        <option>nonaktif</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>No HP</label>
+                    <input type="number" placeholder="08xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label>Alamat Rumah</label>
+                    <input type="text" placeholder="Alamat Mitra">
+                </div>
+                <button class="btn-submit" style="background-color: var(--green-mitra);">Simpan Data Mitra Baru</button>
+            </div>
+
+            <div class="page-title">Tabel Data Base Mitra Aktif</div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tanggal Terima</th>
+                            <th>Nama Mitra</th>
+                            <th>NIK KTP</th>
+                            <th>Referensi</th>
+                            <th>No Pol</th>
+                            <th>Unit</th>
+                            <th>Program</th>
+                            <th>Status</th>
+                            <th>No HP</th>
+                            <th>Alamat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-mitra">
+                            <td>Monday, 05 January 2026</td>
+                            <td>Ammy sanjaya arel</td>
+                            <td>3275034004820013</td>
+                            <td>B 1660 AZQ</td>
+                            <td>ATTO 1</td>
+                            <td>kota</td>
+                            <td>aktif</td>
+                            <td>082320842274</td>
+                            <td>perum pondok jaya indah blok G2 no 10</td>
+                            <td>Bekasi</td>
+                        </tr>
+                        <tr class="row-mitra">
+                            <td>Thursday, 12 March 2026</td>
+                            <td>Devin samuja</td>
+                            <td>3216013101030004</td>
+                            <td>B 1309 UCP</td>
+                            <td>ATTO 1</td>
+                            <td>kota</td>
+                            <td>aktif</td>
+                            <td>08534350124</td>
+                            <td>Dusun pahing Rt 006/003 Kertajaya sindang agung kuningan</td>
+                            <td>Kuningan</td>
+                        </tr>
+                        <tr class="row-mitra">
+                            <td>Wednesday, 15 April 2026</td>
+                            <td>Akbar D</td>
+                            <td>3275031509690014</td>
+                            <td>B 2330 ADC</td>
+                            <td>atto 1</td>
+                            <td>kota</td>
+                            <td>aktif</td>
+                            <td>081296077065</td>
+                            <td>Jl. menteng tengah blok C18 no 18 rt 003/008 teluk pucung</td>
+                            <td>Bekasi Utara</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CONTROLLER JAVASCRIPT DETEKSI REFRESH      -->
+    <!-- ========================================== -->
+    <script>
+        // Cek Session pas web di-refresh biar halaman ga balik ke login terus
+        document.addEventListener("DOMContentLoaded", function() {
+            const isLogin = localStorage.getItem("oraski_login");
+            const lastTab = localStorage.getItem("oraski_tab") || "dashboard";
+
+            if (isLogin === "true") {
+                showMainSystem(lastTab);
+            } else {
+                showLoginScreen();
+            }
+        });
+
+        // Trigger fungsi login
+        function login() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            const error = document.getElementById("error-msg");
+
+            if (user === "admin" && pass === "adminpt") {
+                error.style.display = "none";
+                localStorage.setItem("oraski_login", "true");
+                localStorage.setItem("oraski_tab", "dashboard");
+                showMainSystem("dashboard");
+            } else {
+                error.style.display = "block";
+            }
+        }
+
+        // Trigger fungsi logout
+        function logout() {
+            localStorage.removeItem("oraski_login");
+            localStorage.removeItem("oraski_tab");
+            showLoginScreen();
+        }
+
+        function showMainSystem(tabName) {
+            document.getElementById("login-screen").classList.remove("active");
+            document.getElementById("main-system").style.display = "block";
+            switchTab(tabName);
+        }
+
+        function showLoginScreen() {
+            document.getElementById("main-system").style.display = "none";
+            document.getElementById("login-screen").classList.add("active");
+        }
+
+        // Fungsi navigasi tab/halaman
+        function switchTab(tabName) {
+            // Sembunyikan semua tab screen
+            const tabs = document.querySelectorAll(".screen");
+            tabs.forEach(t => t.classList.remove("active"));
+
+            // Aktifkan tab yang dipilih
+            document.getElementById(`${tabName}-tab`).classList.add("active");
+            localStorage.setItem("oraski_tab", tabName);
+
+            // Ganti highlight menu aktif
+            const navItems = document.querySelectorAll(".nav-item");
+            navItems.forEach(item => item.classList.remove("active"));
+            document.getElementById(`nav-${tabName}`).classList.add("active");
+
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
