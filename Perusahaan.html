@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Synergy Corporate</title>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- RESET & BASIC STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* --- LOGIN PAGE --- */
+        .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #38bdf8;
+        }
+
+        .login-card p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #38bdf8;
+            outline: none;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* --- MAIN WEBSITE (Hidden by default) --- */
+        .main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 10%;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #38bdf8;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        /* --- HERO SECTION --- */
+        #home {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            background: radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.15), transparent 40%);
+        }
+
+        .hero-text {
+            max-width: 600px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+            transition: 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(56, 189, 248, 0.3);
+        }
+
+        /* --- SECTION SYSTEM --- */
+        section {
+            padding: 100px 10%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: #38bdf8;
+            border-radius: 2px;
+        }
+
+        /* --- ABOUT SECTION --- */
+        #about {
+            background: #0b0f19;
+        }
+
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-img {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            height: 350px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .about-img i {
+            font-size: 6rem;
+            color: #38bdf8;
+        }
+
+        .about-text p {
+            color: #94a3b8;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- PROFILE / SERVICES SECTION --- */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .profile-card {
+            background: #1e293b;
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+            border-color: #38bdf8;
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .profile-card i {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .profile-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* --- CONTACT SECTION --- */
+        #contact {
+            background: #0b0f19;
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info p {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item i {
+            width: 45px;
+            height: 45px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 14px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .contact-form textarea {
+            height: 150px;
+            resize: none;
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: #38bdf8;
+            outline: none;
+        }
+
+        .send-btn {
+            padding: 14px;
+            background: #38bdf8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #0ea5e9;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #1e293b;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= LAYER 1: LOGIN Halaman Awal ================= -->
+    <div class="login-wrapper" id="loginPage">
+        <div class="login-card">
+            <h2>Selamat Datang</h2>
+            <p>Silahkan masuk untuk mengakses portal Nexus Synergy</p>
+            
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="Username (Admin)">
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password (adminpt)">
+            </div>
+            
+            <button class="login-btn" onclick="handleLogin()">Sign In</button>
+            <div class="error-msg" id="errorMsg">Username atau password salah!</div>
+        </div>
+    </div>
+
+    <!-- ================= LAYER 2: UTAMA WEBSITE PERUSAHAAN ================= -->
+    <div class="main-content" id="mainWeb">
+        
+        <!-- Navigation Bar -->
+        <nav>
+            <div class="logo">NEXUS<span>SYNERGY</span></div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#about">Tentang</a></li>
+                <li><a href="#profile">Profil Bisnis</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#" class="logout-btn" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero Section -->
+        <section id="home">
+            <div class="hero-text">
+                <h1>Masa Depan <span>Otomasi & Solusi</span> Digital Terintegrasi</h1>
+                <p>Kami menghadirkan inovasi teknologi mutakhir untuk mempercepat transformasi digital industri Anda dengan efisiensi maksimal dan performa tinggi.</p>
+                <a href="#about" class="cta-btn">Jelajahi Solusi</a>
+            </div>
+        </section>
+
+        <!-- Tentang Perusahaan (About) -->
+        <section id="about">
+            <h2 class="section-title">Tentang Kami</h2>
+            <div class="about-container">
+                <div class="about-img">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div class="about-text">
+                    <p>Didirikan dengan visi memimpin era industri modern, <strong>Nexus Synergy</strong> berfokus pada penyediaan solusi sistem otomasi industri, arsitektur SCADA tingkat lanjut, serta integrasi dashboard berbasis cloud untuk memantau performa operasional (OEE) secara real-time.</p>
+                    <p>Didukung oleh tim profesional berpengalaman, kami berkomitmen untuk membantu bisnis skala global maupun lokal melakukan efisiensi energi, mempercepat siklus produksi, dan mengurangi waktu kegagalan sistem (breakdown time).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profil Layanan / Keunggulan (Profile) -->
+        <section id="profile">
+            <h2 class="section-title">Profil & Layanan</h2>
+            <div class="profile-grid">
+                <div class="profile-card">
+                    <i class="fa-solid fa-gears"></i>
+                    <h3>Industrial Automation</h3>
+                    <p>Implementasi kodingan PLC kelas industri (Siemens TIA Portal, Rockwell) dengan penataan logika yang andal demi kestabilan mesin.</p>
+                </div>
+                <div class="profile-card">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <h3>Real-time Dashboard</h3>
+                    <p>Desain antarmuka HMI/SCADA modern berbasis metrik analitik penting untuk kemudahan monitoring operasional dari mana saja.</p>
+                </div>
+                <div class="profile-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h3>Keamanan Sistem</h3>
+                    <p>Proteksi arsitektur jaringan data pabrik dari ancaman siber eksternal menjamin kelangsungan produksi 24/7 tanpa cemas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kontak (Contact) -->
+        <section id="contact">
+            <h2 class="section-title">Hubungi Kami</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Mari Memulai Projek Baru</h3>
+                    <p>Punya kebutuhan kustomisasi sistem atau konsultasi performa pabrik? Jangan ragu hubungi kantor kami.</p>
+                    <div class="info-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>info@nexussynergy.corp</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>+62 21 8899 7766</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Sudirman Central Business District, Jakarta</span>
+                    </div>
+                </div>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Pesan berhasil terkirim!');">
+                    <input type="text" placeholder="Nama Lengkap" required>
+                    <input type="email" placeholder="Alamat Email" required>
+                    <textarea placeholder="Pesan Anda untuk perusahaan..." required></textarea>
+                    <button type="submit" class="send-btn">Kirim Pesan</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 Nexus Synergy Corporate. All Rights Reserved.</p>
+        </footer>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // Logika Validasi Login
+        function handleLogin() {
+            const userInp = document.getElementById('username').value;
+            const passInp = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            const loginPage = document.getElementById('loginPage');
+            const mainWeb = document.getElementById('mainWeb');
+
+            // Cek kecocokan (Username: Admin, Password: adminpt)
+            if (userInp === 'Admin' && passInp === 'adminpt') {
+                errorMsg.style.display = 'none';
+                
+                // Animasi transisi menghilangkan login page dan memunculkan web utama
+                loginPage.style.opacity = '0';
+                setTimeout(() => {
+                    loginPage.style.display = 'none';
+                    mainWeb.style.display = 'block';
+                    setTimeout(() => {
+                        mainWeb.style.opacity = '1';
+                    }, 50);
+                }, 500);
+            } else {
+                // Tampilkan pesan error kalau salah
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Logika Logout
+        function handleLogout() {
+            const loginPage = document.getElementById('loginPage');
+            const mainWeb = document.getElementById('mainWeb');
+            
+            // Reset input field
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+
+            mainWeb.style.opacity = '0';
+            setTimeout(() => {
+                mainWeb.style.display = 'none';
+                loginPage.style.display = 'flex';
+                setTimeout(() => {
+                    loginPage.style.opacity = '1';
+                }, 50);
+            }, 500);
+        }
+
+        // Logika Navbar Active Link Highlight pas di-scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-links a:not(.logout-btn)');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
