@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aetheris Group | Executive Cloud Portal</title>
-    <!-- Google Fonts Premium & Efek Transisi Kelas Atas -->
+    <title>NexaCore Industries | Enterprise Portal</title>
+    <!-- Google Fonts & FontAwesome untuk Icon Premium -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* --- CORE CONFIGURATION & VARIABLES --- */
@@ -13,35 +13,35 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         :root {
-            --bg-deep: #05070c;
-            --panel-lux: #0d111c;
-            --border-lux: #1a2236;
-            --accent-gold: #d97706;
-            --accent-gold-glow: rgba(217, 119, 6, 0.2);
-            --text-white: #f8fafc;
-            --text-dim: #94a3b8;
-            --neon-green: #10b981;
+            --bg-dark: #090d16;
+            --panel-dark: #111827;
+            --border-dark: #1f2937;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-white);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             overflow-x: hidden;
             min-height: 100vh;
         }
 
-        /* --- STYLING HALAMAN LOGIN (SANGAT RAHASIA & BERKELAS) --- */
+        /* --- STYLING HALAMAN LOGIN (SANGAT RAHASIA & CLEAN) --- */
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            background: radial-gradient(circle at center, #0f172a 0%, #020408 100%);
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -49,429 +49,401 @@
         }
 
         .login-box {
-            background: rgba(13, 17, 28, 0.7);
-            border: 1px solid var(--border-lux);
-            backdrop-filter: blur(30px);
-            padding: 3.5rem 3rem;
-            border-radius: 28px;
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid var(--border-dark);
+            backdrop-filter: blur(20px);
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
             width: 100%;
-            max-width: 440px;
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
         .login-box h2 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 800;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
             margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
+            background: linear-gradient(to right, #ffffff, #9ca3af);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .login-box p {
-            color: var(--text-dim);
+            color: var(--text-muted);
             font-size: 0.9rem;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
 
         .field-group {
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
             text-align: left;
         }
 
         .field-group label {
             display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-size: 0.8rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-dim);
-            margin-bottom: 0.6rem;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
         }
 
         .field-group input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-lux);
-            padding: 1.1rem 1.3rem;
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-dark);
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
             color: #fff;
             font-size: 1rem;
             outline: none;
         }
 
         .field-group input:focus {
-            border-color: var(--accent-gold);
-            background: rgba(255, 255, 255, 0.04);
-            box-shadow: 0 0 20px var(--accent-gold-glow);
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px var(--accent-glow);
         }
 
         .btn-enter {
             width: 100%;
-            padding: 1.1rem;
-            background: var(--accent-gold);
-            color: #000;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 1rem;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 20px var(--accent-gold-glow);
+            box-shadow: 0 4px 14px var(--accent-glow);
         }
 
         .btn-enter:hover {
             transform: translateY(-2px);
-            background: #f59e0b;
-            box-shadow: 0 6px 25px rgba(217, 119, 6, 0.4);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
         }
 
         .error-hint {
-            color: #f87171;
+            color: #ef4444;
             font-size: 0.85rem;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
             display: none;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         /* --- MAIN PORTAL APPLICATION --- */
         .app-container {
-            display: none;
+            display: none; /* Muncul setelah login */
             opacity: 0;
         }
 
-        /* NAVIGASI PREMIUM */
+        /* NAVIGATION SYSTEM */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background: rgba(5, 7, 12, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-lux);
+            background: rgba(9, 13, 22, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-dark);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 10%;
+            padding: 1.2rem 8%;
             z-index: 999;
         }
 
         .brand {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
             cursor: pointer;
-            color: var(--text-white);
         }
 
-        .brand span { color: var(--accent-gold); }
+        .brand span { color: var(--accent); }
 
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 3rem;
+            gap: 2.5rem;
         }
 
         .nav-menu a {
-            color: var(--text-dim);
+            color: var(--text-muted);
             text-decoration: none;
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
-            position: relative;
-            padding: 0.5rem 0;
         }
 
         .nav-menu a:hover, .nav-menu a.active-link {
-            color: var(--text-white);
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
-        .nav-menu a.active-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--accent-gold);
-            box-shadow: 0 0 10px var(--accent-gold);
-        }
-
+        /* Menu Titik Tiga / Hamburger */
         .menu-trigger {
             display: none;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             cursor: pointer;
             z-index: 1000;
         }
 
         .menu-trigger span {
-            width: 26px;
-            height: 2.5px;
-            background-color: var(--text-white);
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-main);
             border-radius: 2px;
         }
 
-        /* --- HUB HALAMAN --- */
+        /* --- SYSTEM ARCHITECTURE: PAGES HUB --- */
         .page-wrapper {
-            padding: 9rem 10% 5rem 10%;
+            padding: 8rem 8% 4rem 8%;
             min-height: 100vh;
-            display: none;
+            display: none; /* Setiap halaman disembunyikan, diatur oleh JS */
         }
 
         .page-wrapper.active-page {
             display: block;
-            animation: slideUpIn 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: fadeInPage 0.6s ease forwards;
         }
 
-        @keyframes slideUpIn {
-            from { opacity: 0; transform: translateY(25px); }
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ====== PAGE 1: EXECUTIVE DASHBOARD ====== */
+        /* ====== PAGE 1: ENTERPRISE DASHBOARD (HOME) ====== */
         .db-hero {
-            background: linear-gradient(135deg, #0d111c 0%, #07090e 100%);
-            border: 1px solid var(--border-lux);
-            border-radius: 32px;
-            padding: 5rem 4rem;
+            background: linear-gradient(135deg, #111827 0%, #070a12 100%);
+            border: 1px solid var(--border-dark);
+            border-radius: 30px;
+            padding: 4rem;
             position: relative;
             overflow: hidden;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
         }
 
         .db-hero::before {
             content: '';
             position: absolute;
-            top: -30%;
+            top: -20%;
             right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, var(--accent-gold-glow) 0%, transparent 70%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
             pointer-events: none;
         }
 
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.6rem;
-            background: rgba(16, 185, 129, 0.08);
-            color: var(--neon-green);
-            padding: 0.6rem 1.2rem;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 0.5rem 1rem;
             border-radius: 100px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(16, 185, 129, 0.15);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .status-pulse {
             width: 8px;
             height: 8px;
-            background: var(--neon-green);
+            background: var(--success);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px var(--neon-green); }
-            100% { transform: scale(0.9); opacity: 0.5; }
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
         }
 
         .db-hero h1 {
-            font-size: 3.8rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            line-height: 1.15;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
-            letter-spacing: -2px;
+            letter-spacing: -1.5px;
         }
 
         .db-hero p {
-            color: var(--text-dim);
-            font-size: 1.15rem;
-            max-width: 650px;
-            line-height: 1.7;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
         }
 
+        /* GRID METRICS */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
         }
 
         .metric-card {
-            background: var(--panel-lux);
-            border: 1px solid var(--border-lux);
-            border-radius: 24px;
-            padding: 2.5rem;
-            position: relative;
+            background: var(--panel-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 2rem;
         }
 
         .metric-card:hover {
-            border-color: var(--accent-gold);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .metric-label {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .metric-value {
-            font-size: 2.6rem;
-            font-weight: 800;
-            margin: 0.6rem 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
             color: #fff;
         }
 
-        /* ====== PAGE 2: CORPORATE PROFILE ====== */
+        /* ====== PAGE 2: PROFIL PERUSAHAAN ====== */
         .profile-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5rem;
+            gap: 4rem;
             align-items: center;
         }
 
         .profile-frame {
             position: relative;
-            border-radius: 32px;
+            border-radius: 28px;
             overflow: hidden;
-            border: 1px solid var(--border-lux);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-dark);
         }
 
         .profile-frame img {
             width: 100%;
             display: block;
+            filter: grayscale(20%);
         }
 
         .profile-info h2 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
-            margin-bottom: 2rem;
-            letter-spacing: -1.5px;
-            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
         }
 
         .profile-info p {
-            color: var(--text-dim);
-            line-height: 1.9;
+            color: var(--text-muted);
+            line-height: 1.8;
             margin-bottom: 1.5rem;
-            font-size: 1.05rem;
         }
 
-        /* ====== PAGE 3: TENTANG KAMI ====== */
+        /* ====== PAGE 3: TENTANG KAMI (STRATEGI) ====== */
         .about-header {
             text-align: center;
-            max-width: 750px;
-            margin: 0 auto 5rem auto;
+            max-width: 700px;
+            margin: 0 auto 4rem auto;
         }
 
-        .about-header h2 { font-size: 2.8rem; margin-bottom: 1.2rem; letter-spacing: -1px; }
-        .about-header p { color: var(--text-dim); font-size: 1.1rem; }
+        .about-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .about-header p { color: var(--text-muted); }
 
         .timeline-container {
-            max-width: 950px;
+            max-width: 900px;
             margin: 0 auto;
+            position: relative;
         }
 
         .timeline-item {
-            padding: 3rem;
-            background: var(--panel-lux);
-            border: 1px solid var(--border-lux);
-            border-radius: 24px;
-            margin-bottom: 2.5rem;
+            padding: 2.5rem;
+            background: var(--panel-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
         }
 
         .timeline-year {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 800;
-            color: var(--accent-gold);
-            margin-bottom: 0.8rem;
-            letter-spacing: -0.5px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
         }
 
-        .timeline-item p {
-            color: var(--text-dim);
-            line-height: 1.7;
-        }
-
-        /* ====== PAGE 4: ARSITEKTUR NAVIGASI STRUKTUR ====== */
+        /* ====== PAGE 4: ARSITEKTUR NAVIGASI & STRUKTUR ====== */
         .structure-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
+            gap: 2rem;
         }
 
         .structure-card {
-            background: rgba(13, 17, 28, 0.4);
-            border: 1px solid var(--border-lux);
-            padding: 3rem 2.5rem;
-            border-radius: 24px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-dark);
+            padding: 2.5rem;
+            border-radius: 20px;
             text-align: center;
         }
 
-        .structure-card:hover {
-            border-color: var(--accent-gold);
-        }
-
         .structure-card .node-icon {
-            font-size: 3rem;
-            margin-bottom: 1.8rem;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .structure-card h3 { margin-bottom: 1rem; font-weight: 700; font-size: 1.3rem; }
-        .structure-card p { color: var(--text-dim); font-size: 0.95rem; line-height: 1.7; }
+        .structure-card h3 { margin-bottom: 1rem; font-weight: 700; }
+        .structure-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
-        /* ====== PAGE 5: LAYANAN HUBUNGAN KONTAK ====== */
+        /* ====== PAGE 5: LAYANAN KONTAK INTEGRASI ====== */
         .contact-layout {
             display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 5rem;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
         }
 
-        .contact-nodes h3 { font-size: 2rem; margin-bottom: 1.2rem; letter-spacing: -0.5px; }
-        .contact-nodes p { color: var(--text-dim); margin-bottom: 3.5rem; line-height: 1.7; }
+        .contact-nodes h3 { font-size: 1.8rem; margin-bottom: 1rem; }
+        .contact-nodes p { color: var(--text-muted); margin-bottom: 3rem; }
 
         .node-link {
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            margin-bottom: 1.8rem;
-            background: var(--panel-lux);
-            padding: 1.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--border-lux);
+            margin-bottom: 1.5rem;
+            background: var(--panel-dark);
+            padding: 1.2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-dark);
         }
 
         .node-link .icon-sphere {
-            width: 50px;
-            height: 50px;
-            background: rgba(217, 119, 6, 0.1);
+            width: 45px;
+            height: 45px;
+            background: rgba(59, 130, 246, 0.1);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--accent-gold);
-            font-weight: 800;
+            color: var(--accent);
+            font-weight: bold;
         }
 
         .form-panel {
-            background: var(--panel-lux);
-            border: 1px solid var(--border-lux);
-            padding: 3.5rem;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: var(--panel-dark);
+            border: 1px solid var(--border-dark);
+            padding: 3rem;
+            border-radius: 24px;
         }
 
         .form-grid {
@@ -483,37 +455,31 @@
 
         .form-panel input, .form-panel textarea {
             width: 100%;
-            background: var(--bg-deep);
-            border: 1px solid var(--border-lux);
-            padding: 1.1rem;
-            border-radius: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-dark);
+            padding: 1rem;
+            border-radius: 10px;
             color: white;
             outline: none;
-            font-size: 0.95rem;
         }
 
         .form-panel input:focus, .form-panel textarea:focus {
-            border-color: var(--accent-gold);
+            border-color: var(--accent);
         }
 
         .btn-dispatch {
-            background: var(--accent-gold);
-            color: #000;
+            background: var(--accent);
+            color: white;
             border: none;
-            padding: 1.1rem 3rem;
-            font-weight: 800;
-            border-radius: 12px;
+            padding: 1rem 2.5rem;
+            font-weight: 700;
+            border-radius: 10px;
             cursor: pointer;
-            letter-spacing: 0.5px;
         }
 
-        .btn-dispatch:hover {
-            background: #f59e0b;
-        }
-
-        /* --- RESPONSIVE MEDIA SYSTEM --- */
+        /* --- RESPONSIVE LAYOUT MEDIA QUERIES --- */
         @media (max-width: 1024px) {
-            .profile-layout, .contact-layout { grid-template-columns: 1fr; gap: 4rem; }
+            .profile-layout, .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
             .structure-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
@@ -523,30 +489,30 @@
                 top: -100%;
                 left: 0;
                 width: 100%;
-                background: var(--bg-deep);
+                background: var(--bg-dark);
                 flex-direction: column;
-                padding: 4rem 2rem;
+                padding: 3rem;
                 text-align: center;
-                border-bottom: 1px solid var(--border-lux);
-                gap: 2rem;
+                border-bottom: 1px solid var(--border-dark);
+                gap: 1.5rem;
             }
             .nav-menu.mobile-open {
-                top: 80px;
+                top: 70px;
             }
             .menu-trigger { display: flex; }
             .structure-grid { grid-template-columns: 1fr; }
-            .db-hero h1 { font-size: 2.6rem; }
+            .db-hero h1 { font-size: 2.5rem; }
             .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ================= UMANE RAHASIA: GERBANG OTENTIKASI ================= -->
+    <!-- ================= UMANE RAHASIA: LOGIN INTERACTION ================= -->
     <div class="login-overlay" id="portalGate">
         <div class="login-box">
-            <h2>Aetheris Gateway</h2>
-            <p>Masukkan otoritas keamanan enkripsi tingkat tinggi Anda.</p>
+            <h2>Sistem Otentikasi</h2>
+            <p>Masukkan kredensial keamanan gerbang enkripsi data.</p>
             <form onsubmit="verifyGateAccess(event)">
                 <div class="field-group">
                     <label>ID Pengguna</label>
@@ -562,12 +528,12 @@
         </div>
     </div>
 
-    <!-- ================= DATA CORE UTAMA APLIKASI ================= -->
+    <!-- ================= HALAMAN APLIKASI UTAMA (SETELAH VALIDASI) ================= -->
     <div class="app-container" id="portalApp">
         
-        <!-- MAIN APP HEADER -->
+        <!-- GLOBAL APP HEADER / NAVIGATION -->
         <header>
-            <div class="brand" onclick="switchSystemPage('dashboard')">AETHERIS<span>GROUP</span></div>
+            <div class="brand" onclick="switchSystemPage('dashboard')">NEXA<span>CORE</span></div>
             <ul class="nav-menu" id="navigationMenu">
                 <li><a onclick="switchSystemPage('dashboard')" id="link-dashboard" class="active-link">Dashboard</a></li>
                 <li><a onclick="switchSystemPage('profile')" id="link-profile">Profil</a></li>
@@ -575,6 +541,7 @@
                 <li><a onclick="switchSystemPage('navigation')" id="link-navigation">Navigasi</a></li>
                 <li><a onclick="switchSystemPage('contact')" id="link-contact">Contact</a></li>
             </ul>
+            <!-- Tombol Titik/Garis Tiga Responsif HP -->
             <div class="menu-trigger" onclick="toggleMobileMenu()">
                 <span></span>
                 <span></span>
@@ -582,32 +549,32 @@
             </div>
         </header>
 
-        <!-- PAGE 1: DYNAMIC ENTERPRISE DASHBOARD -->
+        <!-- PAGE 1: ENTERPRISE DASHBOARD -->
         <main class="page-wrapper active-page" id="page-dashboard">
             <div class="db-hero">
                 <div class="status-badge">
                     <div class="status-pulse"></div>
-                    Sistem Aetheris Aktif Global
+                    Sistem Operasional Aktif
                 </div>
-                <h1>Platform Manajemen & Integrasi Terpusat</h1>
-                <p>Arsitektur mutakhir untuk otomasi presisi tinggi, visualisasi metrik performa komprehensif, dan sinkronisasi ekosistem industri waktu nyata.</p>
+                <h1>Selamat Datang di Portal Kendali Mutu Global</h1>
+                <p>Arsitektur monitoring terpadu untuk efisiensi lini produksi, visualisasi metrik performa tinggi, dan otomatisasi kontrol waktu nyata.</p>
             </div>
             
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-label">Efisiensi Total OEE</div>
-                    <div class="metric-value">91.8%</div>
-                    <p style="color: var(--neon-green); font-size: 0.85rem; font-weight:700;">↑ 2.4% Optimalisasi Lini</p>
+                    <div class="metric-value">87.4%</div>
+                    <p style="color: var(--success); font-size: 0.85rem; font-weight:600;">↑ 1.2% dari target standar</p>
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Waktu Operasional Aktif</div>
-                    <div class="metric-value">2,840 Jam</div>
-                    <p style="color: var(--text-dim); font-size: 0.85rem;">Berjalan tanpa kendala enkripsi</p>
+                    <div class="metric-value">1,420 Jam</div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Berjalan tanpa kegagalan mekanis</p>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label">Akurasi Distribusi Data</div>
-                    <div class="metric-value">99.9%</div>
-                    <p style="color: var(--neon-green); font-size: 0.85rem; font-weight:700;">Tingkat latensi minimum</p>
+                    <div class="metric-label">Produk Lolos Kualitas</div>
+                    <div class="metric-value">99.1%</div>
+                    <p style="color: var(--success); font-size: 0.85rem; font-weight:600;">Tingkat reject minimum</p>
                 </div>
             </div>
         </main>
@@ -616,89 +583,89 @@
         <div class="page-wrapper" id="page-profile">
             <div class="profile-layout">
                 <div class="profile-frame">
-                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070" alt="Executive Corporate Building">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070" alt="Corporate Headquarters">
                 </div>
                 <div class="profile-info">
-                    <h2>Membangun Keunggulan Masa Depan Melalui Otomasi</h2>
-                    <p>Aetheris Group berdedikasi menciptakan standar baru dalam arsitektur teknologi industri skala internasional. Kami mengawinkan kecerdasan buatan dengan sistem kontrol logis untuk menghadirkan skalabilitas operasional yang tak tertandingi.</p>
-                    <p>Didorong oleh komitmen inovasi tanpa henti, kami memastikan aset manufaktur dan data perusahaan mitra terintegrasi secara aman, transparan, dan berdaya guna tinggi.</p>
+                    <h2>Pilar Utama Masa Depan Otomatisasi Modern</h2>
+                    <p>NexaCore Industries berdedikasi membangun infrastruktur manufaktur cerdas di era disrupsi teknologi terkini. Kami mengintegrasikan sistem kendali tingkat tinggi untuk mempermudah visibilitas operasional korporasi multinasional.</p>
+                    <p>Didukung oleh tim teknisi bersertifikasi global, kami memformulasikan solusi kustomisasi berskala besar, mencakup manajemen database industri terpusat hingga integrasi IoT nirkabel mutakhir.</p>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 3: TENTANG PERUSAHAAN -->
+        <!-- PAGE 3: TENTANG PERUSAHAAN (REKAM JEJAK) -->
         <div class="page-wrapper" id="page-about">
             <div class="about-header">
-                <h2>Jejak Langkah Strategis</h2>
-                <p>Konsistensi dan dedikasi kami dalam memperluas jangkauan teknologi di berbagai belahan dunia.</p>
+                <h2>Sejarah & Komitmen Perusahaan</h2>
+                <p>Bagaimana kami bergerak secara konsisten membangun ekosistem otomasi yang tangguh di kancah internasional.</p>
             </div>
             <div class="timeline-container">
                 <div class="timeline-item">
                     <div class="timeline-year">2023 - Ekspansi Wilayah Asia Tenggara</div>
-                    <p>Sukses mengeksekusi instalasi infrastruktur otomatisasi modern terpadu di Thailand serta memperkuat fondasi operasional regional.</p>
+                    <p>Sukses mengeksekusi instalasi sistem manufaktur berskala masif di Thailand serta mendirikan pusat integrasi regional baru.</p>
                 </div>
                 <div class="timeline-item">
-                    <div class="timeline-year">2025 - Integrasi Arsitektur SCADA Berbasis Cloud</div>
-                    <p>Meluncurkan ekosistem visualisasi performa waktu nyata yang memangkas biaya pemeliharaan sistem hingga 30% secara masif.</p>
+                    <div class="timeline-year">2025 - Transformasi Arsitektur SCADA Modern</div>
+                    <p>Meluncurkan platform visualisasi performa lini terpusat generasi baru untuk penghematan konsumsi energi operasional pabrik.</p>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 4: ARSITEKTUR NAVIGASI -->
+        <!-- PAGE 4: ARSITEKTUR NAVIGASI & DISTRIBUSI KONTROL -->
         <div class="page-wrapper" id="page-navigation">
             <div class="about-header">
-                <h2>Topologi Struktur Enkripsi Navigasi</h2>
-                <p>Bagaimana jaringan kontrol dan alur distribusi informasi dipetakan demi efisiensi maksimal.</p>
+                <h2>Peta Arsitektur Navigasi Jaringan</h2>
+                <p>Gambaran umum bagaimana struktur pembagian data kontrol dipetakan dalam portal perusahaan kami.</p>
             </div>
             <div class="structure-grid">
                 <div class="structure-card">
-                    <div class="node-icon">⚡</div>
-                    <h3>Inti Kontrol Otomasi</h3>
-                    <p>Lapisan pemrosesan logika terstruktur (PLC) untuk menjaga stabilitas parameter siklus manufaktur.</p>
+                    <div class="node-icon">🖥️</div>
+                    <h3>Topologi Supervisor</h3>
+                    <p>Lapisan kendali SCADA terpusat untuk memonitor jalannya seluruh operasi pabrik tanpa jeda delay.</p>
                 </div>
                 <div class="structure-card">
-                    <div class="node-icon">🔱</div>
-                    <h3>Visualisasi SCADA Hub</h3>
-                    <p>Panel pusat pemantauan visual terenkripsi untuk mempermudah pengambilan keputusan eksekutif.</p>
+                    <div class="node-icon">⚙️</div>
+                    <h3>Logika Pemrosesan</h3>
+                    <p>Eksekusi kode pemrograman PLC terstruktur guna memastikan kalkulasi waktu siklus dan parameter akurat.</p>
                 </div>
                 <div class="structure-card">
-                    <div class="node-icon">🌌</div>
-                    <h3>Gudang Data Global</h3>
-                    <p>Arsip data operasi terdistribusi aman guna mendukung audit efisiensi performa berkala.</p>
+                    <div class="node-icon">☁️</div>
+                    <h3>Awan Data Terdistribusi</h3>
+                    <p>Penyimpanan log riwayat performa berbasis cloud demi mempermudah audit efisiensi berkala.</p>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 5: LAYANAN HUBUNGAN & KONTAK -->
+        <!-- PAGE 5: LAYANAN HUBUNGAN KONTROL & HUBUNGI KAMI -->
         <div class="page-wrapper" id="page-contact">
             <div class="contact-layout">
                 <div class="contact-nodes">
-                    <h3>Hubungi Hub Eksekutif</h3>
-                    <p>Diskusikan kebutuhan arsitektur kontrol, kemitraan strategis global, atau pengajuan audit performa industri dengan kami.</p>
+                    <h3>Hubungi Pusat Enkripsi Data</h3>
+                    <p>Ada kendala integrasi atau butuh rancangan sistem terpadu? Segera sampaikan kebutuhan teknis tim Anda ke server kami.</p>
                     <div class="node-link">
                         <div class="icon-sphere">HQ</div>
                         <div>
-                            <h4 style="font-weight:700;">Kantor Pusat Global</h4>
-                            <p style="font-size:0.85rem; color:var(--text-dim);">Sudirman Central CBD, District 8, Jakarta</p>
+                            <h4 style="font-weight:700;">Headquarters Office</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">Sudirman Central CBD, Tower 4B, Jakarta</p>
                         </div>
                     </div>
                     <div class="node-link">
                         <div class="icon-sphere">EM</div>
                         <div>
-                            <h4 style="font-weight:700;">Saluran Hubungan Resmi</h4>
-                            <p style="font-size:0.85rem; color:var(--text-dim);">executive@aetheris.group</p>
+                            <h4 style="font-weight:700;">Garis Hubungan Utama</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted);">ops-support@nexacore.io</p>
                         </div>
                     </div>
                 </div>
                 <div class="form-panel">
-                    <form onsubmit="alert('Pengajuan Anda masuk ke dalam antrean server Aetheris.'); return false;">
+                    <form onsubmit="alert('Data pengajuan sistem terkirim ke database pusat!'); return false;">
                         <div class="form-grid">
-                            <input type="text" placeholder="Nama Delegasi" required>
-                            <input type="email" placeholder="Email Korporasi Resmi" required>
+                            <input type="text" placeholder="Nama Operator Mandat" required>
+                            <input type="email" placeholder="Enkripsi Surat Elektronik" required>
                         </div>
-                        <input type="text" placeholder="Subjek Masalah / Rencana Proyek" style="margin-bottom:1.5rem;" required>
-                        <textarea placeholder="Tuliskan spesifikasi teknis, cakupan sistem, atau pesan penting yang ingin Anda sampaikan langsung ke manajemen..." style="height:160px; margin-bottom:1.5rem;" required></textarea>
-                        <button type="submit" class="btn-dispatch">Kirim Enkripsi Pesan</button>
+                        <input type="text" placeholder="Nomor Tiket Kode Operasi" style="margin-bottom:1.5rem;" required>
+                        <textarea placeholder="Deskripsikan secara komprehensif rancangan arsitektur atau kendala operasional yang Anda temukan..." style="height:150px; margin-bottom:1.5rem;" required></textarea>
+                        <button type="submit" class="btn-dispatch">Kirim Laporan Operasi</button>
                     </form>
                 </div>
             </div>
@@ -708,7 +675,7 @@
 
     <!-- ================= JAVASCRIPT LOGIC CORE ================= -->
     <script>
-        // LOGIKA GERBANG VERIFIKASI
+        // FUNGSI VERIFIKASI KEAMANAN GERBANG MASUK
         function verifyGateAccess(event) {
             event.preventDefault();
             
@@ -718,6 +685,7 @@
             const portalGate = document.getElementById('portalGate');
             const portalApp = document.getElementById('portalApp');
 
+            // Logika pencocokan rahasia tanpa tanda instruksi
             if (userInput === 'Admin' && passInput === 'adminpt') {
                 gateError.style.display = 'none';
                 portalGate.style.opacity = '0';
@@ -735,24 +703,35 @@
             }
         }
 
-        // LOGIKA PERPINDAHAN HALAMAN MULTI-PAGE SPA
+        // SYSTEM SWAP PAGE (SISTEM PERPINDAHAN HALAMAN HALUS)
         function switchSystemPage(targetPageId) {
+            // Sembunyikan semua halaman terlebih dahulu
             const allPages = document.querySelectorAll('.page-wrapper');
-            allPages.forEach(page => page.classList.remove('active-page'));
+            allPages.forEach(page => {
+                page.classList.remove('active-page');
+            });
 
+            // Matikan semua status aktif di link navbar
             const allLinks = document.querySelectorAll('.nav-menu a');
-            allLinks.forEach(link => link.classList.remove('active-link'));
+            allLinks.forEach(link => {
+                link.classList.remove('active-link');
+            });
 
+            // Aktifkan halaman dan link yang dituju secara instan & mulus
             document.getElementById(`page-${targetPageId}`).classList.add('active-page');
             document.getElementById(`link-${targetPageId}`).classList.add('active-link');
 
+            // Tutup otomatis menu HP jika sedang terbuka
             document.getElementById('navigationMenu').classList.remove('mobile-open');
+            
+            // Auto scroll ke atas setiap kali ganti halaman
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // MOBILE NAVIGATION MENU TRIGGER
+        // INTERAKSI MENU HAMBURGER (UNTUK MOBILE MODE LAYAR HP)
         function toggleMobileMenu() {
-            document.getElementById('navigationMenu').classList.toggle('mobile-open');
+            const menu = document.getElementById('navigationMenu');
+            menu.classList.toggle('mobile-open');
         }
     </script>
 </body>
