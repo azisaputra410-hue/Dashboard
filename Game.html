@@ -1,21 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Mengikuti request: Nama game berada di title bar browser dan nantinya dinamis -->
-    <title>AstroForge: Quantum Grid [Initializing...]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Judul Game Modern di Atas Browser -->
+    <title>CYBER PULSE: Neon Overdrive</title>
     <style>
         :root {
-            --bg-dark: #0a0a12;
-            --panel-bg: rgba(20, 20, 35, 0.7);
-            --neon-blue: #00f0ff;
+            --bg-dark: #05050a;
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff007f;
             --neon-green: #39ff14;
-            --neon-purple: #bd00ff;
-            --neon-red: #ff0055;
-            --text-main: #e2e8f0;
-            --text-muted: #64748b;
-            --border-color: rgba(0, 240, 255, 0.2);
+            --panel-border: rgba(0, 240, 255, 0.3);
         }
 
         * {
@@ -24,1073 +20,610 @@
             padding: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
         }
 
         body {
-            background: linear-gradient(135deg, #050508 0%, #0a0a16 100%);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
+            padding: 0;
+        }
+
+        /* Container Utama Pas Satu Layar HP */
+        #game-viewport {
+            width: 100vw;
             height: 100vh;
+            max-width: 480px;
+            max-height: 850px;
+            background: radial-gradient(circle at center, #100a1c 0%, #05050a 100%);
+            border: 2px solid var(--panel-border);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* Top Navigation / Status Bar */
+        /* Header Skor & Interface Atas */
         header {
-            background: rgba(10, 10, 20, 0.8);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
+            padding: 20px;
             z-index: 10;
+            background: linear-gradient(to bottom, rgba(5,5,10,0.8), rgba(0,0,0,0));
         }
 
-        .logo-area h1 {
-            font-size: 24px;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-        }
-
-        .global-resources {
-            display: flex;
-            gap: 20px;
-        }
-
-        .res-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 8px 16px;
-            border-radius: 6px;
+        .score-box {
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
-            min-width: 120px;
         }
 
-        .res-card .label {
-            font-size: 11px;
-            color: var(--text-muted);
+        .score-label {
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
         }
 
-        .res-card .val {
-            font-size: 18px;
-            font-weight: bold;
-            font-family: monospace;
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px var(--neon-cyan);
         }
 
-        .res-card.energy .val { color: var(--neon-blue); }
-        .res-card.matter .val { color: var(--neon-green); }
-        .res-card.quantum .val { color: var(--neon-purple); }
+        .combo-container {
+            text-align: right;
+        }
 
-        /* Main Game Layout */
-        .main-container {
-            display: flex;
-            flex: 1;
+        .combo-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--neon-magenta);
+            text-shadow: 0 0 12px var(--neon-magenta);
+            transform: scale(1);
+            transition: transform 0.05s ease;
+        }
+
+        .combo-value.pop {
+            transform: scale(1.3);
+        }
+
+        /* Energy Bar untuk Overdrive */
+        #energy-wrapper {
+            width: 90%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 auto;
+            border-radius: 3px;
             overflow: hidden;
+            z-index: 10;
             position: relative;
         }
 
-        /* Sidebar Tabs */
-        .sidebar {
+        #energy-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            box-shadow: 0 0 10px var(--neon-magenta);
+            transition: width 0.1s linear;
+        }
+
+        /* Arena Utama Tempat Spawn Target Objek (Mekanik Manual) */
+        #play-field {
+            flex: 1;
+            position: relative;
+            width: 100%;
+        }
+
+        /* Target Lingkaran Ketuk (Tap Target) */
+        .tap-target {
+            position: absolute;
             width: 80px;
-            background: rgba(5, 5, 10, 0.6);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-            gap: 20px;
+            height: 80px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            cursor: pointer;
             z-index: 5;
         }
 
-        .tab-btn {
-            width: 55px;
-            height: 55px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.02);
-            color: var(--text-muted);
+        /* Inti Target Tengah */
+        .target-core {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* Cincin Waktu Menyusut (Mekanik Ketepatan) */
+        .approach-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            top: 0;
+            left: 0;
+            box-shadow: 0 0 8px var(--neon-cyan);
+            animation: shrinkRing 1.2s linear forwards;
+        }
+
+        @keyframes shrinkRing {
+            from { transform: scale(2.2); opacity: 0.3; }
+            to { transform: scale(0.6); opacity: 1; }
+        }
+
+        /* Target Swipe (Panah Geser) */
+        .swipe-target {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .swipe-arrow {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--neon-magenta);
+            text-shadow: 0 0 15px var(--neon-magenta);
+            animation: pulseArrow 0.4s infinite alternate;
+        }
+
+        @keyframes pulseArrow {
+            from { transform: scale(0.9); }
+            to { transform: scale(1.2); }
+        }
+
+        /* Tombol Picu Overdrive Super Keren */
+        #overdrive-trigger {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            padding: 15px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            font-weight: 800;
+            letter-spacing: 3px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            font-size: 1rem;
             cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.1);
+            opacity: 0.3;
+            pointer-events: none;
             transition: all 0.3s ease;
+        }
+
+        #overdrive-trigger.ready {
+            opacity: 1;
+            pointer-events: auto;
+            background: rgba(57, 255, 20, 0.1);
+            box-shadow: 0 0 20px var(--neon-green);
+            animation: borderPulse 1s infinite alternate;
+        }
+
+        @keyframes borderPulse {
+            from { box-shadow: 0 0 10px var(--neon-green); }
+            to { box-shadow: 0 0 25px var(--neon-green), inset 0 0 10px var(--neon-green); }
+        }
+
+        /* Screen Flash / Efek Saat Hit Negatif atau Positif Luar Biasa */
+        .flash-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+        }
+
+        /* Layar Pembuka / Game Over */
+        .screen-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 10, 0.95);
+            z-index: 20;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 10px;
-            font-weight: 600;
+            padding: 30px;
+            text-align: center;
         }
 
-        .tab-btn i {
-            font-size: 20px;
-            margin-bottom: 4px;
+        .screen-overlay h2 {
+            font-size: 2.2rem;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            margin-bottom: 10px;
+            font-weight: 900;
         }
 
-        .tab-btn:hover, .tab-btn.active {
-            color: var(--neon-blue);
-            border-color: var(--neon-blue);
-            background: rgba(0, 240, 255, 0.05);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-
-        /* Content Panes */
-        .content-area {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pane {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            display: flex;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        .pane.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Grid View Components */
-        .canvas-container {
-            flex: 2;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-        }
-
-        #gridCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .control-panel {
-            flex: 1;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            backdrop-filter: blur(8px);
-            overflow-y: auto;
-        }
-
-        .panel-title {
-            font-size: 18px;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-            color: var(--neon-blue);
-            letter-spacing: 0.5px;
-        }
-
-        .build-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .build-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .build-card:hover {
-            border-color: var(--neon-blue);
-            background: rgba(0, 240, 255, 0.03);
-            transform: translateY(-2px);
-        }
-
-        .build-card.selected {
-            border-color: var(--neon-green);
-            background: rgba(57, 255, 20, 0.05);
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
-        }
-
-        .build-card .b-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .build-card .b-cost {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-family: monospace;
-        }
-
-        /* Upgrades View */
-        .upgrades-container {
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            overflow-y: auto;
-            align-content: start;
-        }
-
-        .up-card {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 15px;
-            transition: all 0.3s;
-        }
-
-        .up-card:hover {
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-            border-color: rgba(0, 240, 255, 0.4);
-        }
-
-        .up-info h3 {
-            font-size: 16px;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-
-        .up-info p {
-            font-size: 13px;
-            color: var(--text-muted);
+        .screen-overlay p {
+            font-size: 0.9rem;
+            color: #8a8a9e;
+            margin-bottom: 30px;
             line-height: 1.4;
         }
 
-        .up-btn {
-            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+        .start-btn {
+            padding: 14px 40px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta));
             border: none;
             color: white;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
+            font-weight: 700;
+            border-radius: 30px;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: opacity 0.2s;
-            font-family: monospace;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
         }
 
-        .up-btn:hover { opacity: 0.9; }
-        .up-btn:disabled {
-            background: #2d3748;
-            color: #718096;
-            cursor: not-allowed;
-        }
-
-        /* Dyson Sphere Mega View */
-        .dyson-container {
-            width: 100%;
-            display: flex;
-            gap: 20px;
-        }
-
-        .dyson-visual {
-            flex: 1;
-            background: #020205;
-            border-radius: 16px;
-            border: 1px solid rgba(189, 0, 255, 0.3);
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset 0 0 50px rgba(189, 0, 255, 0.2);
-        }
-
-        .star-core {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, #fff 0%, #ffaa00 50%, #ff3300 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 60px #ff6600, 0 0 120px rgba(255, 102, 0, 0.4);
-            position: relative;
-            transition: all 0.5s ease;
-        }
-
-        .dyson-ring {
+        /* Hit Rating Text Effect (Perfect, Good, Miss) */
+        .rating-text {
             position: absolute;
-            border: 2px dashed rgba(0, 240, 255, 0.3);
-            border-radius: 50%;
-            animation: spin 20s linear infinite;
+            transform: translate(-50%, -50%);
+            font-weight: 900;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 8;
+            animation: ratingFly 0.5s ease-out forwards;
         }
 
-        .dyson-ring.r1 { width: 180px; height: 180px; animation-duration: 25s; }
-        .dyson-ring.r2 { width: 260px; height: 260px; animation-duration: 40s; animation-direction: reverse; }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .dyson-controls {
-            flex: 1;
-            background: var(--panel-bg);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        @keyframes ratingFly {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+            30% { transform: translate(-50%, -70%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -90%) scale(1); }
         }
 
-        /* Progress Bars */
-        .progress-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            height: 24px;
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.1);
+        /* Efek Mode Overdrive Sedang Aktif di Seluruh Layar */
+        #game-viewport.overdrive-active {
+            animation: screenShake 0.1s infinite alternate;
+            border-color: var(--neon-green) !important;
+        }
+        
+        #game-viewport.overdrive-active .target-core {
+            background: var(--neon-green) !important;
+            box-shadow: 0 0 20px var(--neon-green) !important;
         }
 
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
-            width: 0%;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px var(--neon-blue);
+        @keyframes screenShake {
+            from { transform: translate(1px, 1px); }
+            to { transform: translate(-1px, -1px); }
         }
-
-        .progress-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            font-family: monospace;
-        }
-
-        /* Terminal & Logs */
-        .log-box {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 8px;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            height: 120px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .log-entry {
-            animation: fadeIn 0.2s ease;
-        }
-        .log-entry.info { color: #a0aec0; }
-        .log-entry.success { color: var(--neon-green); }
-        .log-entry.warn { color: #ecc94b; }
-        .log-entry.danger { color: var(--neon-red); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Notification Toast */
-        #toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(10, 10, 20, 0.9);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-            padding: 15px 25px;
-            border-radius: 8px;
-            z-index: 100;
-            transform: translateY(150%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #toast.show { transform: translateY(0); }
-
-        /* Scrollbar customization */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.3); }
     </style>
 </head>
 <body>
 
-    <!-- Main Header dengan Global Real-time Resources -->
-    <header>
-        <div class="logo-area">
-            <h1>ASTROFORGE // Q-GRID</h1>
-        </div>
-        <div class="global-resources">
-            <div class="res-card energy">
-                <span class="label">Quantum Energy</span>
-                <span class="val" id="global-energy">0.00</span>
-            </div>
-            <div class="res-card matter">
-                <span class="label">Dark Matter</span>
-                <span class="val" id="global-matter">0.00</span>
-            </div>
-            <div class="res-card quantum">
-                <span class="label">Quantum Crystals</span>
-                <span class="val" id="global-crystals">0.00</span>
-            </div>
-        </div>
-    </header>
+    <div id="game-viewport">
+        <!-- Efek Kilatan Background -->
+        <div id="flash-screen" class="flash-effect"></div>
 
-    <div class="main-container">
-        <!-- Sidebar Menu Navigasi -->
-        <div class="sidebar">
-            <button class="tab-btn active" onclick="switchTab('grid')">
-                <i>⚃</i>Grid
-            </button>
-            <button class="tab-btn" onclick="switchTab('upgrades')">
-                <i>⚙</i>Tech
-            </button>
-            <button class="tab-btn" onclick="switchTab('dyson')">
-                <i>☼</i>Dyson
-            </button>
+        <!-- Tampilan HUD / Atas Layar -->
+        <header>
+            <div class="score-box">
+                <span class="score-label">Score Matrix</span>
+                <span class="score-value" id="score-display">000000</span>
+            </div>
+            <div class="combo-container">
+                <span class="score-label" style="color: var(--neon-magenta)">Combo</span>
+                <div class="combo-value" id="combo-display">0</div>
+            </div>
+        </header>
+
+        <!-- Bar Energi Pengumpul Manual -->
+        <div id="energy-wrapper">
+            <div id="energy-bar"></div>
         </div>
 
-        <!-- Area Konten Dinamis -->
-        <div class="content-area">
-            
-            <!-- PANE 1: GRID & COLONY AUTOMATION SYSTEM -->
-            <div id="pane-grid" class="pane active">
-                <div class="canvas-container">
-                    <canvas id="gridCanvas"></canvas>
-                </div>
-                <div class="control-panel">
-                    <h2 class="panel-title">Structure Command</h2>
-                    <p style="font-size:13px; color:var(--text-muted)">Pilih modul dan pasang pada sistem grid untuk memulai siklus otomatisasi logistik.</p>
-                    
-                    <div class="build-grid">
-                        <div class="build-card" id="b-solar" onclick="selectBuild('solar')">
-                            <div class="b-title" style="color:var(--neon-blue)">Solar Collector</div>
-                            <div class="b-cost">Mat: 10</div>
-                        </div>
-                        <div class="build-card" id="b-extractor" onclick="selectBuild('extractor')">
-                            <div class="b-title" style="color:var(--neon-green)">Matter Extractor</div>
-                            <div class="b-cost">Ene: 15</div>
-                        </div>
-                        <div class="build-card" id="b-refinery" onclick="selectBuild('refinery')">
-                            <div class="b-title" style="color:var(--neon-purple)">Crystal Refinery</div>
-                            <div class="b-cost">Mat: 50 | Ene: 50</div>
-                        </div>
-                        <div class="build-card" id="b-defense" onclick="selectBuild('defense')">
-                            <div class="b-title" style="color:var(--neon-red)">Shield Matrix</div>
-                            <div class="b-cost">Mat: 100</div>
-                        </div>
-                    </div>
+        <!-- Zona Tempur Utama Manual -->
+        <div id="play-field"></div>
 
-                    <div id="node-details" style="background:rgba(255,255,255,0.02); padding:12px; border-radius:8px; border:1px dashed rgba(255,255,255,0.1); font-size:13px; display:none;">
-                        <h4 style="margin-bottom:5px; color:#fff;" id="detail-name">-</h4>
-                        <p id="detail-status">-</p>
-                        <button class="up-btn" style="width:100%; margin-top:10px; padding:6px;" onclick="upgradeSelectedNode()">Upgrade Node</button>
-                    </div>
+        <!-- Tombol Aksi Overdrive -->
+        <button id="overdrive-trigger" onclick="activateOverdrive()">Overdrive Ready</button>
 
-                    <h2 class="panel-title" style="margin-top:auto;">Automated Terminal Logs</h2>
-                    <div class="log-box" id="grid-logs">
-                        <div class="log-entry info">[SYSTEM] Quantum grid ready for deployment.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANE 2: POHON TEKNOLOGI & UPGRADES -->
-            <div id="pane-upgrades" class="pane">
-                <div class="upgrades-container" id="upgrades-list">
-                    <!-- Dinamis via Javascript -->
-                </div>
-            </div>
-
-            <!-- PANE 3: DYSON SPHERE MEGASTRUCTURE PANE -->
-            <div id="pane-dyson" class="pane">
-                <div class="dyson-container">
-                    <div class="dyson-visual">
-                        <div class="star-core" id="starCore"></div>
-                        <div class="dyson-ring r1"></div>
-                        <div class="dyson-ring r2"></div>
-                    </div>
-                    <div class="dyson-controls">
-                        <h2 class="panel-title">Mega-Engineering System</h2>
-                        <p style="font-size:13px; color:var(--text-muted)">Alokasikan kristal kuantum dan energi raksasa secara massal untuk merajut kerangka raksasa di sekeliling bintang demi menguasai peradaban Tipe II.</p>
-                        
-                        <div>
-                            <span style="font-size: 13px; color: var(--text-muted);">Progres Konstruksi Dyson Sphere</span>
-                            <div class="progress-container" style="margin-top: 5px;">
-                                <div class="progress-bar" id="dyson-progress"></div>
-                                <div class="progress-text" id="dyson-text">0.00%</div>
-                            </div>
-                        </div>
-
-                        <div style="display:flex; gap:10px;">
-                            <button class="up-btn" style="flex:1;" onclick="investDyson(1)">Suntik 1 Crystal</button>
-                            <button class="up-btn" style="flex:1; background:linear-gradient(90deg, var(--neon-purple), var(--neon-red))" onclick="investDyson(10)">Suntik 10 Crystals</button>
-                        </div>
-
-                        <div class="log-box" id="dyson-logs" style="flex:1; height:auto;">
-                            <div class="log-entry info">[DYSON] Menunggu alokasi material pertama untuk inisiasi kerangka...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <!-- Layar Mulai / Kalah Menu -->
+        <div id="menu-overlay" class="screen-overlay">
+            <h2 id="menu-title">CYBER PULSE</h2>
+            <p id="menu-desc">Ketuk target lingkaran tepat waktu saat cincin menyusut pas di tengah. Usap (*Swipe*) panah merah sesuai arahnya! Pertahankan refleks tanganmu.</p>
+            <button class="start-btn" onclick="startGame()">INITIALIZE MECHANICS</button>
         </div>
     </div>
 
-    <div id="toast">Notifikasi Otorisasi Sistem</div>
-
-    <!-- CORE GAME GAMEENGINE SCRIPT -->
     <script>
-        // GLOBAL GAME DATA ENGINE STATE
-        const game = {
-            resources: {
-                energy: 50.0,
-                matter: 30.0,
-                crystals: 0.0
-            },
-            grid: {
-                size: 8,
-                nodes: [],
-                selectedCell: null
-            },
-            buildSelection: null,
-            upgrades: {
-                quantumEfficiency: { id: 'quantumEfficiency', name: 'Quantum Core Tuning', cost: 15, costType: 'matter', level: 0, max: 10, desc: 'Meningkatkan output energi dasar semua Solar Collector sebesar +25% per tingkat.', multiplier: 0.25 },
-                extractorSubroutines: { id: 'extractorSubroutines', name: 'Subrutin Ekstraktor AI', cost: 20, costType: 'energy', level: 0, max: 10, desc: 'Optimasi pengeboran otomatis. Dark Matter extractor +30% lebih cepat.', multiplier: 0.30 },
-                crystalCatalyst: { id: 'crystalCatalyst', name: 'Katalisator Fusi Kuantum', cost: 5, costType: 'crystals', level: 0, max: 5, desc: 'Mempercepat siklus pembentukan Kristal Kuantum sebesar 15%.', multiplier: 0.15 },
-                autoRepairBots: { id: 'autoRepairBots', name: 'Nanite Self-Assembly', cost: 100, costType: 'matter', level: 0, max: 1, desc: 'Membuka sistem otomatisasi perbaikan grid saat terkena solar flare anomaly.', multiplier: 1 }
-            },
-            dyson: {
-                progress: 0.0,
-                investedCrystals: 0,
-                requiredCrystals: 500,
-                multiplier: 1.0
-            },
-            stats: {
-                totalTime: 0,
-                lastTick: Date.now()
-            }
-        };
+        const playField = document.getElementById("play-field");
+        const scoreDisplay = document.getElementById("score-display");
+        const comboDisplay = document.getElementById("combo-display");
+        const energyBar = document.getElementById("energy-bar");
+        const overdriveBtn = document.getElementById("overdrive-trigger");
+        const menuOverlay = document.getElementById("menu-overlay");
+        const viewport = document.getElementById("game-viewport");
+        const flashScreen = document.getElementById("flash-screen");
 
-        // BINDING UTALITAS STRUKTUR BANGUNAN
-        const STRUCTURE_TYPES = {
-            solar: { name: "Solar Collector", cost: { matter: 10, energy: 0, crystals: 0 }, color: "#00f0ff", symbol: "☼" },
-            extractor: { name: "Matter Extractor", cost: { matter: 0, energy: 15, crystals: 0 }, color: "#39ff14", symbol: "⚲" },
-            refinery: { name: "Crystal Refinery", cost: { matter: 50, energy: 50, crystals: 0 }, color: "#bd00ff", symbol: "◈" },
-            defense: { name: "Shield Matrix", cost: { matter: 100, energy: 0, crystals: 0 }, color: "#ff0055", symbol: "🛡" }
-        };
+        let score = 0;
+        let combo = 0;
+        let energy = 0;
+        let isPlaying = false;
+        let isOverdrive = false;
+        let spawnInterval;
+        let gameLoopSpeed = 1000; // milidetik
+        let activeTargets = [];
 
-        let canvas, ctx;
-        let animationFrameId;
+        // Inisialisasi Deteksi Geser Layar HP (Swipe Mechanics)
+        let touchStartX = 0;
+        let touchStartY = 0;
 
-        // INIASIALISASI APLIKASI UTAMA
-        window.onload = function() {
-            initCanvas();
-            initGrid();
-            loadGame();
-            renderUpgrades();
+        function startGame() {
+            score = 0;
+            combo = 0;
+            energy = 0;
+            isPlaying = true;
+            isOverdrive = false;
+            gameLoopSpeed = 1000;
+            activeTargets = [];
+            playField.innerHTML = "";
             
-            // Core Logic Interval Loop (Otomatisasi Kalkulasi Logika: 10 Kali Per Detik / 100ms)
-            setInterval(gameTick, 100);
+            scoreDisplay.innerText = "000000";
+            comboDisplay.innerText = "0";
+            energyBar.style.width = "0%";
+            overdriveBtn.classList.remove("ready");
+            viewport.classList.remove("overdrive-active");
+
+            menuOverlay.style.display = "none";
             
-            // Render Loop untuk grafis Canvas performa tinggi
-            requestAnimationFrame(renderLoop);
-
-            // Trigger Random dynamic Event engine otomatis setiap 30-45 detik
-            triggerRandomEventTimer();
-        };
-
-        function initCanvas() {
-            canvas = document.getElementById('gridCanvas');
-            ctx = canvas.getContext('2d');
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            canvas.addEventListener('click', handleCanvasClick);
-        }
-
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-        }
-
-        function initGrid() {
-            game.grid.nodes = [];
-            for(let x = 0; x < game.grid.size; x++) {
-                game.grid.nodes[x] = [];
-                for(let y = 0; y < game.grid.size; y++) {
-                    game.grid.nodes[x][y] = {
-                        type: 'empty',
-                        level: 0,
-                        progress: 0,
-                        status: 'active',
-                        integrity: 100
-                    };
+            // Pemicu Spawn Objek Manual secara berkala
+            clearInterval(spawnInterval);
+            gameLoop = setInterval(() => {
+                if(isPlaying) {
+                    // Acak memunculkan antara Klik Biasa (Tap) atau Geser (Swipe)
+                    if(Math.random() > 0.35) {
+                        spawnTapTarget();
+                    } else {
+                        spawnSwipeTarget();
+                    }
                 }
-            }
+            }, gameLoopSpeed);
         }
 
-        // SISTEM NAVIGASI TAB MODERN
-        function switchTab(tabId) {
-            document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        // MEKANIK 1: Membuat Target Ketukan (Tap Target)
+        function spawnTapTarget() {
+            const target = document.createElement("div");
+            target.className = "tap-target";
             
-            document.getElementById(`pane-${tabId}`).classList.add('active');
-            event.currentTarget.classList.add('active');
+            // Mengatur koordinat acak di layar HP agar menantang
+            const x = Math.random() * 70 + 15; // Jangkauan 15% - 85% lebar layar
+            const y = Math.random() * 65 + 15; // Jangkauan 15% - 80% tinggi layar
+            target.style.left = `${x}%`;
+            target.style.top = `${y}%`;
 
-            if(tabId === 'grid') {
-                setTimeout(resizeCanvas, 50); // Redraw fix
-            }
-        }
+            const core = document.createElement("div");
+            core.className = "target-core";
 
-        // AKSI SELEKSI BANGUNAN GRID
-        function selectBuild(type) {
-            document.querySelectorAll('.build-card').forEach(c => c.classList.remove('selected'));
-            if(game.buildSelection === type) {
-                game.buildSelection = null; // deselect
-            } else {
-                game.buildSelection = type;
-                document.getElementById(`b-${type}`).classList.add('selected');
-            }
-        }
+            const ring = document.createElement("approach-ring");
+            ring.className = "approach-ring";
 
-        // HANDLING KLIK PADA ENGINE CANVAS GRID DETEKSI MATRIKS
-        function handleCanvasClick(e) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            target.appendChild(core);
+            target.appendChild(ring);
+            playField.appendChild(target);
 
-            const cellSize = Math.min(canvas.width, canvas.height) / (game.grid.size + 2);
-            const offsetX = (canvas.width - (cellSize * game.grid.size)) / 2;
-            const offsetY = (canvas.height - (cellSize * game.grid.size)) / 2;
+            let startTime = Date.now();
+            let hitTriggered = false;
 
-            const gridX = Math.floor((mouseX - offsetX) / cellSize);
-            const gridY = Math.floor((mouseY - offsetY) / cellSize);
+            // Kejadian saat User Mengetuk secara Manual
+            target.addEventListener("touchstart", (e) => {
+                e.preventDefault();
+                if(hitTriggered) return;
+                hitTriggered = true;
 
-            if(gridX >= 0 && gridX < game.grid.size && gridY >= 0 && gridY < game.grid.size) {
-                executeGridAction(gridX, gridY);
-            }
-        }
-
-        // EKSEKUSI PENEMPATAN & PEMINDAHAN MODUL GRID (OTOMATISASI DAN VALIDASI BIAYA)
-        function executeGridAction(x, y) {
-            const node = game.grid.nodes[x][y];
-
-            if(game.buildSelection) {
-                // Mode Menaruh Bangunan Modul Baru
-                if(node.type !== 'empty') {
-                    showToast("Kesalahan: Lokasi grid sudah terisi komponen lain!");
-                    return;
-                }
+                let clickTime = Date.now();
+                let elapsed = clickTime - startTime;
                 
-                const struct = STRUCTURE_TYPES[game.buildSelection];
-                
-                // Validasi resource mencukupi
-                if(game.resources.energy >= struct.cost.energy && 
-                   game.resources.matter >= struct.cost.matter && 
-                   game.resources.crystals >= struct.cost.crystals) {
-                    
-                    // Deduct
-                    game.resources.energy -= struct.cost.energy;
-                    game.resources.matter -= struct.cost.matter;
-                    game.resources.crystals -= struct.cost.crystals;
-
-                    // Build
-                    game.grid.nodes[x][y] = {
-                        type: game.buildSelection,
-                        level: 1,
-                        progress: 0,
-                        status: 'active',
-                        integrity: 100
-                    };
-
-                    pushLog('grid-logs', `Membangun ${struct.name} di koordinat [${x}, ${y}]`, 'success');
-                    selectBuild(game.buildSelection); // reset selection visual status
+                // Menghitung akurasi ketukan manual (Akurasi Terbaik di kisaran 1000-1150ms)
+                if (elapsed >= 950 && elapsed <= 1200) {
+                    triggerHit("PERFECT", x, y);
+                } else if (elapsed > 500 && elapsed < 950) {
+                    triggerHit("GOOD", x, y);
                 } else {
-                    showToast("Kesalahan: Sumber daya material tidak mencukupi!");
+                    triggerHit("MISS", x, y);
                 }
-            } else {
-                // Mode Inspeksi Klik Detail Node Modul
-                game.grid.selectedCell = {x, y};
-                showNodeDetails(x, y);
-            }
-        }
-
-        function showNodeDetails(x, y) {
-            const node = game.grid.nodes[x][y];
-            const detailsDiv = document.getElementById('node-details');
-            if(node.type === 'empty') {
-                detailsDiv.style.display = 'none';
-                return;
-            }
-
-            detailsDiv.style.display = 'block';
-            document.getElementById('detail-name').innerText = `${STRUCTURE_TYPES[node.type].name} (LVL ${node.level})`;
-            document.getElementById('detail-status').innerText = `Integritas Struktur: ${node.integrity}% | Status Operasional: ${node.status.toUpperCase()}`;
-        }
-
-        function upgradeSelectedNode() {
-            if(!game.grid.selectedCell) return;
-            const {x, y} = game.grid.selectedCell;
-            const node = game.grid.nodes[x][y];
-            
-            const cost = node.level * 40;
-            if(game.resources.matter >= cost) {
-                game.resources.matter -= cost;
-                node.level++;
-                showNodeDetails(x, y);
-                pushLog('grid-logs', `Upgrade node [${x},${y}] ke level ${node.level}`, 'success');
-            } else {
-                showToast(`Butuh ${cost} Dark Matter untuk mengupgrade node ini.`);
-            }
-        }
-
-        // CORE LOGIC TICK ENGINE (DENGAN OTOMATISASI PRODUKSI BERANTAI)
-        function gameTick() {
-            const now = Date.now();
-            const delta = (now - game.stats.lastTick) / 1000;
-            game.stats.lastTick = now;
-
-            // Efek Teknologi
-            const solarBonus = 1 + (game.upgrades.quantumEfficiency.level * game.upgrades.quantumEfficiency.multiplier);
-            const extractorBonus = 1 + (game.upgrades.extractorSubroutines.level * game.upgrades.extractorSubroutines.multiplier);
-            const crystalBonusSpeed = 1 + (game.upgrades.crystalCatalyst.level * game.upgrades.crystalCatalyst.multiplier);
-
-            // Iterasi Jalur Grid Otomatisasi Logistik
-            for(let x = 0; x < game.grid.size; x++) {
-                for(let y = 0; y < game.grid.size; y++) {
-                    const node = game.grid.nodes[x][y];
-                    if(node.status === 'damaged' && game.upgrades.autoRepairBots.level > 0) {
-                        node.integrity += 1;
-                        if(node.integrity >= 100) {
-                            node.integrity = 100;
-                            node.status = 'active';
-                            pushLog('grid-logs', `Nanite otomatis memperbaiki komponen grid di [${x},${y}]`, 'success');
-                        }
-                    }
-
-                    if(node.status !== 'active') continue;
-
-                    // Logika Distribusi per Tipe Bangunan Otomatis
-                    if(node.type === 'solar') {
-                        game.resources.energy += (0.5 * node.level * solarBonus) * delta;
-                    } 
-                    else if(node.type === 'extractor') {
-                        game.resources.matter += (0.3 * node.level * extractorBonus) * delta;
-                    } 
-                    else if(node.type === 'refinery') {
-                        // Mengubah energi & matter menjadi crystal secara otomatis berkala
-                        const drainRate = 2 * delta;
-                        if(game.resources.energy >= drainRate && game.resources.matter >= drainRate) {
-                            game.resources.energy -= drainRate;
-                            game.resources.matter -= drainRate;
-                            node.progress += (5 * crystalBonusSpeed) * delta;
-                            
-                            if(node.progress >= 100) {
-                                node.progress = 0;
-                                game.resources.crystals += 1;
-                                pushLog('grid-logs', `[Refinery ${x},${y}] Berhasil mensintesis 1 Kristal Kuantum Baru`, 'info');
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Update Semua Tampilan Interface UI
-            updateUI();
-        }
-
-        // UPDATE UI DENGAN TEKS PADA TAB SEARCH BRWOSER REAL TIME (Dinamis Sesuai Request)
-        function updateUI() {
-            document.getElementById('global-energy').innerText = game.resources.energy.toFixed(2);
-            document.getElementById('global-matter').innerText = game.resources.matter.toFixed(2);
-            document.getElementById('global-crystals').innerText = game.resources.crystals.toFixed(0);
-
-            // DINAMIS REQUEST: Mengubah nama game di bar pencarian/tab browser sesuai kondisi resource game secara berkala
-            document.title = `⚡ [E:${Math.floor(game.resources.energy)}] M:${Math.floor(game.resources.matter)} | AstroForge`;
-
-            // Update Progress Bar Kontruksi Dyson Sphere Megastructure
-            const pct = (game.dyson.investedCrystals / game.dyson.requiredCrystals) * 100;
-            game.dyson.progress = Math.min(pct, 100);
-            document.getElementById('dyson-progress').style.width = `${game.dyson.progress}%`;
-            document.getElementById('dyson-text').innerText = `${game.dyson.progress.toFixed(2)}%`;
-
-            // Efek Visual Skala Bintang Dyson secara otomatis
-            const starScale = 1 + (game.dyson.progress / 150);
-            document.getElementById('starCore').style.transform = `scale(${starScale})`;
-
-            // Real-time Save Auto-throttled secara background aman
-            if(Math.random() < 0.01) { saveGame(); }
-        }
-
-        // CORE RENDER LOOP CANVAS ENGINE (GRAFIS VEKTOR & INFRASTRUKTUR JALUR INTERKONEKSI)
-        function renderLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const cellSize = Math.min(canvas.width, canvas.height) / (game.grid.size + 2);
-            const offsetX = (canvas.width - (cellSize * game.grid.size)) / 2;
-            const offsetY = (canvas.height - (cellSize * game.grid.size)) / 2;
-
-            // Draw Background Grid Lines Matrix Cosmic Efek
-            ctx.strokeStyle = "rgba(0, 240, 255, 0.05)";
-            ctx.lineWidth = 1;
-            for(let i = 0; i <= game.grid.size; i++) {
-                // Vertikal
-                ctx.beginPath();
-                ctx.moveTo(offsetX + i * cellSize, offsetY);
-                ctx.lineTo(offsetX + i * cellSize, offsetY + game.grid.size * cellSize);
-                ctx.stroke();
-
-                // Horisontal
-                ctx.beginPath();
-                ctx.moveTo(offsetX, offsetY + i * cellSize);
-                ctx.lineTo(offsetX + game.grid.size * cellSize, offsetY + i * cellSize);
-                ctx.stroke();
-            }
-
-            // Draw Modul Node Data Komponen Terpasang
-            for(let x = 0; x < game.grid.size; x++) {
-                for(let y = 0; y < game.grid.size; y++) {
-                    const node = game.grid.nodes[x][y];
-                    const cX = offsetX + x * cellSize;
-                    const cY = offsetY + y * cellSize;
-
-                    // Gambar Indikator Seleksi
-                    if(game.grid.selectedCell && game.grid.selectedCell.x === x && game.grid.selectedCell.y === y) {
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
-                        ctx.fillRect(cX, cY, cellSize, cellSize);
-                        ctx.strokeStyle = "rgba(255,255,255,0.4)";
-                        ctx.strokeRect(cX, cY, cellSize, cellSize);
-                    }
-
-                    if(node.type === 'empty') continue;
-
-                    const info = STRUCTURE_TYPES[node.type];
-                    
-                    // Gambar Kotak Node Modul
-                    ctx.fillStyle = "rgba(15, 15, 30, 0.85)";
-                    ctx.fillRect(cX + 4, cY + 4, cellSize - 8, cellSize - 8);
-                    
-                    ctx.strokeStyle = node.status === 'damaged' ? '#ff0055' : info.color;
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(cX + 4, cY + 4, cellSize - 8, cellSize - 8);
-
-                    // Render Simbol Ikon Tengah
-                    ctx.fillStyle = node.status === 'damaged' ? '#ff0055' : '#ffffff';
-                    ctx.font = `${cellSize * 0.4}px Arial`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(info.symbol, cX + cellSize/2, cY + cellSize/2 - 2);
-
-                    // Render Level Kecil di pojok
-                    ctx.fillStyle = "rgba(255,255,255,0.6)";
-                    ctx.font = `${cellSize * 0.2}px monospace`;
-                    ctx.fillText(`L${node.level}`, cX + cellSize - 12, cY + cellSize - 10);
-
-                    // Render Refinery Bar Proses Internal Otomatis
-                    if(node.type === 'refinery' && node.progress > 0) {
-                        ctx.fillStyle = "rgba(189, 0, 255, 0.4)";
-                        ctx.fillRect(cX + 6, cY + cellSize - 8, (cellSize - 12) * (node.progress/100), 3);
-                    }
-                }
-            }
-
-            animationFrameId = requestAnimationFrame(renderLoop);
-        }
-
-        // TECH TREE UPGRADE ENGINE RENDERING SYSTEM
-        function renderUpgrades() {
-            const container = document.getElementById('upgrades-list');
-            container.innerHTML = '';
-
-            Object.keys(game.upgrades).forEach(key => {
-                const up = game.upgrades[key];
-                const card = document.createElement('div');
-                card.className = 'up-card';
-                card.innerHTML = `
-                    <div class="up-info">
-                        <h3>${up.name} [Lvl ${up.level}/${up.max}]</h3>
-                        <p>${up.desc}</p>
-                    </div>
-                    <button class="up-btn" id="btn-up-${up.id}" onclick="buyUpgrade('${up.id}')">
-                        Upgrade: ${up.cost} ${up.costType.toUpperCase()}
-                    </button>
-                `;
-                container.appendChild(card);
+                
+                target.remove();
             });
-            updateUpgradeButtons();
-        }
 
-        function buyUpgrade(id) {
-            const up = game.upgrades[id];
-            if(up.level >= up.max) return;
-
-            if(game.resources[up.costType] >= up.cost) {
-                game.resources[up.costType] -= up.cost;
-                up.level++;
-                
-                // Peningkatan Biaya Eksponensial Khas Game Incremental Modern
-                up.cost = Math.floor(up.cost * 1.6);
-                
-                renderUpgrades();
-                showToast(`Upgrade ${up.name} Berhasil ditingkatkan!`);
-                pushLog('grid-logs', `Riset Selesai: ${up.name} naik ke tingkat ${up.level}`, 'success');
-            } else {
-                showToast("Resource sains tidak cukup untuk inisiasi evolusi teknologi!");
-            }
-        }
-
-        function updateUpgradeButtons() {
-            Object.keys(game.upgrades).forEach(key => {
-                const up = game.upgrades[key];
-                const btn = document.getElementById(`btn-up-${up.id}`);
-                if(!btn) return;
-
-                if(game.resources[up.costType] < up.cost || up.level >= up.max) {
-                    btn.disabled = true;
-                } else {
-                    btn.disabled = false;
-                }
-            });
-        }
-
-        // INVESTASI MEGASTRUKTUR DYSON SYSTEM ELEVATION PRESTIGE
-        function investDyson(amount) {
-            if(game.resources.crystals >= amount) {
-                game.resources.crystals -= amount;
-                game.dyson.investedCrystals += amount;
-                
-                pushLog('dyson-logs', `Mengirimkan ${amount} Kristal menuju orbit inti bintang utama...`, 'info');
-                
-                if(game.dyson.investedCrystals >= game.dyson.requiredCrystals) {
-                    pushLog('dyson-logs', `[EVENT AKHIR] DYSON SPHERE SELESAI SEMPURNA! Peradaban Anda Telah Menguasai Energi Galaksi Semesta!`, 'success');
-                    showToast("Kemenangan Mutlak! Dyson Sphere Berhasil Dibangun.");
-                }
-            } else {
-                showToast("Anda membutuhkan Kristal Kuantum murni dari Refinery!");
-            }
-        }
-
-        // RANDOM EVENT ENGINE DENGAN AI ANOMALI SISTEM OTOMATISASI SECARA INTERMITTENT
-        function triggerRandomEventTimer() {
+            // Batas Waktu jika User Lambat Mengetuk (Auto Miss)
             setTimeout(() => {
-                triggerRandomAnomaly();
-                triggerRandomEventTimer();
-            }, Math.random() * 20000 + 25000); // Trigger acak setiap 25 - 45 detik sekali
+                if(!hitTriggered) {
+                    triggerHit("MISS", x, y);
+                    target.remove();
+                }
+            }, 1200);
         }
 
-        function triggerRandomAnomaly() {
-            const roll = Math.random();
-            if(roll < 0.4) {
-                // Event Buruk: Solar Flare Anomaly merusak grid
-                pushLog('grid-logs', `⚠️ [WARNING] Badai radiasi solar flare menghantam sistem koloni!`, 'danger');
-                
-                let damagedCount = 0;
-                for(let i=0; i<3; i++) {
-                    let rx = Math.floor(Math.random() * game.grid.size);
-                    let ry = Math.floor(Math.random() * game.grid.size);
-                    let node = game.grid.nodes[rx][ry];
-                    
-                    if(node.type !== 'empty' && node.type !== 'defense') {
-                        node.status = 'damaged';
-                        node.integrity = Math.floor(Math.random() * 40 + 20);
-                        damagedCount++;
-                    }
-                }
-                if(damagedCount > 0) {
-                    showToast("Anomali Solar Flare merusak modul infrastruktur grid kamu!");
-                }
-            } else if (roll < 0.85) {
-                // Event Baik: Komet Penambangan Jatuh
-                const bonusMatter = Math.floor(Math.random() * 80 + 30);
-                game.resources.matter += bonusMatter;
-                pushLog('grid-logs', `☄️ [EVENT] Komet Dark Matter melintasi orbit. Berhasil memanen +${bonusMatter} material.`, 'success');
-                showToast("Panen komet melimpah terdeteksi!");
-            } else {
-                // Event Langka Super Nova Pulse
-                game.resources.energy += 300;
-                pushLog('grid-logs', `✨ [QUANTUM PULSE] Lonjakan partikel suci mengisi seluruh cadangan energi baterai utama!`, 'success');
-            }
-        }
-
-        // LOGGER TERMINAL INTERNAL UTILITIES
-        function pushLog(targetId, msg, type = 'info') {
-            const box = document.getElementById(targetId);
-            if(!box) return;
-
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
-            const time = new Date().toLocaleTimeString();
-            entry.innerText = `[${time}] ${msg}`;
+        // MEKANIK 2: Membuat Target Usapan Panah (Swipe Target)
+        function spawnSwipeTarget() {
+            const target = document.createElement("div");
+            target.className = "swipe-target";
             
-            box.appendChild(entry);
-            box.scrollTop = box.scrollHeight; // Auto scroll to bottom
-        }
+            const x = Math.random() * 60 + 20;
+            const y = Math.random() * 60 + 20;
+            target.style.left = `${x}%`;
+            target.style.top = `${y}%`;
 
-        // GLOBAL NOTIFICATION TOAST TO MANAGER
-        function showToast(text) {
-            const t = document.getElementById('toast');
-            t.innerText = text;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3500);
-        }
+            const directions = ["↑", "↓", "→", "←"];
+            const chosenDir = directions[Math.floor(Math.random() * directions.length)];
 
-        // SISTEM ENGINE SAVE & LOAD OTOMATIS (DATA PERSISTENCE SYSTEM VIA LOCALSTORAGE)
-        function saveGame() {
-            const saveData = {
-                resources: game.resources,
-                grid: game.grid.nodes,
-                dyson: game.dyson,
-                upgradeLevels: Object.keys(game.upgrades).map(k => ({id: k, lvl: game.upgrades[k].level, cost: game.upgrades[k].cost}))
-            };
-            localStorage.setItem('astroforge_quantum_save', JSON.stringify(saveData));
-        }
+            const arrow = document.createElement("div");
+            arrow.className = "swipe-arrow";
+            arrow.innerText = chosenDir;
 
-        function loadGame() {
-            const raw = localStorage.getItem('astroforge_quantum_save');
-            if(!raw) return;
-            try {
-                const data = JSON.parse(raw);
-                game.resources = data.resources;
-                game.grid.nodes = data.grid;
-                game.dyson = data.dyson;
+            target.appendChild(arrow);
+            playField.appendChild(target);
+
+            let hitTriggered = false;
+
+            // Menangkap Awal Koordinat Jari Menyentuh Layar HP
+            target.addEventListener("touchstart", (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+
+            // Menangkap Arah Geseran Jari Saat Dilepas (Swipe Detection)
+            target.addEventListener("touchend", (e) => {
+                if(hitTriggered) return;
                 
-                if(data.upgradeLevels) {
-                    data.upgradeLevels.forEach(savedUp => {
-                        if(game.upgrades[savedUp.id]) {
-                            game.upgrades[savedUp.id].level = savedUp.lvl;
-                            game.upgrades[savedUp.id].cost = savedUp.cost;
-                        }
-                    });
+                let touchEndX = e.changedTouches[0].clientX;
+                let touchEndY = e.changedTouches[0].clientY;
+
+                let diffX = touchEndX - touchStartX;
+                let diffY = touchEndY - touchStartY;
+                
+                let detectedDir = "";
+
+                // Menentukan Logika Arah Geser Terkuat
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    detectedDir = diffX > 0 ? "→" : "←";
+                } else {
+                    detectedDir = diffY > 0 ? "↓" : "↑";
                 }
-                pushLog('grid-logs', 'Sistem memuat data lama dari komputasi memori awan...', 'success');
-            } catch(e) {
-                console.error("Gagal load save data, memulai dari awal.");
+
+                if (detectedDir === chosenDir && (Math.abs(diffX) > 30 || Math.abs(diffY) > 30)) {
+                    triggerHit("PERFECT SWIPE", x, y);
+                    hitTriggered = true;
+                    target.remove();
+                } else {
+                    triggerHit("MISS", x, y);
+                    hitTriggered = true;
+                    target.remove();
+                }
+            });
+
+            // Waktu kedaluwarsa panah
+            setTimeout(() => {
+                if(!hitTriggered) {
+                    triggerHit("MISS", x, y);
+                    target.remove();
+                }
+            }, 1500);
+        }
+
+        // SISTEM PENILAIAN & AKURASI LANGSUNG
+        function triggerHit(rating, x, y) {
+            const ratingText = document.createElement("div");
+            ratingText.className = "rating-text";
+            ratingText.style.left = `${x}%`;
+            ratingText.style.top = `${y}%`;
+            
+            let pointGain = 0;
+
+            if (rating.includes("PERFECT")) {
+                ratingText.style.color = "var(--neon-cyan)";
+                combo++;
+                pointGain = isOverdrive ? 500 : 250;
+                energy = Math.min(100, energy + 8);
+                popComboUI();
+            } else if (rating === "GOOD") {
+                ratingText.style.color = "var(--neon-green)";
+                combo++;
+                pointGain = isOverdrive ? 200 : 100;
+                energy = Math.min(100, energy + 4);
+                popComboUI();
+            } else { // MISS
+                ratingText.style.color = "var(--neon-magenta)";
+                combo = 0;
+                energy = Math.max(0, energy - 15);
+                triggerFlashEffect("rgba(255, 0, 127, 0.2)");
+                
+                // Mengurangi nyawa/skor secara bertahap jika banyak miss
+                score = Math.max(0, score - 50);
             }
+
+            score += pointGain;
+            scoreDisplay.innerText = String(score).padStart(6, '0');
+            comboDisplay.innerText = combo;
+            energyBar.style.width = `${energy}%`;
+
+            // Update Judul atas Pencarian Browser secara real-time berdasarkan skor tertinggi
+            document.title = `⚡ SCORE: ${score} | CYBER PULSE`;
+
+            ratingText.innerText = rating;
+            playField.appendChild(ratingText);
+            setTimeout(() => ratingText.remove(), 500);
+
+            // Validasi Kesiapan Fitur Overdrive Modus Aktif
+            if(energy >= 100 && !isOverdrive) {
+                overdriveBtn.classList.add("ready");
+            } else if(energy < 100 && !isOverdrive) {
+                overdriveBtn.classList.remove("ready");
+            }
+        }
+
+        function popComboUI() {
+            comboDisplay.classList.add("pop");
+            setTimeout(() => comboDisplay.classList.remove("pop"), 50);
+        }
+
+        function triggerFlashEffect(color) {
+            flashScreen.style.backgroundColor = color;
+            flashScreen.style.opacity = "1";
+            setTimeout(() => flashScreen.style.opacity = "0", 150);
+        }
+
+        // MEKANIK ULTIMATE: Aktivasi Mode Overdrive Secara Manual
+        function activateOverdrive() {
+            if(energy < 100 || isOverdrive) return;
+            
+            isOverdrive = true;
+            overdriveBtn.classList.remove("ready");
+            overdriveBtn.innerText = "OVERDRIVE ACTIVE (2X POINTS)";
+            viewport.classList.add("overdrive-active");
+            triggerFlashEffect("rgba(57, 255, 20, 0.4)");
+
+            // Pengkondisian tempo game dipercepat instan agar adrenalin meningkat
+            clearInterval(spawnInterval);
+            gameLoopSpeed = 500; // Spawn objek 2x lipat lebih cepat!
+            
+            // Menguras energi overdrive secara bertahap selama 8 detik penuh
+            let drainInterval = setInterval(() => {
+                energy -= 1.25;
+                energyBar.style.width = `${Math.max(0, energy)}%`;
+                
+                if(energy <= 0) {
+                    clearInterval(drainInterval);
+                    isOverdrive = false;
+                    overdriveBtn.innerText = "Overdrive Ready";
+                    viewport.classList.remove("overdrive-active");
+                    gameLoopSpeed = 1000;
+                }
+            }, 100);
+        }
+
+        // Logika Mengakhiri Game secara Taktis
+        function gameOver() {
+            isPlaying = false;
+            clearInterval(spawnInterval);
+            document.getElementById("menu-title").innerText = "MATRIX OVERLOAD";
+            document.getElementById("menu-desc").innerText = `Koneksi terputus! Total Rekor Sinkronisasi Skor Kamu: ${score} Poin. Mau coba pecahkan rekor lagi?`;
+            menuOverlay.style.display = "flex";
         }
     </script>
 </body>
