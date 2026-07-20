@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- ================= SEO META TAGS (LANGKAH 2) ================= -->
+    <!-- ================= SEO META TAGS ================= -->
     <title>Apex Synergy Global | Portal Otomasi Industri & SCADA Enterprise</title>
     <meta name="description" content="Apex Synergy Global adalah penyedia layanan otomatisasi sistem PLC, smart dashboard SCADA, dan integrasi manufaktur enterprise global.">
     <meta name="keywords" content="Apex Synergy, Apex Synergy Global, otomatisasi industri, PLC, SCADA, WinCC, TIA Portal">
     <meta name="robots" content="index, follow">
 
-    <!-- Verifikasi Google Search Console (LANGKAH 3 BAGIAN 5) -->
+    <!-- Verifikasi Google Search Console -->
     <meta name="google-site-verification" content="CMRWseO6N4-9L5YMuP_LLNJyUjPw1S67KE6_agC3iW4" />
      
-    <!-- Open Graph / Facebook (Biar keren saat link dibagikan ke WA/Sosmed) -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Apex Synergy Global | Otomasi Industri">
     <meta property="og:description" content="Solusi integrasi kontrol industri skala enterprise dan optimasi OEE.">
@@ -58,7 +58,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* --- HALAMAN LOGIN PREMIUM (KREATIF, MODERN & CYBER STYLE) --- */
+        /* --- HALAMAN LOGIN PREMIUM --- */
         .login-wrapper {
             position: fixed;
             top: 0;
@@ -75,7 +75,6 @@
             overflow: hidden;
         }
 
-        /* Latar Belakang Digital Grid Animasi */
         .login-wrapper::before {
             content: '';
             position: absolute;
@@ -224,7 +223,7 @@
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* --- NAVBAR & KUSTOMISASI MENU TITIK TIGA --- */
+        /* --- NAVBAR & NAV DROPDOWN --- */
         nav {
             background-color: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(25px);
@@ -301,7 +300,6 @@
             height: 2px;
         }
 
-        /* Overlay Menu Kebawah */
         .nav-dropdown {
             position: fixed;
             top: -100%;
@@ -343,7 +341,6 @@
             transform: translateY(-2px);
         }
 
-        /* Tombol Logout Elegan & Profesional (Glow Aksen Blue Modern) */
         .nav-dropdown .btn-logout-menu {
             margin-top: 1.5rem;
             padding: 0.85rem 3.5rem;
@@ -629,7 +626,7 @@
             font-size: 1.1rem;
         }
 
-        /* --- COMPLIANCE & STANDARDS SECTION --- */
+        /* --- COMPLIANCE & STANDARDS --- */
         .compliance {
             background-color: var(--secondary);
             color: var(--white);
@@ -914,7 +911,6 @@
         <!-- NAVBAR -->
         <nav>
             <div class="logo">Apex<span>Synergy</span></div>
-            <!-- Pemicu Menu Berbentuk Titik Tiga Vertikal -->
             <div class="menu-trigger" onclick="toggleMenu()" id="menuBtn">
                 <span></span>
                 <span></span>
@@ -1228,7 +1224,6 @@
             
             localStorage.removeItem('apex_session');
             
-            // Mengembalikan status ikon menu dan menutup navigasi
             document.getElementById('menuBtn').classList.remove('active');
             document.getElementById('dropdownMenu').classList.remove('active');
             
