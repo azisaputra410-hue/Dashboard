@@ -1,0 +1,6 @@
+# Mengizinkan seluruh web crawler (Googlebot, Bingbot, dll) mengindeks semua halaman
+User-agent: *
+Allow: /
+
+# Menunjukkan lokasi sitemap utama web
+Sitemap: https://azisaputra410-hue.github.io/Dashboard/sitemap.xml
