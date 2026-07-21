@@ -1,28 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- ================= SEO META TAGS ================= -->
+    <!-- ================= SEO META TAGS UTAMA ================= -->
     <title>Apex Synergy Global | Portal Otomasi Industri & SCADA Enterprise</title>
     <meta name="description" content="Apex Synergy Global adalah penyedia layanan otomatisasi sistem PLC, smart dashboard SCADA, dan integrasi manufaktur enterprise global.">
-    <meta name="keywords" content="Apex Synergy, Apex Synergy Global, otomatisasi industri, PLC, SCADA, WinCC, TIA Portal">
+    <meta name="keywords" content="Apex Synergy, Apex Synergy Global, otomatisasi industri, PLC, SCADA, WinCC, TIA Portal, OEE, Otomasi Pabrik">
     <meta name="robots" content="index, follow">
+    <meta name="author" content="Apex Synergy Global">
+    <link rel="canonical" href="https://azisaputra410-hue.github.io/Dashboard/">
 
     <!-- Verifikasi Google Search Console -->
-    <!--<meta name="google-site-verification" content="CMRWseO6N4-9L5YMuP_LLNJyUjPw1S67KE6_agC3iW4" />-->
-<meta name="google-site-verification" content="CMRWseO6N4-9L5YMuP_LLNJyUjPw1S67KE6_agC3iW4" />
+    <meta name="google-site-verification" content="CMRWseO6N4-9L5YMuP_LLNJyUjPw1S67KE6_agC3iW4" />
     
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Apex Synergy Global | Otomasi Industri">
-    <meta property="og:description" content="Solusi integrasi kontrol industri skala enterprise dan optimasi OEE.">
+    <meta property="og:title" content="Apex Synergy Global | Otomasi Industri & SCADA Enterprise">
+    <meta property="og:description" content="Solusi integrasi kontrol industri skala enterprise, arsitektur PLC, dan optimasi OEE.">
     <meta property="og:url" content="https://azisaputra410-hue.github.io/Dashboard/">
-    <!-- ============================================================= -->
+    <meta property="og:site_name" content="Apex Synergy Global">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=1200">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Apex Synergy Global | Otomasi Industri">
+    <meta name="twitter:description" content="Solusi integrasi kontrol industri skala enterprise dan optimasi OEE.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=1200">
+
+    <!-- Favicon Placeholders -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+    <!-- Structured Data (Schema.org) untuk Google Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://azisaputra410-hue.github.io/Dashboard/#organization",
+          "name": "Apex Synergy Global",
+          "url": "https://azisaputra410-hue.github.io/Dashboard/",
+          "logo": "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=500",
+          "email": "azisaputra410@gmail.com",
+          "description": "Penyedia layanan otomatisasi sistem PLC, smart dashboard SCADA, dan integrasi manufaktur enterprise global."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://azisaputra410-hue.github.io/Dashboard/#website",
+          "url": "https://azisaputra410-hue.github.io/Dashboard/",
+          "name": "Apex Synergy Global",
+          "publisher": {
+            "@id": "https://azisaputra410-hue.github.io/Dashboard/#organization"
+          }
+        }
+      ]
+    }
+    </script>
 
     <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         /* --- RESET & GLOBAL VARIABLES --- */
         * {
@@ -59,7 +100,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* --- HALAMAN LOGIN PREMIUM --- */
+        /* --- OVERLAY LOGIN OPTIMIZED FOR SEO --- */
         .login-wrapper {
             position: fixed;
             top: 0;
@@ -71,9 +112,15 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
             padding: 20px;
             overflow: hidden;
+        }
+
+        .login-wrapper.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .login-wrapper::before {
@@ -219,8 +266,8 @@
 
         /* --- KONTEN UTAMA WEBSITE --- */
         .main-content {
-            display: none;
-            opacity: 0;
+            display: block;
+            opacity: 1;
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -880,7 +927,7 @@
 </head>
 <body>
 
-    <!-- ================= HALAMAN LOGIN PREMIUM ================= -->
+    <!-- ================= HALAMAN LOGIN OVERLAY ================= -->
     <div class="login-wrapper" id="loginPage">
         <div class="login-bg-glow"></div>
         <div class="login-bg-glow-2"></div>
@@ -966,7 +1013,7 @@
                     </div>
                 </div>
                 <div>
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070" alt="Insinyur Otomasi Industri Senior" class="about-img">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070" alt="Insinyur Otomasi Industri Senior Apex Synergy Global" class="about-img">
                 </div>
             </div>
         </section>
@@ -1004,7 +1051,7 @@
             </div>
             <div class="cases-grid">
                 <div class="case-card">
-                    <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=2070" alt="Instalasi Thailand" class="case-img">
+                    <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=2070" alt="Instalasi Otomasi Otomotif Thailand" class="case-img">
                     <div class="case-body">
                         <span class="case-tag">Automotive Plant - Thailand</span>
                         <h4>Revitalisasi Lini Perakitan Utama</h4>
@@ -1013,7 +1060,7 @@
                     </div>
                 </div>
                 <div class="case-card">
-                    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=2070" alt="Instalasi F&B" class="case-img">
+                    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=2070" alt="Instalasi F&B OEE Tracking" class="case-img">
                     <div class="case-body">
                         <span class="case-tag">Food & Beverage - Regional</span>
                         <h4>Otomatisasi Batching & OEE Tracking</h4>
@@ -1022,7 +1069,7 @@
                     </div>
                 </div>
                 <div class="case-card">
-                    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=2070" alt="Instalasi Farmasi" class="case-img">
+                    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=2070" alt="Validasi Kontrol Sterilisasi Farmasi" class="case-img">
                     <div class="case-body">
                         <span class="case-tag">Pharmaceutical - Global</span>
                         <h4>Validasi Kontrol Sterilisasi</h4>
@@ -1067,21 +1114,21 @@
             </div>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070" alt="Control Room SCADA">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070" alt="Pusat Kendali SCADA Terpusat Apex Synergy Global">
                     <div class="gallery-desc">
                         <h4>Pusat Kendali SCADA Terpusat</h4>
                         <p>Monitoring performa OEE multi-pabrik secara terpadu.</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=2070" alt="Panel Rak PLC">
+                    <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=2070" alt="Rak Panel dan Instrumentasi PLC">
                     <div class="gallery-desc">
                         <h4>Rak Panel & Instrumentasi PLC</h4>
-                        <p>Integrasi kabel kontrol and modul I/O berkecepatan tinggi.</p>
+                        <p>Integrasi kabel kontrol dan modul I/O berkecepatan tinggi.</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=2070" alt="Robotik Otomotif">
+                    <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=2070" alt="Lini Perakitan Otomatis Robotik Manufaktur">
                     <div class="gallery-desc">
                         <h4>Lini Perakitan Otomatis Robotik</h4>
                         <p>Sinkronisasi presisi robot lengan untuk lini assembly cepat.</p>
@@ -1144,12 +1191,9 @@
         document.addEventListener("DOMContentLoaded", function() {
             const loginStatus = localStorage.getItem('apex_session');
             const loginPage = document.getElementById('loginPage');
-            const mainWebsite = document.getElementById('mainWebsite');
 
             if (loginStatus === 'authenticated') {
-                loginPage.style.display = 'none';
-                mainWebsite.style.display = 'block';
-                mainWebsite.style.opacity = '1';
+                loginPage.classList.add('hidden');
             }
         });
 
@@ -1159,7 +1203,7 @@
             document.getElementById('dropdownMenu').classList.toggle('active');
         }
 
-        // Integrasi Pengiriman Dokumen Email Masalah
+        // Integrasi Pengiriman Dokumen Email Masalah (Fixed Mailto Parameter Bug)
         function sendEnterpriseMail(event) {
             event.preventDefault();
             const form = event.target;
@@ -1183,13 +1227,14 @@
                 `Mohon segera ditindaklanjuti.`
             );
             
-            window.location.href = `mailto:${emailTarget}?subject=${emailSubject}?body=${emailBody}`;
+            // Menggunakan &body= bukan ?body=
+            window.location.href = `mailto:${emailTarget}?subject=${emailSubject}&body=${emailBody}`;
             
             alert('Aplikasi klien email eksternal Anda akan terbuka secara otomatis untuk memproses dokumen permintaan.');
             form.reset();
         }
 
-        // Penanganan Proses Masuk ke Sistem & Pengisian Sesi Lokal
+        // Penanganan Proses Masuk ke Sistem
         function handleLogin(event) {
             event.preventDefault();
             const form = event.target;
@@ -1198,21 +1243,11 @@
             
             const errorMsg = document.getElementById('errorMsg');
             const loginPage = document.getElementById('loginPage');
-            const mainWebsite = document.getElementById('mainWebsite');
 
             if (userIn === 'Admin' && passIn === 'adminpt') {
                 errorMsg.style.display = 'none';
-                
                 localStorage.setItem('apex_session', 'authenticated');
-                
-                loginPage.style.opacity = '0';
-                setTimeout(() => {
-                    loginPage.style.display = 'none';
-                    mainWebsite.style.display = 'block';
-                    setTimeout(() => {
-                        mainWebsite.style.opacity = '1';
-                    }, 50);
-                }, 500);
+                loginPage.classList.add('hidden');
             } else {
                 errorMsg.style.display = 'block';
                 form.elements['passField'].value = '';
@@ -1229,16 +1264,7 @@
             document.getElementById('dropdownMenu').classList.remove('active');
             
             const loginPage = document.getElementById('loginPage');
-            const mainWebsite = document.getElementById('mainWebsite');
-            
-            mainWebsite.style.opacity = '0';
-            setTimeout(() => {
-                mainWebsite.style.display = 'none';
-                loginPage.style.display = 'flex';
-                setTimeout(() => {
-                    loginPage.style.opacity = '1';
-                }, 50);
-            }, 500);
+            loginPage.classList.remove('hidden');
         }
     </script>
 </body>
