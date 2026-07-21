@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ================= SEO META TAGS UTAMA ================= -->
+    <title>Apex Synergy Global | Portal Otomasi Industri & SCADA Enterprise</title>
+    <meta name="description" content="Apex Synergy Global adalah penyedia layanan otomatisasi sistem PLC, smart dashboard SCADA, dan integrasi manufaktur enterprise global.">
+    <meta name="keywords" content="Apex Synergy, Apex Synergy Global, otomatisasi industri, PLC, SCADA, WinCC, TIA Portal, OEE, Otomasi Pabrik">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Apex Synergy Global">
+    <link rel="canonical" href="https://azisaputra410-hue.github.io/Dashboard/">
+
+    <!-- Verifikasi Google Search Console -->
+    <!--<meta name="google-site-verification" content="CMRWseO6N4-9L5YMuP_LLNJyUjPw1S67KE6_agC3iW4" /> -->
+    <meta name="google-site-verification" content="CMRWseO6N4-9L5YMuP_LLNJyUjPw1S67KE6_agC3iW4" />
+  
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Apex Synergy Global | Otomasi Industri & SCADA Enterprise">
+    <meta property="og:description" content="Solusi integrasi kontrol industri skala enterprise, arsitektur PLC, dan optimasi OEE.">
+    <meta property="og:url" content="https://azisaputra410-hue.github.io/Dashboard/">
+    <meta property="og:site_name" content="Apex Synergy Global">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=1200">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Apex Synergy Global | Otomasi Industri">
+    <meta name="twitter:description" content="Solusi integrasi kontrol industri skala enterprise dan optimasi OEE.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=1200">
+
+    <!-- Favicon Placeholders -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+    <!-- Structured Data (Schema.org) untuk Google Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://azisaputra410-hue.github.io/Dashboard/#organization",
+          "name": "Apex Synergy Global",
+          "url": "https://azisaputra410-hue.github.io/Dashboard/",
+          "logo": "https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=500",
+          "email": "azisaputra410@gmail.com",
+          "description": "Penyedia layanan otomatisasi sistem PLC, smart dashboard SCADA, dan integrasi manufaktur enterprise global."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://azisaputra410-hue.github.io/Dashboard/#website",
+          "url": "https://azisaputra410-hue.github.io/Dashboard/",
+          "name": "Apex Synergy Global",
+          "publisher": {
+            "@id": "https://azisaputra410-hue.github.io/Dashboard/#organization"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- RESET & GLOBAL VARIABLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --secondary-light: #1e293b;
+            --accent: #38bdf8;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, .logo {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* --- OVERLAY LOGIN OPTIMIZED FOR SEO --- */
+        .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #060913;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .login-wrapper.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .login-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: linear-gradient(rgba(37, 99, 235, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(37, 99, 235, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            top: -50%;
+            left: -50%;
+            transform: rotate(15deg);
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: rotate(15deg) translateY(0); }
+            100% { transform: rotate(15deg) translateY(40px); }
+        }
+
+        .login-bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(0,0,0,0) 70%);
+            top: -15%;
+            right: -10%;
+            pointer-events: none;
+        }
+
+        .login-bg-glow-2 {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, rgba(0,0,0,0) 70%);
+            bottom: -25%;
+            left: -15%;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            padding: 4.5rem 3.5rem;
+            border-radius: 32px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.12);
+            width: 100%;
+            max-width: 490px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .login-header h2 {
+            color: var(--white);
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 0.8rem;
+        }
+
+        .login-header h2 span {
+            color: var(--accent);
+        }
+
+        .login-header p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .login-card .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .login-card .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .login-card .form-group input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--white);
+        }
+
+        .login-card .form-group input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.5);
+        }
+
+        .error-msg {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.08);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 0.85rem;
+            margin-top: 1.8rem;
+            text-align: center;
+            display: none;
+            font-weight: 500;
+        }
+
+        /* --- KONTEN UTAMA WEBSITE --- */
+        .main-content {
+            display: block;
+            opacity: 1;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- NAVBAR & NAV DROPDOWN --- */
+        nav {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.3rem 8%;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--secondary);
+            letter-spacing: -1.2px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .menu-trigger {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            z-index: 1002;
+            position: relative;
+        }
+
+        .menu-trigger:hover {
+            background-color: rgba(15, 23, 42, 0.05);
+        }
+
+        .menu-trigger span {
+            width: 6px;
+            height: 6px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-trigger.active span {
+            background-color: var(--white);
+            border-radius: 2px;
+        }
+
+        .menu-trigger.active span:nth-child(1) {
+            transform: translateY(11px) rotate(45deg);
+            width: 24px;
+            height: 2px;
+        }
+        
+        .menu-trigger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .menu-trigger.active span:nth-child(3) {
+            transform: translateY(-11px) rotate(-45deg);
+            width: 24px;
+            height: 2px;
+        }
+
+        .nav-dropdown {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            background-color: rgba(9, 13, 22, 0.96);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            z-index: 1001;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 8rem 2rem 5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-dropdown.active {
+            top: 0;
+        }
+
+        .nav-dropdown ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.6rem;
+        }
+
+        .nav-dropdown a {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 1.4rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-dropdown a:hover {
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .nav-dropdown .btn-logout-menu {
+            margin-top: 1.5rem;
+            padding: 0.85rem 3.5rem;
+            background-color: transparent;
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-dropdown .btn-logout-menu:hover {
+            background-color: rgba(37, 99, 235, 0.08);
+            border-color: var(--accent);
+            color: var(--white);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+            transform: translateY(0);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 15rem 8% 12rem 8%;
+            background: linear-gradient(135deg, rgba(9, 13, 22, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%), 
+                        url('https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=2070') no-repeat center center/cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: var(--white);
+            position: relative;
+        }
+
+        .hero-badge {
+            background-color: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-block;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            max-width: 1000px;
+            margin-bottom: 2rem;
+            letter-spacing: -2.5px;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            max-width: 800px;
+            margin-bottom: 4rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .btn-primary {
+            padding: 1.2rem 3rem;
+            background-color: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 18px 30px rgba(37, 99, 235, 0.45);
+        }
+
+        /* --- SECTION BASE STYLE --- */
+        .section {
+            padding: 9rem 8%;
+        }
+
+        .section-title {
+            text-align: left;
+            max-width: 800px;
+            margin-bottom: 5.5rem;
+        }
+
+        .section-title p {
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 2.5px;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: var(--secondary);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        /* --- PROFIL SECTION --- */
+        .about-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .about-content h3 {
+            font-size: 2.2rem;
+            color: var(--secondary);
+            margin-bottom: 1.8rem;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+
+        .about-content p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            line-height: 1.85;
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 3.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 2.5rem;
+        }
+
+        .stat-item h4 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .stat-item p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .about-img {
+            width: 100%;
+            border-radius: 28px;
+            box-shadow: 0 40px 70px -15px rgba(15, 23, 42, 0.12);
+            object-fit: cover;
+            height: 540px;
+        }
+
+        /* --- SERVICES SECTION --- */
+        .services {
+            background-color: var(--white);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+        }
+
+        .service-card {
+            padding: 4rem 3rem;
+            background-color: var(--bg-light);
+            border-radius: 24px;
+            border: 1px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            background-color: var(--white);
+            border-color: rgba(37, 99, 235, 0.1);
+            box-shadow: 0 30px 60px -10px rgba(15, 23, 42, 0.06);
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            background-color: rgba(37, 99, 235, 0.06);
+            color: var(--primary);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--secondary);
+            letter-spacing: -0.5px;
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            font-size: 1rem;
+            text-align: justify;
+            line-height: 1.75;
+        }
+
+        /* --- CASE STUDIES SECTION --- */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .case-card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.02);
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .case-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px -10px rgba(15, 23, 42, 0.08);
+        }
+
+        .case-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .case-body {
+            padding: 2.5rem;
+        }
+
+        .case-tag {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 1.5px;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .case-body h4 {
+            font-size: 1.4rem;
+            color: var(--secondary);
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .case-body p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+            text-align: justify;
+            line-height: 1.7;
+        }
+
+        .case-metric {
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border);
+            font-weight: 700;
+            color: var(--success);
+            font-size: 1.1rem;
+        }
+
+        /* --- COMPLIANCE & STANDARDS --- */
+        .compliance {
+            background-color: var(--secondary);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .compliance .section-title h2 {
+            color: var(--white);
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .compliance-item {
+            padding: 2.5rem 2rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .compliance-item:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(56, 189, 248, 0.2);
+        }
+
+        .compliance-item h4 {
+            font-size: 1.6rem;
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .compliance-item p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* --- GALLERY SECTION --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            height: 340px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.06);
+        }
+
+        .gallery-desc {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2.5rem;
+            background: linear-gradient(transparent, rgba(9, 13, 22, 0.95));
+            color: var(--white);
+        }
+
+        .gallery-desc h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.4rem;
+            font-weight: 700;
+        }
+
+        .gallery-desc p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        /* --- CONTACT SECTION --- */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 6rem;
+            background-color: var(--secondary);
+            padding: 6rem;
+            border-radius: 40px;
+            color: var(--white);
+            box-shadow: 0 40px 80px -20px rgba(9, 13, 22, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .contact-details h3 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 1.8rem;
+            letter-spacing: -1px;
+        }
+
+        .contact-details p {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            margin-bottom: 3.5rem;
+            line-height: 1.8;
+        }
+
+        .contact-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .meta-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .meta-box .icon-circle {
+            width: 52px;
+            height: 52px;
+            background-color: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent);
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .meta-box h5 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.4rem;
+            letter-spacing: 1px;
+        }
+
+        .meta-box span {
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+
+        .contact-form-panel {
+            background-color: rgba(255, 255, 255, 0.01);
+            padding: 4rem;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-flex {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .contact-form-panel input, .contact-form-panel textarea {
+            width: 100%;
+            padding: 1.1rem 1.4rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            outline: none;
+            font-size: 0.95rem;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .contact-form-panel input:focus, .contact-form-panel textarea:focus {
+            border-color: var(--accent);
+            background-color: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+        }
+
+        .contact-form-panel textarea {
+            height: 160px;
+            resize: none;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 1.1rem;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-action:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #030712;
+            color: #475569;
+            padding: 4.5rem 8% 3.5rem 8%;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.95rem;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .about-layout, .contact-container {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+            .about-img {
+                height: 420px;
+            }
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 1.2rem 5%; }
+            .hero { padding: 11rem 5% 7rem 5%; }
+            .hero h1 { font-size: 2.8rem; }
+            .section { padding: 6rem 5%; }
+            .contact-container { padding: 3rem 2rem; }
+            .contact-form-panel { padding: 2.5rem 1.8rem; }
+            .form-flex { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= HALAMAN LOGIN OVERLAY ================= -->
+    <div class="login-wrapper" id="loginPage">
+        <div class="login-bg-glow"></div>
+        <div class="login-bg-glow-2"></div>
+        
+        <div class="login-card">
+            <div class="login-header">
+                <h2>Apex <span>Synergy</span></h2>
+                <p>Silakan masuk menggunakan kredensial otoritas Anda.</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Identitas Pengguna</label>
+                    <input type="text" name="userField" placeholder="Masukkan nama pengguna" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Kata Sandi</label>
+                    <input type="password" name="passField" placeholder="Masukkan kata sandi" required>
+                </div>
+                <button type="submit" class="btn-login">Autentikasi Sistem</button>
+                <div class="error-msg" id="errorMsg">Gagal memverifikasi akun. Kredensial tidak valid atau akses ditolak.</div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ================= KONTEN UTAMA WEBSITE ================= -->
+    <div class="main-content" id="mainWebsite">
+        
+        <!-- NAVBAR -->
+        <nav>
+            <div class="logo">Apex<span>Synergy</span></div>
+            <div class="menu-trigger" onclick="toggleMenu()" id="menuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+
+        <!-- DROPDOWN MENU NAVIGATION -->
+        <div class="nav-dropdown" id="dropdownMenu">
+            <ul>
+                <li><a href="#home" onclick="toggleMenu()">Ringkasan Utama</a></li>
+                <li><a href="#profil" onclick="toggleMenu()">Profil Korporat</a></li>
+                <li><a href="#layanan" onclick="toggleMenu()">Solusi Integrasi</a></li>
+                <li><a href="#studi-kasus" onclick="toggleMenu()">Studi Kasus Global</a></li>
+                <li><a href="#kepatuhan" onclick="toggleMenu()">Sertifikasi Mutu</a></li>
+                <li><a href="#galeri" onclick="toggleMenu()">Fasilitas Produksi</a></li>
+                <li><a href="#contact" onclick="toggleMenu()">Hubungan Komersial</a></li>
+                <li><a href="#" class="btn-logout-menu" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- HERO SECTION -->
+        <section class="hero" id="home">
+            <div>
+                <span class="hero-badge">Arsitektur Otomasi Enterprise</span>
+                <h1>Mendorong Transformasi Industri ke Tingkat Tertinggi</h1>
+                <p>Kami merekayasa sistem otomasi terintegrasi, arsitektur SCADA tingkat lanjut berskala korporasi, serta optimasi performa tinggi untuk efisiensi ekosistem manufaktur modern secara global.</p>
+                <a href="#profil" class="btn-primary">Pelajari Selengkapnya</a>
+            </div>
+        </section>
+
+        <!-- PROFIL SECTION -->
+        <section class="section" id="profil">
+            <div class="section-title">
+                <p>Struktur & Rekam Jejak</p>
+                <h2>Profil Perusahaan</h2>
+            </div>
+            <div class="about-layout">
+                <div class="about-content">
+                    <h3>Inovasi Berkelanjutan Guna Mencapai Efisiensi Maksimal Lini Produksi</h3>
+                    <p>Didirikan dengan cetak biru strategis untuk memodernisasi infrastruktur manufaktur, Apex Synergy Global bergerak di baris terdepan rekayasa sistem otomatisasi. Kami bermitra dengan industri manufaktur otomotif, pengolahan makanan, farmasi, serta logistik berskala internasional guna menyelaraskan operational excellence.</p>
+                    <p>Melalui penerapan sensor pintar berbasis Industrial Internet of Things (IIoT), analitik data prediktif secara real-time, serta arsitektur Programmable Logic Controller (PLC) yang tangguh, kami mendedikasikan keahlian kami untuk memangkas penolakan produk, meminimalkan waktu henti mendadak, dan mendongkrak Return on Investment (ROI) aset mekanis klien secara signifikan.</p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <h4>99.98%</h4>
+                            <p>Sistem Uptime Terjamin</p>
+                        </div>
+                        <div class="stat-item">
+                            <h4>450+</h4>
+                            <p>Instalasi Pabrik Global</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070" alt="Insinyur Otomasi Industri Senior Apex Synergy Global" class="about-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES SECTION -->
+        <section class="section services" id="layanan">
+            <div class="section-title">
+                <p>Arsitektur Solusi Terapan</p>
+                <h2>Layanan Utama Skala Enterprise</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Otomatisasi Sistem & PLC</h3>
+                    <p>Perancangan dan pemrograman logika kontrol industri berstandar IEC 61131-3 menggunakan platform PLC terkemuka dunia seperti Siemens TIA Portal, Rockwell Studio 5000, dan Schneider EcoStruxure untuk menjamin pemrosesan data waktu nyata secara deterministik.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Smart Dashboard & SCADA</h3>
+                    <p>Visualisasi komprehensif melalui platform SCADA modern (WinCC, Ignition, Wonderware). Kami mengintegrasikan pelacakan Overall Equipment Effectiveness (OEE) secara live, manajemen alarm kegagalan sistem, dan pelaporan otomatis untuk mempermudah analisis data lini produksi.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h3>Integrasi & Instalasi Global</h3>
+                    <p>Layanan perluasan instalasi, migrasi sistem lama (legacy system), hingga komisioning jarak jauh yang memenuhi standardisasi lintas negara guna memastikan konsistensi performa antar pabrik cabang di bawah satu jaringan integrasi yang aman.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CASE STUDIES SECTION -->
+        <section class="section" id="studi-kasus">
+            <div class="section-title">
+                <p>Implementasi Riil Lapangan</p>
+                <h2>Studi Kasus & Keberhasilan Proyek</h2>
+            </div>
+            <div class="cases-grid">
+                <div class="case-card">
+                    <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=2070" alt="Instalasi Otomasi Otomotif Thailand" class="case-img">
+                    <div class="case-body">
+                        <span class="case-tag">Automotive Plant - Thailand</span>
+                        <h4>Revitalisasi Lini Perakitan Utama</h4>
+                        <p>Migrasi sistem kendali lama ke arsitektur PLC redundant multi-node dengan jaringan komunikasi Profinet ring topology. Integrasi SCADA real-time untuk pelacakan data mikro.</p>
+                        <div class="case-metric">Reduksi Unplanned Downtime: 34%</div>
+                    </div>
+                </div>
+                <div class="case-card">
+                    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=2070" alt="Instalasi F&B OEE Tracking" class="case-img">
+                    <div class="case-body">
+                        <span class="case-tag">Food & Beverage - Regional</span>
+                        <h4>Otomatisasi Batching & OEE Tracking</h4>
+                        <p>Implementasi sistem pelacakan OEE otomatis berbasis sensor IIoT untuk menghitung kuantitas produk layak secara instan dan kalkulasi performa runtime mesin presisi.</p>
+                        <div class="case-metric">Kenaikan Akurasi OEE: +12.5%</div>
+                    </div>
+                </div>
+                <div class="case-card">
+                    <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=2070" alt="Validasi Kontrol Sterilisasi Farmasi" class="case-img">
+                    <div class="case-body">
+                        <span class="case-tag">Pharmaceutical - Global</span>
+                        <h4>Validasi Kontrol Sterilisasi</h4>
+                        <p>Penerapan arsitektur kontrol rigid yang memenuhi standar FDA 21 CFR Part 11 dengan audit trail otomatis untuk pelacakan perubahan parameter suhu dan tekanan kritis.</p>
+                        <div class="case-metric">Kepatuhan Regulasi Audit: 100%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPLIANCE & STANDARDS SECTION -->
+        <section class="section compliance" id="kepatuhan">
+            <div class="section-title" style="text-align: center; margin: 0 auto 5rem auto;">
+                <p style="color: var(--accent);">Standardisasi Internasional</p>
+                <h2>Kepatuhan Teknik & Sertifikasi Mutu</h2>
+            </div>
+            <div class="compliance-grid">
+                <div class="compliance-item">
+                    <h4>IEC 61131-3</h4>
+                    <p>Standar Arsitektur Struktur Kode & Logika Pemrograman PLC</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>ISA-95</h4>
+                    <p>Integrasi Mulus Sistem Kontrol Manufaktur Enterprise (L1 - L4)</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>ISO 9001:2015</h4>
+                    <p>Sistem Manajemen Mutu Rekayasa & Komisioning Mesin</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>CE / UL Listed</h4>
+                    <p>Kepatuhan Panel Kontrol Terhadap Regulasi Keamanan Listrik</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY SECTION -->
+        <section class="section" id="galeri">
+            <div class="section-title">
+                <p>Dokumentasi Operasional Riil</p>
+                <h2>Fasilitas & Infrastruktur Global</h2>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070" alt="Pusat Kendali SCADA Terpusat Apex Synergy Global">
+                    <div class="gallery-desc">
+                        <h4>Pusat Kendali SCADA Terpusat</h4>
+                        <p>Monitoring performa OEE multi-pabrik secara terpadu.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?q=80&w=2070" alt="Rak Panel dan Instrumentasi PLC">
+                    <div class="gallery-desc">
+                        <h4>Rak Panel & Instrumentasi PLC</h4>
+                        <p>Integrasi kabel kontrol dan modul I/O berkecepatan tinggi.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=2070" alt="Lini Perakitan Otomatis Robotik Manufaktur">
+                    <div class="gallery-desc">
+                        <h4>Lini Perakitan Otomatis Robotik</h4>
+                        <p>Sinkronisasi presisi robot lengan untuk lini assembly cepat.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section class="section" id="contact">
+            <div class="section-title">
+                <p>Aliansi Strategis</p>
+                <h2>Mulai Kolaborasi Komersial Anda</h2>
+            </div>
+            <div class="contact-container">
+                <div class="contact-details">
+                    <h3>Diskusikan Proyek Skala Korporat Anda Bersama Kami</h3>
+                    <p>Tim spesialis otomasi, software architect, dan konsultan teknis eksekutif senior kami siap melakukan analisis audit mendalam ke lini manufaktur pabrik Anda saat ini.</p>
+                    <div class="contact-meta">
+                        <div class="meta-box">
+                            <div class="icon-circle">📍</div>
+                            <div>
+                                <h5>Kantor Pusat Operasional</h5>
+                                <span>Sudirman Central Business District, Lantai 42, Jakarta, Indonesia</span>
+                            </div>
+                        </div>
+                        <div class="meta-box">
+                            <div class="icon-circle">✉️</div>
+                            <div>
+                                <h5>Korespondensi Bisnis</h5>
+                                <span>azisaputra410@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form-panel">
+                    <form onsubmit="sendEnterpriseMail(event)">
+                        <div class="form-flex">
+                            <input type="text" name="clientName" placeholder="Nama Lengkap Anda" required>
+                            <input type="email" name="clientEmail" placeholder="Email Resmi Perusahaan" required>
+                        </div>
+                        <input type="text" name="projectSubject" placeholder="Subjek Masalah / Proyek Industri" style="margin-bottom: 1.5rem;" required>
+                        <textarea name="projectDetail" placeholder="Jelaskan kebutuhan detail sistem, kendala kontrol hardware, atau target OEE pabrik Anda secara terperinci..." required></textarea>
+                        <button type="submit" class="btn-action">Kirim Dokumen Permintaan</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ENTERPRISE FOOTER -->
+        <footer>
+            <p>&copy; 2026 Apex Synergy Global Corporation. Seluruh hak cipta dilindungi undang-undang. Koneksi Gateway Aman.</p>
+        </footer>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // Memeriksa Status Sesi saat Halaman Dimuat
+        document.addEventListener("DOMContentLoaded", function() {
+            const loginStatus = localStorage.getItem('apex_session');
+            const loginPage = document.getElementById('loginPage');
+
+            if (loginStatus === 'authenticated') {
+                loginPage.classList.add('hidden');
+            }
+        });
+
+        // Manajemen Aksi Buka-Tutup Menu Titik Tiga
+        function toggleMenu() {
+            document.getElementById('menuBtn').classList.toggle('active');
+            document.getElementById('dropdownMenu').classList.toggle('active');
+        }
+
+        // Integrasi Pengiriman Dokumen Email Masalah (Fixed Mailto Parameter Bug)
+        function sendEnterpriseMail(event) {
+            event.preventDefault();
+            const form = event.target;
+            
+            const name = form.elements['clientName'].value;
+            const email = form.elements['clientEmail'].value;
+            const subject = form.elements['projectSubject'].value;
+            const detail = form.elements['projectDetail'].value;
+            
+            const emailTarget = "azisaputra410@gmail.com";
+            const emailSubject = encodeURIComponent(`[PROYEK ENTERPRISE] ${subject}`);
+            const emailBody = encodeURIComponent(
+                `Halo Tim Apex Synergy Global,\n\n` +
+                `Ada permintaan kolaborasi masuk dengan detail berikut:\n` +
+                `--------------------------------------------------\n` +
+                `Nama Pengirim : ${name}\n` +
+                `Email Klien   : ${email}\n` +
+                `Subjek Proyek : ${subject}\n\n` +
+                `Detail Kebutuhan Sistem:\n${detail}\n` +
+                `--------------------------------------------------\n\n` +
+                `Mohon segera ditindaklanjuti.`
+            );
+            
+            // Menggunakan &body= bukan ?body=
+            window.location.href = `mailto:${emailTarget}?subject=${emailSubject}&body=${emailBody}`;
+            
+            alert('Aplikasi klien email eksternal Anda akan terbuka secara otomatis untuk memproses dokumen permintaan.');
+            form.reset();
+        }
+
+        // Penanganan Proses Masuk ke Sistem
+        function handleLogin(event) {
+            event.preventDefault();
+            const form = event.target;
+            const userIn = form.elements['userField'].value;
+            const passIn = form.elements['passField'].value;
+            
+            const errorMsg = document.getElementById('errorMsg');
+            const loginPage = document.getElementById('loginPage');
+
+            if (userIn === 'Admin' && passIn === 'adminpt') {
+                errorMsg.style.display = 'none';
+                localStorage.setItem('apex_session', 'authenticated');
+                loginPage.classList.add('hidden');
+            } else {
+                errorMsg.style.display = 'block';
+                form.elements['passField'].value = '';
+            }
+        }
+
+        // Penghentian Akses Sesi & Transisi Kembali ke Login
+        function handleLogout(event) {
+            event.preventDefault();
+            
+            localStorage.removeItem('apex_session');
+            
+            document.getElementById('menuBtn').classList.remove('active');
+            document.getElementById('dropdownMenu').classList.remove('active');
+            
+            const loginPage = document.getElementById('loginPage');
+            loginPage.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
