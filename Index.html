@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT GAME TOPUP - Solusi Top Up Cepat & Terpercaya</title>
+    
+    <!-- FAVICON -->
+    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/azisaputra410-hue/Dashboard/main/Screenshot_20260725_130619.jpg">
+
+    <!-- FONTS & ICONS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- STYLE CSS (DIGABUNG) -->
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-color: #151a24;
+            --primary-color: #00e5ff;
+            --secondary-color: #0056b3;
+            --text-color: #ffffff;
+            --text-muted: #8b9bb4;
+            --accent-green: #39ff14;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: var(--card-color);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+        }
+
+        .logo-container h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .logo-container h1 span {
+            color: var(--primary-color);
+        }
+
+        .logo-container p {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .promo-banner {
+            background: linear-gradient(135deg, #101524, #1a233a);
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .promo-banner h2 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .promo-banner p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            background-color: var(--card-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .game-card {
+            background-color: var(--card-color);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            transform: scale(1.03);
+            border-color: var(--primary-color);
+        }
+
+        .game-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            overflow: hidden;
+            border: 2px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .game-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .step-box {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .input-group-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group-vertical input, .input-group-vertical select {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: var(--bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .diamond-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .diamond-card {
+            background-color: var(--bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .diamond-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .dm-val { font-weight: 600; font-size: 14px; display: block; }
+        .dm-price { font-size: 12px; color: var(--primary-color); margin-top: 4px; display: block; }
+
+        .divider {
+            grid-column: span 2;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            margin: 15px 0 5px 0;
+            padding-top: 15px;
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .detail-table td {
+            padding: 15px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-table td:last-child { text-align: right; font-weight: 600; }
+        .highlight-text { color: var(--primary-color); }
+
+        .payment-option {
+            background-color: var(--card-color);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-option.selected { border-color: var(--primary-color); }
+        .pay-info { display: flex; align-items: center; gap: 15px; }
+        .pay-info i { font-size: 24px; color: var(--primary-color); }
+        .pay-select-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+        }
+        .payment-option.selected .pay-select-dot {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <h1>CT <span>GAME TOPUP</span></h1>
+            <p>Top Up Game & Pembayaran Digital</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- PAGE 1: DASHBOARD (Pilih Game) -->
+        <div id="page-dashboard" class="page active">
+            <div class="promo-banner">
+                <h2>PROMO BULAN INI!</h2>
+                <p>Nikmati harga diamond termurah & proses kilat 24 Jam.</p>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="Cari game favoritmu...">
+            </div>
+
+            <h3 class="section-title">Pilih Game Terpopuler</h3>
+            <div class="game-grid">
+                <div class="game-card" data-game="mlbb">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/78d66ff1ab1bd23f7fd6d9cdb93854881cb8f0b69e8a301faaf4f4eab058d19e_600.jpeg" alt="Mobile Legends">
+                    </div>
+                    <h3>Mobile Legends</h3>
+                </div>
+                <div class="game-card" data-game="ff">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/azisaputra410-hue/Dashboard/main/images.jpeg" alt="Free Fire">
+                    </div>
+                    <h3>Free Fire</h3>
+                </div>
+                <div class="game-card" data-game="vlr">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/valorant_tile.jpg" alt="Valorant">
+                    </div>
+                    <h3>Valorant</h3>
+                </div>
+                <div class="game-card" data-game="genshin">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/genshinimpact_tile%20(1).jpg" alt="Genshin Impact">
+                    </div>
+                    <h3>Genshin Impact</h3>
+                </div>
+                <div class="game-card" data-game="pb">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/PointBlank_ID_tile.jpg" alt="Point Blank">
+                    </div>
+                    <h3>Point Blank</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: FORM INPUT DATA & PILIH NOMINAL -->
+        <div id="page-form" class="page">
+            <button class="btn-back" id="btn-back-dashboard">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">1</div>
+                    <span id="form-account-title">Masukkan Data Akun Anda</span>
+                </div>
+                <div class="input-group-vertical">
+                    <input type="text" id="user-id" placeholder="Masukkan User ID">
+                    <input type="text" id="zone-id" placeholder="Masukkan Zone ID">
+                    <select id="server-id" style="display: none;">
+                        <option value="" disabled selected>Pilih Server</option>
+                        <option value="Asia">Asia</option>
+                        <option value="America">America</option>
+                        <option value="Europe">Europe</option>
+                        <option value="TW, HK, MO">TW, HK, MO</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">2</div>
+                    <span>Pilih Nominal Diamond / Produk</span>
+                </div>
+                <div class="diamond-grid" id="product-container"></div>
+            </div>
+
+            <button class="btn-primary" id="btn-to-detail">Lanjut ke Transaksi</button>
+        </div>
+
+        <!-- PAGE 3: DETAIL TRANSAKSI & PEMBAYARAN -->
+        <div id="page-detail" class="page">
+            <button class="btn-back" id="btn-back-form">
+                <i class="fa-solid fa-arrow-left"></i> Edit Pesanan
+            </button>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">3</div>
+                    <span>Detail Transaksi Anda</span>
+                </div>
+                
+                <table class="detail-table">
+                    <tr>
+                        <td>Game</td>
+                        <td id="detail-game">-</td>
+                    </tr>
+                    <tr id="row-id-label">
+                        <td id="label-id-type">ID Pengguna</td>
+                        <td id="detail-id">-</td>
+                    </tr>
+                    <tr>
+                        <td>Nominal Item</td>
+                        <td id="detail-dm">-</td>
+                    </tr>
+                    <tr>
+                        <td>Total Biaya</td>
+                        <td id="detail-price" class="highlight-text">Rp 0</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">4</div>
+                    <span>Pilih Metode Pembayaran</span>
+                </div>
+
+                <div class="payment-option" data-pay="QRIS">
+                    <div class="pay-info">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <div>
+                            <span class="pay-name">QRIS</span>
+                            <span class="pay-sub">E-Wallet & Mobile Banking</span>
+                        </div>
+                    </div>
+                    <div class="pay-select-dot"></div>
+                </div>
+
+                <div class="payment-option" data-pay="DANA">
+                    <div class="pay-info">
+                        <i class="fa-solid fa-wallet"></i>
+                        <div>
+                            <span class="pay-name">DANA</span>
+                            <span class="pay-sub">E-Wallet Resmi</span>
+                        </div>
+                    </div>
+                    <div class="pay-select-dot"></div>
+                </div>
+
+                <div class="payment-option" data-pay="GO-PAY">
+                    <div class="pay-info">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <div>
+                            <span class="pay-name">GO-PAY</span>
+                            <span class="pay-sub">Aplikasi Gojek</span>
+                        </div>
+                    </div>
+                    <div class="pay-select-dot"></div>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="btn-finish-checkout">Proses Pembayaran</button>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT JS (DIGABUNG) -->
+    <script>
+        const productsData = {
+            mlbb: [
+                { name: '5 Diamonds', price: 2000 },
+                { name: '12 Diamonds', price: 5000 },
+                { name: '85 Diamonds', price: 24000 },
+                { name: '240 Diamonds', price: 63000 },
+                { type: 'divider', name: '🎁 Produk Lainnya' },
+                { name: 'Weekly Diamond Pass', price: 28800, prefix: '💎 ' }
+            ],
+            ff: [
+                { name: '50 Diamonds', price: 7500 },
+                { name: '140 Diamonds', price: 19500 },
+                { name: '355 Diamonds', price: 49500, prefix: '⭐ ' }
+            ],
+            vlr: [
+                { name: '475 VP', price: 58000 },
+                { name: '1000 VP', price: 114000 }
+            ],
+            genshin: [
+                { name: 'Blessing of the Welkin Moon', price: 74573, prefix: '🌙 ' },
+                { name: '300 Chronal Nexus', price: 74573 }
+            ],
+            pb: [
+                { name: '1200 PB CASH', price: 11610 },
+                { name: '12000 PB CASH', price: 100799 }
+            ]
+        };
+
+        let state = {
+            gameType: '',
+            userId: '',
+            zoneId: '',
+            item: '',
+            price: 0,
+            paymentMethod: ''
+        };
+
+        function goToPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        document.getElementById('search-input').addEventListener('keyup', function(e) {
+            const keyword = e.target.value.toLowerCase();
+            document.querySelectorAll('.game-card').forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                card.style.display = title.includes(keyword) ? 'block' : 'none';
+            });
+        });
+
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('click', function() {
+                state.gameType = this.dataset.game;
+                
+                document.getElementById('user-id').value = '';
+                document.getElementById('zone-id').value = '';
+                document.getElementById('server-id').selectedIndex = 0;
+                state.item = '';
+                state.price = 0;
+
+                setupFormFields(state.gameType);
+                renderProducts(productsData[state.gameType] || []);
+                goToPage('page-form');
+            });
+        });
+
+        function setupFormFields(game) {
+            const zoneInput = document.getElementById('zone-id');
+            const serverInput = document.getElementById('server-id');
+            const formTitle = document.getElementById('form-account-title');
+            const userInput = document.getElementById('user-id');
+
+            zoneInput.style.display = "none";
+            serverInput.style.display = "none";
+
+            if (game === 'mlbb') {
+                formTitle.innerText = "Masukkan User ID & Zone ID";
+                userInput.placeholder = "Masukkan User ID";
+                zoneInput.placeholder = "Masukkan Zone ID";
+                zoneInput.style.display = "block";
+            } else if (game === 'genshin') {
+                formTitle.innerText = "Masukkan UID & Pilih Server";
+                userInput.placeholder = "Masukkan UID Genshin";
+                serverInput.style.display = "block";
+            } else {
+                formTitle.innerText = "Masukkan ID Pengguna";
+                userInput.placeholder = "Masukkan ID Pengguna";
+            }
+        }
+
+        function renderProducts(productList) {
+            const container = document.getElementById('product-container');
+            container.innerHTML = '';
+
+            productList.forEach(prod => {
+                if (prod.type === 'divider') {
+                    const div = document.createElement('div');
+                    div.className = 'divider';
+                    div.innerText = prod.name;
+                    container.appendChild(div);
+                } else {
+                    const card = document.createElement('div');
+                    card.className = 'diamond-card';
+                    const prefix = prod.prefix || '';
+                    const formatPrice = "Rp " + prod.price.toLocaleString('id-ID');
+
+                    card.innerHTML = `
+                        <span class="dm-val">${prefix}${prod.name}</span>
+                        <span class="dm-price">${formatPrice}</span>
+                    `;
+
+                    card.onclick = function() {
+                        document.querySelectorAll('.diamond-card').forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                        state.item = prefix + prod.name;
+                        state.price = prod.price;
+                    };
+
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        document.getElementById('btn-back-dashboard').addEventListener('click', () => goToPage('page-dashboard'));
+        document.getElementById('btn-back-form').addEventListener('click', () => goToPage('page-form'));
+
+        document.getElementById('btn-to-detail').addEventListener('click', function() {
+            const userId = document.getElementById('user-id').value;
+            const zoneId = document.getElementById('zone-id').value;
+            const serverId = document.getElementById('server-id').value;
+
+            if (!userId) { alert('Silakan isi User ID Anda!'); return; }
+            if (state.gameType === 'mlbb' && !zoneId) { alert('Silakan isi Zone ID Anda!'); return; }
+            if (state.gameType === 'genshin' && !serverId) { alert('Silakan pilih Server!'); return; }
+            if (!state.item) { alert('Silakan pilih nominal produk!'); return; }
+
+            state.userId = userId;
+            state.zoneId = state.gameType === 'mlbb' ? zoneId : (state.gameType === 'genshin' ? serverId : '');
+
+            document.getElementById('detail-game').innerText = state.gameType.toUpperCase();
+            document.getElementById('detail-id').innerText = state.zoneId ? `${state.userId} (${state.zoneId})` : state.userId;
+            document.getElementById('detail-dm').innerText = state.item;
+            document.getElementById('detail-price').innerText = "Rp " + state.price.toLocaleString('id-ID');
+
+            goToPage('page-detail');
+        });
+
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                state.paymentMethod = this.dataset.pay;
+            });
+        });
+
+        document.getElementById('btn-finish-checkout').addEventListener('click', function() {
+            if (!state.paymentMethod) {
+                alert('Silakan pilih metode pembayaran terlebih dahulu!');
+                return;
+            }
+
+            const orderData = {
+                game: state.gameType,
+                user_id: state.userId,
+                zone_id: state.zoneId,
+                product: state.item,
+                amount: state.price,
+                payment_method: state.paymentMethod
+            };
+
+            console.log("Mengirim data pesanan ke Backend:", orderData);
+            alert(`Pesanan ${orderData.product} diproses via ${orderData.payment_method}. (Tahap selanjutnya: Koneksi ke API Midtrans/Xendit)`);
+        });
+    </script>
+</body>
+</html>
