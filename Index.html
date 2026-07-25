@@ -12,12 +12,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- MIDTRANS SNAP JS (SANDBOX) -->
+    <!-- MIDTRANS SNAP JS (SANDBOX) - SUDAH DIPERBAIKI -->
     <script type="text/javascript"
       src="https://app.sandbox.midtrans.com/snap/snap.js"
-      data-client-key="ISI_CLIENT_KEY_SANDBOX_KAMU"></script>
+      data-client-key="SB-Mid-client-ohijvCQGGJUMG8XC"></script>
 
-    <!-- STYLE CSS (DIGABUNG) -->
+    <!-- STYLE CSS -->
     <style>
         :root {
             --bg-color: #0b0e14;
@@ -348,7 +348,7 @@
 
     <div class="container">
 
-        <!-- PAGE 1: DASHBOARD (Pilih Game) -->
+        <!-- PAGE 1: DASHBOARD -->
         <div id="page-dashboard" class="page active">
             <div class="promo-banner">
                 <h2>PROMO BULAN INI!</h2>
@@ -395,7 +395,7 @@
             </div>
         </div>
 
-        <!-- PAGE 2: FORM INPUT DATA & PILIH NOMINAL -->
+        <!-- PAGE 2: FORM INPUT -->
         <div id="page-form" class="page">
             <button class="btn-back" id="btn-back-dashboard">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
@@ -430,7 +430,7 @@
             <button class="btn-primary" id="btn-to-detail">Lanjut ke Transaksi</button>
         </div>
 
-        <!-- PAGE 3: DETAIL TRANSAKSI & PEMBAYARAN -->
+        <!-- PAGE 3: DETAIL TRANSAKSI -->
         <div id="page-detail" class="page">
             <button class="btn-back" id="btn-back-form">
                 <i class="fa-solid fa-arrow-left"></i> Edit Pesanan
@@ -507,7 +507,7 @@
 
     </div>
 
-    <!-- SCRIPT JS (DIHUBUNGKAN KE BACKEND NODE.JS TERMUX) -->
+    <!-- SCRIPT JS -->
     <script>
         const productsData = {
             mlbb: [
@@ -665,7 +665,7 @@
             });
         });
 
-        // --- BAGIAN INI YANG SUDAH TERHUBUNG KE BACKEND TERMUX ---
+        // KONEKSI KE BACKEND TERMUX
         document.getElementById('btn-finish-checkout').addEventListener('click', function() {
             if (!state.paymentMethod) {
                 alert('Silakan pilih metode pembayaran terlebih dahulu!');
@@ -685,7 +685,6 @@
             btnCheckout.innerText = "Menghubungkan ke Sistem Pembayaran...";
             btnCheckout.disabled = true;
 
-            // Memanggil API Backend Node.js di Termux
             fetch('http://localhost:3000/api/create-transaction', {
                 method: 'POST',
                 headers: {
@@ -699,25 +698,25 @@
                 btnCheckout.disabled = false;
 
                 if (data.success) {
-                    // Memunculkan Pop-up Pembayaran Midtrans secara otomatis
-                    window.snap.pay(data.token, {
-                        onSuccess: function(result){
-                            alert("Pembayaran Berhasil!");
-                            console.log(result);
-                            location.reload();
-                        },
-                        onPending: function(result){
-                            alert("Menunggu pembayaran diselesaikan.");
-                            console.log(result);
-                        },
-                        onError: function(result){
-                            alert("Pembayaran Gagal!");
-                            console.log(result);
-                        },
-                        onClose: function(){
-                            alert('Anda menutup jendela pembayaran.');
-                        }
-                    });
+                    if (typeof window.snap !== 'undefined') {
+                        window.snap.pay(data.token, {
+                            onSuccess: function(result){
+                                alert("Pembayaran Berhasil!");
+                                location.reload();
+                            },
+                            onPending: function(result){
+                                alert("Menunggu pembayaran diselesaikan.");
+                            },
+                            onError: function(result){
+                                alert("Pembayaran Gagal!");
+                            },
+                            onClose: function(){
+                                alert('Anda menutup jendela pembayaran.');
+                            }
+                        });
+                    } else {
+                        alert("Midtrans Snap JS belum siap, muat ulang halaman!");
+                    }
                 } else {
                     alert("Gagal membuat transaksi: " + data.message);
                 }
@@ -726,7 +725,7 @@
                 console.error('Error:', error);
                 btnCheckout.innerText = "Proses Pembayaran";
                 btnCheckout.disabled = false;
-                alert("Terjadi kesalahan koneksi ke server backend (Pastikan server Termux sudah aktif).");
+                alert("Terjadi kesalahan koneksi ke server Termux. Pastikan 'node server.js' sudah berjalan.");
             });
         });
     </script>
