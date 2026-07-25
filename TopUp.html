@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT GAME TOPUP - Solusi Top Up Cepat & Terpercaya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-color: #151a24;
+            --primary-color: #00e5ff;
+            --secondary-color: #0056b3;
+            --text-color: #ffffff;
+            --text-muted: #8b9bb4;
+            --accent-green: #39ff14;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--card-color);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+        }
+
+        .logo-container h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .logo-container h1 span {
+            color: var(--primary-color);
+        }
+
+        .logo-container p {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* CONTAINER UTAMA & TRANSISI HALAMAN */
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* UTILITIES */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-back:hover {
+            color: white;
+            border-color: white;
+        }
+
+        /* ==================== PAGE 1: DASHBOARD ==================== */
+        .promo-banner {
+            background: linear-gradient(135deg, #101524, #1a233a);
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .promo-banner h2 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .promo-banner p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            background-color: var(--card-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .game-card {
+            background-color: var(--card-color);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            transform: scale(1.03);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+        }
+
+        .game-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(0, 229, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .game-card:hover .game-icon {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+
+        .game-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .game-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ==================== PAGE 2: NOMINAL & ID ==================== */
+        .step-box {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .input-group-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group-vertical input, .input-group-vertical select {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: var(--bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group-vertical select option {
+            background-color: var(--card-color);
+            color: white;
+        }
+
+        .input-group-vertical input:focus, .input-group-vertical select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .diamond-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .diamond-card {
+            background-color: var(--bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .diamond-card:hover {
+            border-color: var(--primary-color);
+        }
+
+        .diamond-card.selected {
+            border-color: var(--primary-color);
+            background: rgba(0, 229, 255, 0.05);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        }
+
+        .dm-val {
+            font-weight: 600;
+            font-size: 14px;
+            display: block;
+        }
+
+        .dm-price {
+            font-size: 12px;
+            color: var(--primary-color);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .divider {
+            grid-column: span 2;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            margin: 15px 0 5px 0;
+            padding-top: 15px;
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ==================== PAGE 3: TRANSACTION DETAILS ==================== */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .detail-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-table td {
+            padding: 15px 0;
+            font-size: 14px;
+        }
+
+        .detail-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .highlight-text {
+            color: var(--primary-color);
+        }
+
+        /* ==================== PAGE 4: METODE PEMBAYARAN ==================== */
+        .payment-option {
+            background-color: var(--card-color);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary-color);
+        }
+
+        .pay-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pay-info i {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .pay-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .pay-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .pay-select-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-option.selected .pay-select-dot {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <h1>CT <span>GAME TOPUP</span></h1>
+            <p>Top Up Game & Pembayaran Digital</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- ==================== PAGE 1: DASHBOARD ==================== -->
+        <div id="page-dashboard" class="page active">
+            <div class="promo-banner">
+                <h2>PROMO BULAN INI!</h2>
+                <p>Nikmati harga diamond termurah & proses kilat 24 Jam.</p>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Cari game favoritmu..." onkeyup="filterGames(this.value)">
+            </div>
+
+            <h3 class="section-title">Pilih Game Terpopuler</h3>
+            <div class="game-grid">
+                <!-- Mobile Legends -->
+                <div class="game-card" onclick="selectGame('mlbb')">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/78d66ff1ab1bd23f7fd6d9cdb93854881cb8f0b69e8a301faaf4f4eab058d19e_600.jpeg" alt="Mobile Legends">
+                    </div>
+                    <h3>Mobile Legends</h3>
+                </div>
+                <!-- Free Fire -->
+                <div class="game-card" onclick="selectGame('ff')">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/unnamed.webp" alt="Free Fire">
+                    </div>
+                    <h3>Free Fire</h3>
+                </div>
+                <!-- Valorant -->
+                <div class="game-card" onclick="selectGame('vlr')">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/valorant_tile.jpg" alt="Valorant">
+                    </div>
+                    <h3>Valorant</h3>
+                </div>
+                <!-- Genshin Impact -->
+                <div class="game-card" onclick="selectGame('genshin')">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/genshinimpact_tile%20(1).jpg" alt="Genshin Impact">
+                    </div>
+                    <h3>Genshin Impact</h3>
+                </div>
+                <!-- Point Blank -->
+                <div class="game-card" onclick="selectGame('pb')">
+                    <div class="game-icon">
+                        <img src="https://raw.githubusercontent.com/muhammadazizsaputra6-alt/Just-For-You/main/PointBlank_ID_tile.jpg" alt="Point Blank">
+                    </div>
+                    <h3>Point Blank</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PAGE 2: NOMINAL & ID ==================== -->
+        <div id="page-form" class="page">
+            <button class="btn-back" onclick="goToPage('page-dashboard')">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">1</div>
+                    <span id="form-account-title">Masukkan Data Akun Anda</span>
+                </div>
+                <div class="input-group-vertical">
+                    <!-- Semua input ID bertipe 'text' agar keyboard HP biasa (bisa huruf) muncul, bukan numpad saja -->
+                    <input type="text" id="user-id" placeholder="Masukkan User ID" required>
+                    <input type="text" id="zone-id" placeholder="Masukkan Zone ID" required>
+                    <select id="server-id" style="display: none;">
+                        <option value="" disabled selected>Pilih Server</option>
+                        <option value="Asia">Asia</option>
+                        <option value="America">America</option>
+                        <option value="Europe">Europe</option>
+                        <option value="TW, HK, MO">TW, HK, MO</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">2</div>
+                    <span>Pilih Nominal Diamond / Produk</span>
+                </div>
+                <div class="diamond-grid" id="product-container">
+                    </div>
+            </div>
+
+            <button class="btn-primary" onclick="proceedToDetail()">Lanjut ke Transaksi</button>
+        </div>
+
+        <!-- ==================== PAGE 3: TRANSACTION DETAILS ==================== -->
+        <div id="page-detail" class="page">
+            <button class="btn-back" onclick="goToPage('page-form')">
+                <i class="fa-solid fa-arrow-left"></i> Edit Pesanan
+            </button>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">3</div>
+                    <span>Detail Transaksi Anda</span>
+                </div>
+                
+                <table class="detail-table">
+                    <tr>
+                        <td>Game</td>
+                        <td id="detail-game">-</td>
+                    </tr>
+                    <tr id="row-id-label">
+                        <td id="label-id-type">ID Pengguna</td>
+                        <td id="detail-id">-</td>
+                    </tr>
+                    <tr>
+                        <td>Nominal Item</td>
+                        <td id="detail-dm">-</td>
+                    </tr>
+                    <tr>
+                        <td>Total Biaya</td>
+                        <td id="detail-price" class="highlight-text">Rp 0</td>
+                    </tr>
+                </table>
+
+                <button class="btn-primary" onclick="goToPage('page-payment')">Pilih Metode Pembayaran</button>
+            </div>
+        </div>
+
+        <!-- ==================== PAGE 4: METODE PEMBAYARAN ==================== -->
+        <div id="page-payment" class="page">
+            <button class="btn-back" onclick="goToPage('page-detail')">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Detail
+            </button>
+
+            <div class="step-box">
+                <div class="step-title">
+                    <div class="step-number">4</div>
+                    <span>Pilih Metode Pembayaran</span>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('QRIS', this)">
+                    <div class="pay-info">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <div>
+                            <span class="pay-name">QRIS</span>
+                            <span class="pay-sub">E-Wallet & Mobile Banking</span>
+                        </div>
+                    </div>
+                    <div class="pay-select-dot"></div>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('DANA', this)">
+                    <div class="pay-info">
+                        <i class="fa-solid fa-wallet"></i>
+                        <div>
+                            <span class="pay-name">DANA</span>
+                            <span class="pay-sub">E-Wallet Resmi</span>
+                        </div>
+                    </div>
+                    <div class="pay-select-dot"></div>
+                </div>
+
+                <div class="payment-option" onclick="selectPayment('GO-PAY', this)">
+                    <div class="pay-info">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <div>
+                            <span class="pay-name">GO-PAY</span>
+                            <span class="pay-sub">Aplikasi Gojek</span>
+                        </div>
+                    </div>
+                    <div class="pay-select-dot"></div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="finishTransaction()">Selesaikan Pembayaran</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Data List Mobile Legends
+        const mlProducts = [
+            { name: '5 Diamonds', price: 1800 },
+            { name: '12 Diamonds', price: 5200 },
+            { name: '19 Diamonds', price: 6900 },
+            { name: '28 Diamonds', price: 8600 },
+            { name: '44 Diamonds', price: 12500 },
+            { name: '59 Diamonds', price: 17000 },
+            { name: '85 Diamonds', price: 23000 },
+            { name: '170 Diamonds', price: 45000 },
+            { name: '240 Diamonds', price: 62800 },
+            { name: '296 Diamonds ⭐', price: 88000 },
+            { name: '408 Diamonds', price: 1051500 },
+            { name: '568 Diamonds', price: 143800 },
+            { name: '875 Diamonds', price: 220000 },
+            { name: '2010 Diamonds', price: 476900 },
+            { name: '4830 Diamonds', price: 1142500 },
+            { type: 'divider', name: '🎁 Produk Lainnya' },
+            { name: 'Twilight Pass', price: 153000, prefix: '⭐ ' },
+            { name: 'Weekly Diamond Pass', price: 28800, prefix: '💎 ' },
+            { name: 'Weekly Elite Pack', price: 16100, prefix: '🎁 ' }
+        ];
+
+        // Data List Free Fire
+        const ffProducts = [
+            { name: '5 Diamonds', price: 1500 },
+            { name: '12 Diamonds', price: 2500, prefix: '⭐ ' },
+            { name: '50 Diamonds', price: 8500 },
+            { name: '70 Diamonds', price: 10500 },
+            { name: '140 Diamonds', price: 19500 },
+            { name: '355 Diamonds', price: 49500, prefix: '⭐ ' },
+            { name: '720 Diamonds', price: 95000 },
+            { name: '1450 Diamonds', price: 183000 },
+            { name: '2180 Diamonds', price: 273000 },
+            { name: '3640 Diamonds', price: 454500 },
+            { name: '7290 Diamonds', price: 904000 },
+            { name: '36500 Diamonds', price: 4510000 },
+            { name: '73100 Diamonds', price: 9010000 }
+        ];
+
+        // Data List Valorant (Harga di foto + 2.000)
+        const vlrProducts = [
+            { name: '475 VP', price: 58000 },
+            { name: '1000 VP', price: 114000 },
+            { name: '2050 VP', price: 226000 },
+            { name: '3650 VP', price: 391000 },
+            { name: '5350 VP', price: 561000 },
+            { name: '11000 VP', price: 1101000 }
+        ];
+
+        // Data List Genshin Impact (Harga di foto + 1.600)
+        const genshinProducts = [
+            { type: 'divider', name: '🔥 Bestseller' },
+            { name: 'Blessing of the Welkin Moon', price: 74573, prefix: '🌙 ' },
+            { type: 'divider', name: '💎 Chronal Nexus' },
+            { name: '60 Chronal Nexus', price: 16465 },
+            { name: '300 Chronal Nexus', price: 74573 },
+            { name: '980 Chronal Nexus', price: 231330 },
+            { name: '1.980 Chronal Nexus', price: 442141 },
+            { name: '3.280 Chronal Nexus', price: 735834 },
+            { name: '6.480 Chronal Nexus', price: 1469168 },
+            { type: 'divider', name: '💎 Genesis Crystals' },
+            { name: '60 Genesis Crystals', price: 16465 },
+            { name: '330 Genesis Crystals', price: 74573 },
+            { name: '1090 Genesis Crystals', price: 231330 },
+            { name: '2240 Genesis Crystals', price: 442141 },
+            { name: '3880 Genesis Crystals', price: 735834 },
+            { name: '8080 Genesis Crystals', price: 1469168 }
+        ];
+
+        // Data List Point Blank (Harga di foto + 1.700)
+        const pbProducts = [
+            { type: 'divider', name: '🔥 Bestseller' },
+            { name: '1200 PB CASH', price: 11610, prefix: '🛡️ ' },
+            { name: '12000 PB CASH', price: 100799, prefix: '🛡️ ' },
+            { type: 'divider', name: '🛡️ Semua Nominal' },
+            { name: '1200 PB CASH', price: 11610 },
+            { name: '2400 PB CASH', price: 21520 },
+            { name: '6000 PB CASH', price: 51250 },
+            { name: '12000 PB CASH', price: 100799 },
+            { name: '24000 PB CASH', price: 199898 },
+            { name: '36000 PB CASH', price: 298997 },
+            { name: '60000 PB CASH', price: 497195 }
+        ];
+
+        let selectedGameType = ''; 
+        let transaction = {
+            userId: '',
+            zoneId: '',
+            item: '',
+            price: 0,
+            paymentMethod: ''
+        };
+
+        function goToPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function filterGames(keyword) {
+            const cards = document.querySelectorAll('.game-card');
+            cards.forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                if (title.includes(keyword.toLowerCase())) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function selectGame(gameType) {
+            selectedGameType = gameType;
+            
+            document.getElementById('user-id').value = '';
+            document.getElementById('zone-id').value = '';
+            document.getElementById('server-id').selectedIndex = 0;
+            transaction.item = '';
+            transaction.price = 0;
+
+            const zoneInput = document.getElementById('zone-id');
+            const serverInput = document.getElementById('server-id');
+            const formTitle = document.getElementById('form-account-title');
+            const userInput = document.getElementById('user-id');
+
+            if (gameType === 'mlbb') {
+                formTitle.innerText = "Masukkan User ID & Zone ID";
+                userInput.placeholder = "Masukkan User ID";
+                zoneInput.style.display = "block"; 
+                zoneInput.placeholder = "Masukkan Zone ID";
+                serverInput.style.display = "none";
+                renderProducts(mlProducts);
+            } else if (gameType === 'ff') {
+                formTitle.innerText = "Masukkan ID Pengguna";
+                userInput.placeholder = "Masukkan ID Pengguna";
+                zoneInput.style.display = "none"; 
+                serverInput.style.display = "none";
+                renderProducts(ffProducts);
+            } else if (gameType === 'vlr') {
+                formTitle.innerText = "Masukkan ID Root Anda";
+                userInput.placeholder = "Contoh: Westbourne#SEA";
+                zoneInput.style.display = "none";
+                serverInput.style.display = "none";
+                renderProducts(vlrProducts);
+            } else if (gameType === 'genshin') {
+                formTitle.innerText = "Masukkan UID & Pilih Server";
+                userInput.placeholder = "Masukkan UID Genshin";
+                zoneInput.style.display = "none";
+                serverInput.style.display = "block";
+                renderProducts(genshinProducts);
+            } else if (gameType === 'pb') {
+                formTitle.innerText = "Masukkan ID Zepetto Anda";
+                userInput.placeholder = "Masukkan ID Zepetto";
+                zoneInput.style.display = "none";
+                serverInput.style.display = "none";
+                renderProducts(pbProducts);
+            }
+
+            goToPage('page-form');
+        }
+
+        function renderProducts(productList) {
+            const container = document.getElementById('product-container');
+            container.innerHTML = '';
+
+            productList.forEach(prod => {
+                if (prod.type === 'divider') {
+                    const div = document.createElement('div');
+                    div.className = 'divider';
+                    div.innerText = prod.name;
+                    container.appendChild(div);
+                } else {
+                    const card = document.createElement('div');
+                    card.className = 'diamond-card';
+                    
+                    const prefix = prod.prefix || '';
+                    const formatPrice = "Rp " + prod.price.toLocaleString('id-ID');
+
+                    card.onclick = function() {
+                        const cards = document.querySelectorAll('.diamond-card');
+                        cards.forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                        
+                        transaction.item = prefix + prod.name;
+                        transaction.price = prod.price;
+                    };
+
+                    card.innerHTML = `
+                        <span class="dm-val">${prefix}${prod.name}</span>
+                        <span class="dm-price">${formatPrice}</span>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        function proceedToDetail() {
+            const userIdInput = document.getElementById('user-id').value;
+            const zoneIdInput = document.getElementById('zone-id').value;
+            const serverIdInput = document.getElementById('server-id').value;
+
+            if (!userIdInput) {
+                if (selectedGameType === 'vlr') {
+                    alert('Tolong masukkan ID Root Anda!');
+                } else if (selectedGameType === 'genshin') {
+                    alert('Tolong masukkan UID Genshin Anda!');
+                } else if (selectedGameType === 'pb') {
+                    alert('Tolong masukkan ID Zepetto Anda!');
+                } else {
+                    alert('Tolong masukkan User ID Anda!');
+                }
+                return;
+            }
+
+            if (selectedGameType === 'mlbb' && !zoneIdInput) {
+                alert('Tolong masukkan Zone ID Anda!');
+                return;
+            }
+
+            if (selectedGameType === 'genshin' && !serverIdInput) {
+                alert('Tolong pilih Server Genshin Anda!');
+                return;
+            }
+
+            if (!transaction.item) {
+                alert('Silakan pilih nominal produk terlebih dahulu!');
+                return;
+            }
+
+            transaction.userId = userIdInput;
+            
+            if (selectedGameType === 'mlbb') {
+                transaction.zoneId = zoneIdInput;
+            } else if (selectedGameType === 'genshin') {
+                transaction.zoneId = serverIdInput; 
+            } else {
+                transaction.zoneId = '';
+            }
+
+            const gameLabel = document.getElementById('detail-game');
+            const labelIdType = document.getElementById('label-id-type');
+            const detailId = document.getElementById('detail-id');
+
+            if (selectedGameType === 'mlbb') {
+                gameLabel.innerText = "Mobile Legends: Bang Bang";
+                labelIdType.innerText = "ID & Zona";
+                detailId.innerText = `${transaction.userId} (${transaction.zoneId})`;
+            } else if (selectedGameType === 'ff') {
+                gameLabel.innerText = "Free Fire";
+                labelIdType.innerText = "ID Pengguna";
+                detailId.innerText = transaction.userId;
+            } else if (selectedGameType === 'vlr') {
+                gameLabel.innerText = "Valorant";
+                labelIdType.innerText = "ID Root";
+                detailId.innerText = transaction.userId;
+            } else if (selectedGameType === 'genshin') {
+                gameLabel.innerText = "Genshin Impact";
+                labelIdType.innerText = "UID & Server";
+                detailId.innerText = `${transaction.userId} (${transaction.zoneId})`;
+            } else if (selectedGameType === 'pb') {
+                gameLabel.innerText = "Point Blank";
+                labelIdType.innerText = "ID Zepetto";
+                detailId.innerText = transaction.userId;
+            }
+
+            document.getElementById('detail-dm').innerText = transaction.item;
+            document.getElementById('detail-price').innerText = "Rp " + transaction.price.toLocaleString('id-ID');
+
+            goToPage('page-detail');
+        }
+
+        function selectPayment(methodName, element) {
+            const options = document.querySelectorAll('.payment-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+
+            element.classList.add('selected');
+            transaction.paymentMethod = methodName;
+        }
+
+        function finishTransaction() {
+            if (!transaction.paymentMethod) {
+                alert('Silakan pilih metode pembayaran Anda terlebih dahulu!');
+                return;
+            }
+
+            const adminWA = "6287724699161";
+            let message = "";
+
+            if (selectedGameType === 'mlbb') {
+                message = `🔥 Selamat Datang di CT GAME TOPUP 🔥
+
+Terima kasih sudah menghubungi kami. 🙏
+
+Untuk melakukan top up, silakan isi format berikut:
+
+🎮 Game : Mobile Legends: Bang Bang
+🆔 ID Pengguna : ${transaction.userId}
+🌐 Zona ID: ${transaction.zoneId}
+💎 Nominal : ${transaction.item}
+
+💳 Pembayaran: ${transaction.paymentMethod}
+
+⚡ Estimasi proses 1–10 menit setelah pembayaran berhasil dikonfirmasi.`;
+            } else if (selectedGameType === 'ff') {
+                message = `🔥 Selamat Datang di CT GAME TOPUP 🔥
+
+Terima kasih sudah menghubungi kami. 🙏
+
+Untuk melakukan top up, silakan isi format berikut:
+
+🎮 Game : Free Fire
+🆔 ID Pengguna : ${transaction.userId}
+💎 Nominal : ${transaction.item}
+
+💳 Pembayaran: ${transaction.paymentMethod}
+
+⚡ Estimasi proses 1–10 menit setelah pembayaran berhasil dikonfirmasi.`;
+            } else if (selectedGameType === 'vlr') {
+                message = `🔥 Selamat Datang di CT GAME TOPUP 🔥
+
+Terima kasih sudah menghubungi kami. 🙏
+
+Untuk melakukan top up, silakan isi format berikut:
+
+🎮 Game : Valorant
+🆔 ID Root : ${transaction.userId}
+💎 Nominal : ${transaction.item}
+
+💳 Pembayaran: ${transaction.paymentMethod}
+
+⚡ Estimasi proses 1–10 menit setelah pembayaran berhasil dikonfirmasi.`;
+            } else if (selectedGameType === 'genshin') {
+                message = `🔥 Selamat Datang di CT GAME TOPUP 🔥
+
+Terima kasih sudah menghubungi kami. 🙏
+
+Untuk melakukan top up, silakan isi format berikut:
+
+🎮 Game : Genshin Impact
+🆔 UID : ${transaction.userId}
+🌐 Server: ${transaction.zoneId}
+💎 Nominal : ${transaction.item}
+
+💳 Pembayaran: ${transaction.paymentMethod}
+
+⚡ Estimasi proses 1–10 menit setelah pembayaran berhasil dikonfirmasi.`;
+            } else if (selectedGameType === 'pb') {
+                message = `🔥 Selamat Datang di CT GAME TOPUP 🔥
+
+Terima kasih sudah menghubungi kami. 🙏
+
+Untuk melakukan top up, silakan isi format berikut:
+
+🎮 Game : Point Blank
+🆔 ID Pengguna : ${transaction.userId}
+💎 Nominal : ${transaction.item}
+
+💳 Pembayaran: ${transaction.paymentMethod}
+
+⚡ Estimasi proses 1–10 menit setelah pembayaran berhasil dikonfirmasi.`;
+            }
+
+            const encodedMessage = encodeURIComponent(message);
+            const waLink = `https://api.whatsapp.com/send?phone=${adminWA}&text=${encodedMessage}`;
+
+            window.open(waLink, '_blank');
+        }
+    </script>
+</body>
+</html>
