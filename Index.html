@@ -12,6 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- MIDTRANS SNAP JS (SANDBOX) -->
+    <script type="text/javascript"
+      src="https://app.sandbox.midtrans.com/snap/snap.js"
+      data-client-key="ISI_CLIENT_KEY_SANDBOX_KAMU"></script>
+
     <!-- STYLE CSS (DIGABUNG) -->
     <style>
         :root {
@@ -502,7 +507,7 @@
 
     </div>
 
-    <!-- SCRIPT JS (DIGABUNG) -->
+    <!-- SCRIPT JS (DIHUBUNGKAN KE BACKEND NODE.JS TERMUX) -->
     <script>
         const productsData = {
             mlbb: [
@@ -660,6 +665,7 @@
             });
         });
 
+        // --- BAGIAN INI YANG SUDAH TERHUBUNG KE BACKEND TERMUX ---
         document.getElementById('btn-finish-checkout').addEventListener('click', function() {
             if (!state.paymentMethod) {
                 alert('Silakan pilih metode pembayaran terlebih dahulu!');
@@ -675,8 +681,53 @@
                 payment_method: state.paymentMethod
             };
 
-            console.log("Mengirim data pesanan ke Backend:", orderData);
-            alert(`Pesanan ${orderData.product} diproses via ${orderData.payment_method}. (Tahap selanjutnya: Koneksi ke API Midtrans/Xendit)`);
+            const btnCheckout = document.getElementById('btn-finish-checkout');
+            btnCheckout.innerText = "Menghubungkan ke Sistem Pembayaran...";
+            btnCheckout.disabled = true;
+
+            // Memanggil API Backend Node.js di Termux
+            fetch('http://localhost:3000/api/create-transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnCheckout.innerText = "Proses Pembayaran";
+                btnCheckout.disabled = false;
+
+                if (data.success) {
+                    // Memunculkan Pop-up Pembayaran Midtrans secara otomatis
+                    window.snap.pay(data.token, {
+                        onSuccess: function(result){
+                            alert("Pembayaran Berhasil!");
+                            console.log(result);
+                            location.reload();
+                        },
+                        onPending: function(result){
+                            alert("Menunggu pembayaran diselesaikan.");
+                            console.log(result);
+                        },
+                        onError: function(result){
+                            alert("Pembayaran Gagal!");
+                            console.log(result);
+                        },
+                        onClose: function(){
+                            alert('Anda menutup jendela pembayaran.');
+                        }
+                    });
+                } else {
+                    alert("Gagal membuat transaksi: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btnCheckout.innerText = "Proses Pembayaran";
+                btnCheckout.disabled = false;
+                alert("Terjadi kesalahan koneksi ke server backend (Pastikan server Termux sudah aktif).");
+            });
         });
     </script>
 </body>
