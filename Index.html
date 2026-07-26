@@ -665,7 +665,7 @@
             });
         });
 
-        // KONEKSI KE BACKEND TERMUX VIA SERVEO TUNNEL
+        // KONEKSI KE BACKEND SERVEO TERBARU
         document.getElementById('btn-finish-checkout').addEventListener('click', function() {
             if (!state.paymentMethod) {
                 alert('Silakan pilih metode pembayaran terlebih dahulu!');
@@ -685,7 +685,7 @@
             btnCheckout.innerText = "Menghubungkan ke Sistem Pembayaran...";
             btnCheckout.disabled = true;
 
-            fetch('https://dc73351a87bd4015-111-94-10-115.serveousercontent.com/api/create-transaction', {
+            fetch('https://bfdafa42b0eb7272-111-94-10-115.serveousercontent.com/api/create-transaction', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
