@@ -58,6 +58,26 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #334155;
         }
+
+        /* Navigasi halaman: hanya satu bagian tampil pada satu waktu */
+        .page-view { display: none; }
+        .page-view.active-page {
+            display: block;
+            animation: pageEnter 0.35s ease both;
+        }
+        @keyframes pageEnter {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-link.active-nav {
+            color: #22d3ee;
+        }
+        #mobile-menu { display: none; }
+        #mobile-menu.open { display: block; }
+        @media (prefers-reduced-motion: reduce) {
+            .page-view.active-page { animation: none; }
+            html { scroll-behavior: auto !important; }
+        }
     </style>
 </head>
 <body class="bg-brand-dark text-slate-100 min-h-screen relative selection:bg-cyan-500 selection:text-black">
@@ -105,16 +125,23 @@
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-                <a href="#hero" class="hover:text-cyan-400 transition-colors">Beranda</a>
-                <a href="#story" class="hover:text-cyan-400 transition-colors">Story Perjalanan</a>
-                <a href="#gallery" class="hover:text-cyan-400 transition-colors">Galeri Foto</a>
-                <a href="#video" class="hover:text-cyan-400 transition-colors">Video Showcase</a>
+                <a href="#" data-page="hero" onclick="showPage('hero'); return false;" class="nav-link hover:text-cyan-400 transition-colors">Beranda</a>
+                <a href="#" data-page="story" onclick="showPage('story'); return false;" class="nav-link hover:text-cyan-400 transition-colors">Story Perjalanan</a>
+                <a href="#" data-page="gallery" onclick="showPage('gallery'); return false;" class="nav-link hover:text-cyan-400 transition-colors">Galeri Foto</a>
+                <a href="#" data-page="video" onclick="showPage('video'); return false;" class="nav-link hover:text-cyan-400 transition-colors">Video Showcase</a>
             </div>
+            <button id="mobile-menu-toggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false" onclick="toggleMobileMenu()" class="md:hidden ml-auto mr-3 w-10 h-10 rounded-lg border border-slate-700 text-slate-200 hover:text-cyan-400">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <div class="flex items-center">
-                <a href="#story" class="px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-semibold hover:bg-cyan-500/20 transition-all">
-                    Jelajahi Cerita
-                </a>
+                <button type="button" onclick="showPage('story')" class="px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-semibold hover:bg-cyan-500/20 transition-all">Jelajahi Cerita</button>
             </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden border-t border-slate-800 bg-brand-dark/95 px-6 py-3 space-y-1">
+            <button type="button" onclick="showPage('hero'); toggleMobileMenu(false)" class="block w-full text-left py-3 text-slate-300 hover:text-cyan-400">Beranda</button>
+            <button type="button" onclick="showPage('story'); toggleMobileMenu(false)" class="block w-full text-left py-3 text-slate-300 hover:text-cyan-400">Story Perjalanan</button>
+            <button type="button" onclick="showPage('gallery'); toggleMobileMenu(false)" class="block w-full text-left py-3 text-slate-300 hover:text-cyan-400">Galeri Foto</button>
+            <button type="button" onclick="showPage('video'); toggleMobileMenu(false)" class="block w-full text-left py-3 text-slate-300 hover:text-cyan-400">Video Showcase</button>
         </div>
     </nav>
 
@@ -122,7 +149,7 @@
     <main id="main-content" class="opacity-0 transition-opacity duration-1000">
 
         <!-- HERO SECTION -->
-        <section id="hero" class="min-h-screen pt-32 pb-20 flex items-center relative px-6">
+        <section id="hero" class="page-view active-page min-h-screen pt-32 pb-20 flex items-center relative px-6">
             <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-500/10 to-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
             
             <div class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
@@ -142,14 +169,14 @@
                     </p>
                     
                     <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-                        <a href="#story" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-cyan-500 text-brand-dark font-bold hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/25 flex items-center justify-center space-x-2">
+                        <button type="button" onclick="showPage('story')" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-cyan-500 text-brand-dark font-bold hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/25 flex items-center justify-center space-x-2">
                             <i class="fa-solid fa-book-open"></i>
-                            <span>BStory Perjalanan</span>
-                        </a>
-                        <a href="#gallery" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold transition-all flex items-center justify-center space-x-2">
+                            <span>Story Perjalanan</span>
+                        </button>
+                        <button type="button" onclick="showPage('gallery')" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-semibold transition-all flex items-center justify-center space-x-2">
                             <i class="fa-solid fa-images text-emerald-400"></i>
                             <span>Galeri Foto</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -190,7 +217,7 @@
         </section>
 
         <!-- STORY SECTION -->
-        <section id="story" class="py-24 bg-slate-900/40 border-y border-slate-800/80 relative">
+        <section id="story" class="page-view py-24 bg-slate-900/40 border-y border-slate-800/80 relative">
             <div class="max-w-5xl mx-auto px-6">
                 <div class="text-center max-w-2xl mx-auto mb-16">
                     <span class="text-cyan-400 text-xs font-mono tracking-wider uppercase bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
@@ -258,7 +285,7 @@
         </section>
 
         <!-- GALLERY SECTION -->
-        <section id="gallery" class="py-24 relative">
+        <section id="gallery" class="page-view py-24 relative">
             <div class="max-w-6xl mx-auto px-6">
                 <div class="text-center max-w-2xl mx-auto mb-16">
                     <span class="text-emerald-400 text-xs font-mono tracking-wider uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
@@ -367,7 +394,7 @@
         </section>
 
         <!-- VIDEO SECTION -->
-        <section id="video" class="py-24 bg-slate-900/40 border-t border-slate-800/80">
+        <section id="video" class="page-view py-24 bg-slate-900/40 border-t border-slate-800/80">
             <div class="max-w-5xl mx-auto px-6">
                 <div class="text-center max-w-2xl mx-auto mb-16">
                     <span class="text-cyan-400 text-xs font-mono tracking-wider uppercase bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
@@ -424,6 +451,39 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // Berpindah halaman tanpa melompat ke anchor/scroll bagian lain.
+        function showPage(pageId) {
+            const allowedPages = ['hero', 'story', 'gallery', 'video'];
+            if (!allowedPages.includes(pageId)) pageId = 'hero';
+
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.toggle('active-page', page.id === pageId);
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const active = link.dataset.page === pageId;
+                link.classList.toggle('active-nav', active);
+                if (active) link.setAttribute('aria-current', 'page');
+                else link.removeAttribute('aria-current');
+            });
+
+            // Selalu mulai dari bagian atas halaman yang dipilih.
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuToggle = document.getElementById('mobile-menu-toggle');
+            if (mobileMenu) mobileMenu.classList.remove('open');
+            if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function toggleMobileMenu(forceState) {
+            const menu = document.getElementById('mobile-menu');
+            const toggle = document.getElementById('mobile-menu-toggle');
+            if (!menu || !toggle) return;
+            const shouldOpen = typeof forceState === 'boolean' ? forceState : !menu.classList.contains('open');
+            menu.classList.toggle('open', shouldOpen);
+            toggle.setAttribute('aria-expanded', String(shouldOpen));
+        }
+
         function enterPortfolio() {
             const gate = document.getElementById('welcome-gate');
             const nav = document.getElementById('main-nav');
@@ -446,7 +506,7 @@
             content.classList.remove('opacity-0');
             content.style.opacity = '1';
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showPage('hero');
         }
 
         function filterGallery(category) {
@@ -482,6 +542,10 @@
                 }
             });
         }
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') toggleMobileMenu(false);
+        });
     </script>
 </body>
 </html>
