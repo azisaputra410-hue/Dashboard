@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STORY PERJALANAN</title>
+    <title>Muhammad Aziz Saputra</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -59,12 +59,11 @@
             background: #334155;
         }
 
-        /* Navigasi halaman: hanya satu bagian tampil pada satu waktu */
-        .page-view { display: none; }
-        .page-view.active-page {
-            display: block;
-            animation: pageEnter 0.35s ease both;
-        }
+        /* Navigasi halaman: satu halaman saja yang terlihat pada satu waktu.
+           Selector dibuat lebih spesifik agar tidak bentrok dengan utility Tailwind. */
+        main#main-content section.page-view { display: none; }
+        main#main-content section.page-view.active-page { display: block; animation: pageEnter 0.35s ease both; }
+        main#main-content section#hero.page-view.active-page { display: flex; }
         @keyframes pageEnter {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
@@ -456,8 +455,13 @@
             const allowedPages = ['hero', 'story', 'gallery', 'video'];
             if (!allowedPages.includes(pageId)) pageId = 'hero';
 
-            document.querySelectorAll('.page-view').forEach(page => {
-                page.classList.toggle('active-page', page.id === pageId);
+            // Atur display secara langsung supaya halaman lain benar-benar hilang,
+            // bukan hanya dilewati dengan scroll. Hero memakai flex untuk layout-nya.
+            document.querySelectorAll('main#main-content section.page-view').forEach(page => {
+                const isSelected = page.id === pageId;
+                page.classList.toggle('active-page', isSelected);
+                page.style.display = isSelected ? (page.id === 'hero' ? 'flex' : 'block') : 'none';
+                page.setAttribute('aria-hidden', String(!isSelected));
             });
 
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -474,6 +478,11 @@
             if (mobileMenu) mobileMenu.classList.remove('open');
             if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
         }
+
+        // Pastikan hanya Beranda yang terlihat saat website pertama kali dibuka.
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('hero');
+        });
 
         function toggleMobileMenu(forceState) {
             const menu = document.getElementById('mobile-menu');
