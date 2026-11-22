@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Lightning Storm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #03030a;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+            user-select: none;
+        }
+
+        /* Canvas Full Screen */
+        #stormCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* UI Overlay (Frontend Minimalis & Responsif) */
+        .hud-top {
+            position: fixed;
+            top: 20px;
+            left: 24px;
+            z-index: 10;
+            pointer-events: none;
+            text-shadow: 0 0 12px rgba(100, 180, 255, 0.7);
+        }
+
+        .hud-top h1 {
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #00f2fe, #ff007f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hud-top p {
+            font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+            color: rgba(200, 215, 255, 0.75);
+            margin-top: 4px;
+        }
+
+        /* Panel Kontrol Bawah */
+        .controls {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+            background: rgba(10, 12, 28, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(120, 160, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            width: max-content;
+            max-width: 92vw;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e0ecff;
+            border: 1px solid rgba(130, 180, 255, 0.35);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        button:hover, button:active {
+            background: rgba(0, 242, 254, 0.25);
+            border-color: #00f2fe;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            border-color: transparent;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hud-top">
+        <h1>Neon Lightning Storm</h1>
+        <p id="phaseLabel">Fase: Gather (Awan Berkumpul)</p>
+    </div>
+
+    <canvas id="stormCanvas"></canvas>
+
+    <div class="controls">
+        <button id="btnReplay">↻ Putar Ulang</button>
+        <button id="btnStrike">⚡ Picu Petir</button>
+        <button id="btnLoop" class="active">∞ Loop: ON</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('stormCanvas');
+        const ctx = canvas.getContext('2d');
+        const phaseLabel = document.getElementById('phaseLabel');
+
+        // Resolusi virtual asli dari kode Python (780 x 480)
+        const VIRT_W = 780;
+        const VIRT_H = 480;
+        let scaleX = 1;
+        let scaleY = 1;
+
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            scaleX = canvas.width / VIRT_W;
+            scaleY = canvas.height / VIRT_H;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Konversi koordinat Turtle (tengah 0,0, Y ke atas) ke Canvas HTML
+        function toScreenX(tx) {
+            return (tx + VIRT_W / 2) * scaleX;
+        }
+        function toScreenY(ty) {
+            return (VIRT_H / 2 - ty) * scaleY;
+        }
+
+        // Konstanta dari kode Python
+        const HUES = [0.52, 0.88, 0.72, 0.55];
+        const STRIKES = [
+            [110, 1], [214, 2], [316, 3], [420, 4],
+            [452, 5], [488, 6], [530, 7], [566, 8]
+        ];
+        const SHEETS = [
+            [30, 0.25], [58, 0.35], [170, 0.3], [270, 0.3]
+        ];
+        const SPANS = [
+            [0, 90], [90, 192], [192, 294], [294, 402], [402, 618]
+        ];
+
+        // PRNG Seeded (meniru random.Random(seed) di Python)
+        class SeededRandom {
+            constructor(seed) {
+                this.seed = seed % 2147483647;
+                if (this.seed <= 0) this.seed += 2147483646;
+            }
+            next() {
+                this.seed = (this.seed * 16807) % 2147483647;
+                return (this.seed - 1) / 2147483646;
+            }
+            uniform(min, max) {
+                return min + this.next() * (max - min);
+            }
+            randint(min, max) {
+                return Math.floor(this.uniform(min, max + 1));
+            }
+            sample(arr, k) {
+                const copy = [...arr];
+                const res = [];
+                for (let i = 0; i < k && copy.length > 0; i++) {
+                    const idx = Math.floor(this.next() * copy.length);
+                    res.push(copy.splice(idx, 1)[0]);
+                }
+                return res;
+            }
+        }
+
+        // Fungsi Matematika & Warna
+        function clamp(x) {
+            return Math.max(0.0, Math.min(1.0, x));
+        }
+
+        function mix(a, b, k) {
+            return [
+                a[0] + (b[0] - a[0]) * k,
+                a[1] + (b[1] - a[1]) * k,
+                a[2] + (b[2] - a[2]) * k
+            ];
+        }
+
+        function rgbToCss(rgb, alpha = 1) {
+            const r = Math.round(clamp(rgb[0]) * 255);
+            const g = Math.round(clamp(rgb[1]) * 255);
+            const b = Math.round(clamp(rgb[2]) * 255);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function hsvToRgb(h, s = 0.85, v = 1.0) {
+            h = ((h % 1) + 1) % 1;
+            const i = Math.floor(h * 6);
+            const f = h * 6 - i;
+            const p = v * (1 - s);
+            const q = v * (1 - f * s);
+            const t = v * (1 - (1 - f) * s);
+            switch (i % 6) {
+                case 0: return [v, t, p];
+                case 1: return [q, v, p];
+                case 2: return [p, v, t];
+                case 3: return [p, q, v];
+                case 4: return [t, p, v];
+                case 5: return [v, p, q];
+            }
+        }
+
+        function neon(h, s = 0.85, v = 1.0) {
+            return hsvToRgb(h, s, v);
+        }
+
+        function stroke(pts, color, width) {
+            if (!pts || pts.length < 2) return;
+            ctx.beginPath();
+            ctx.strokeStyle = rgbToCss(color);
+            ctx.lineWidth = width * Math.min(scaleX, scaleY);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.moveTo(toScreenX(pts[0][0]), toScreenY(pts[0][1]));
+            for (let i = 1; i < pts.length; i++) {
+                ctx.lineTo(toScreenX(pts[i][0]), toScreenY(pts[i][1]));
+            }
+            ctx.stroke();
+        }
+
+        // Algoritma Fraktal Petir (jag)
+        function jag(p, q, rng, depth, spread) {
+            if (depth === 0) return [p, q];
+            const dx = rng.uniform(-spread, spread);
+            const dy = rng.uniform(-spread, spread) / 3;
+            const m = [(p[0] + q[0]) / 2 + dx, (p[1] + q[1]) / 2 + dy];
+            const left = jag(p, m, rng, depth - 1, spread / 2);
+            const right = jag(m, q, rng, depth - 1, spread / 2);
+            return left.slice(0, -1).concat(right);
+        }
+
+        function makeBolt(frame, seed) {
+            const rng = new SeededRandom(seed * 31);
+            const x0 = rng.uniform(-250, 250);
+            const x1 = x0 + rng.uniform(-100, 100);
+            const main = jag([x0, 175], [x1, -150], rng, 5, 60);
+            const forks = [];
+            const indices = [];
+            for (let idx = 4; idx < main.length - 4; idx++) indices.push(idx);
+            
+            for (const k of rng.sample(indices, 5)) {
+                const p = main[k];
+                const end = [
+                    p[0] + rng.uniform(-130, 130),
+                    p[1] - rng.uniform(50, 120)
+                ];
+                forks.push([k, jag(p, end, rng, 3, 24)]);
+            }
+            return { frame, hue: HUES[seed % 4], main, forks };
+        }
+
+        let BOLTS = STRIKES.map(([f, s]) => makeBolt(f, s));
+        let customSheets = [...SHEETS];
+
+        function glowAt(age) {
+            if (age < 0) return 0;
+            if (age < 0.15) return 0.15 * age / 0.15;
+            const a = age - 0.15;
+            let f = Math.exp(-a * 7);
+            f += 0.6 * Math.exp(-Math.pow((a - 0.2) * 14, 2));
+            return Math.min(1.0, f);
+        }
+
+        // Lapisan 1: Langit Gradien Dinamis
+        function drawSky(fl) {
+            const lit = [0.55, 0.6, 0.95];
+            const top = mix([0.01, 0.01, 0.05], lit, fl * 0.6);
+            const low = mix([0.10, 0.05, 0.20], [0.85, 0.85, 1.0], fl * 0.7);
+
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, rgbToCss(top));
+            grad.addColorStop(1, rgbToCss(low));
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Lapisan 2: Awan Badai Bergerak
+        function drawClouds(tm, fl, build) {
+            const rng = new SeededRandom(3);
+            const count = Math.floor(320 * build);
+            const radiusScale = Math.max(scaleX, scaleY);
+
+            for (let i = 0; i < count; i++) {
+                let x = rng.uniform(-430, 430);
+                x += 14 * Math.sin(tm * 0.5 + i);
+                const y = rng.uniform(125, 265);
+                const v = rng.uniform(0.04, 0.13);
+                const dark = [v * 0.8, v * 0.7, v * 1.6];
+                const col = mix(dark, [0.62, 0.66, 0.95], fl * 0.65);
+                const dotSize = rng.uniform(50, 100);
+
+                ctx.beginPath();
+                ctx.fillStyle = rgbToCss(col, 0.85);
+                ctx.arc(toScreenX(x), toScreenY(y), (dotSize / 2) * radiusScale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Lapisan 3: Siluet Gedung Kota & Lampu Jendela
+        function drawCity(fl) {
+            const rng = new SeededRandom(8);
+            let x = -390;
+            while (x < 390) {
+                const w = rng.randint(30, 60);
+                const h = rng.randint(30, 105);
+                const lit = [0.25, 0.28, 0.45];
+                const col = mix([0.01, 0.01, 0.03], lit, fl * 0.5);
+
+                // Badan gedung
+                ctx.fillStyle = rgbToCss(col);
+                ctx.fillRect(
+                    toScreenX(x),
+                    toScreenY(-240 + h),
+                    w * scaleX + 1,
+                    h * scaleY + 1
+                );
+
+                // Jendela menyala
+                const winCount = Math.floor(w / 10);
+                ctx.fillStyle = rgbToCss([1, 0.8, 0.45]);
+                for (let j = 0; j < winCount; j++) {
+                    const wx = x + rng.randint(3, w - 3);
+                    const wy = -232 + rng.randint(6, h - 6);
+                    ctx.beginPath();
+                    ctx.arc(toScreenX(wx), toScreenY(wy), 1.8 * Math.min(scaleX, scaleY), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                x += w;
+            }
+        }
+
+        // Lapisan 4: Hujan Miring
+        function drawRain(tm, fl, build) {
+            const col = mix([0.25, 0.3, 0.5], [0.8, 0.85, 1.0], fl);
+            const count = Math.floor(140 * build);
+            for (let i = 0; i < count; i++) {
+                const x = ((i * 61) % 820) - 410;
+                const y = 250 - ((tm * 460 + i * 47) % 500);
+                stroke([[x, y], [x - 5, y - 16]], col, 1.2);
+            }
+        }
+
+        // Lapisan 5: Petir Neon & Percikan Tanah
+        function drawBolt(b, i) {
+            const age = (i - b.frame) / 30;
+            if (age < 0 || age > 1.3) return;
+
+            const f = clamp(age / 0.16);
+            const fade = Math.pow(clamp(1 - (age - 0.16) / 1.1), 1.5);
+            const n = Math.floor(f * (b.main.length - 1)) + 1;
+
+            const outer = neon(b.hue, 0.9, 0.35 * fade);
+            const mid = neon(b.hue, 0.6, 0.25 + 0.75 * fade);
+            let core = mix(neon(b.hue, 0.25, 1), [1, 1, 1], 0.5);
+            core = mix([0, 0, 0], core, 0.3 + 0.7 * fade);
+
+            const layers = [
+                [22, outer],
+                [10, mid],
+                [4, core]
+            ];
+
+            for (const [width, col] of layers) {
+                stroke(b.main.slice(0, n), col, width);
+                for (const [k, fork] of b.forks) {
+                    if (k < n) {
+                        stroke(fork, col, width * 0.55);
+                    }
+                }
+            }
+
+            // Percikan cahaya saat petir menyentuh bawah
+            if (f >= 1 && age < 0.6) {
+                const [x, y] = b.main[b.main.length - 1];
+                for (let j = 0; j < 12; j++) {
+                    const a = (6.283 * j) / 12;
+                    const r = 10 + 90 * (age - 0.16);
+                    const ex = x + r * Math.cos(a);
+                    const end = [ex, y + (r * Math.sin(a)) / 2];
+                    stroke([[x, y], end], neon(b.hue, 0.3, fade), 1.5);
+                }
+            }
+        }
+
+        // State Animasi & Kontrol
+        let currentFrame = 0;
+        let isLooping = true;
+        let manualSeed = 100;
+        let lastTime = 0;
+        const FPS = 30;
+        const FRAME_INTERVAL = 1000 / FPS;
+
+        function updatePhaseLabel(frame) {
+            if (frame < SPANS[0][1]) phaseLabel.textContent = "Fase 1: Gather (Awan Menggelap)";
+            else if (frame < SPANS[1][1]) phaseLabel.textContent = "Fase 2: First Strike (Sambaran Pertama)";
+            else if (frame < SPANS[2][1]) phaseLabel.textContent = "Fase 3: Second Strike (Badai Meningkat)";
+            else if (frame < SPANS[3][1]) phaseLabel.textContent = "Fase 4: Third Strike (Kilat Beruntun)";
+            else phaseLabel.textContent = "Fase 5: Finale (Puncak Badai Neon)";
+        }
+
+        function renderFrame(i) {
+            const tm = i / 30;
+            const build = Math.min(1.0, i / 60);
+            let fl = 0.0;
+
+            for (const [f0, amp] of customSheets) {
+                fl = Math.max(fl, amp * glowAt((i - f0) / 30));
+            }
+            for (const b of BOLTS) {
+                fl = Math.max(fl, 0.55 * glowAt((i - b.frame) / 30));
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSky(fl);
+            drawClouds(tm, fl, build);
+            drawCity(fl);
+            drawRain(tm, fl, build);
+            for (const b of BOLTS) {
+                drawBolt(b, i);
+            }
+            updatePhaseLabel(i);
+        }
+
+        function animate(timestamp) {
+            if (timestamp - lastTime >= FRAME_INTERVAL) {
+                lastTime = timestamp;
+                renderFrame(currentFrame);
+                currentFrame++;
+
+                if (currentFrame >= 618) {
+                    if (isLooping) {
+                        currentFrame = 0;
+                        BOLTS = STRIKES.map(([f, s]) => makeBolt(f, s));
+                        customSheets = [...SHEETS];
+                    } else {
+                        currentFrame = 617;
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // Event Tombol Interaktif
+        document.getElementById('btnReplay').addEventListener('click', () => {
+            currentFrame = 0;
+            BOLTS = STRIKES.map(([f, s]) => makeBolt(f, s));
+            customSheets = [...SHEETS];
+        });
+
+        document.getElementById('btnStrike').addEventListener('click', () => {
+            manualSeed++;
+            BOLTS.push(makeBolt(currentFrame, manualSeed));
+            customSheets.push([currentFrame, 0.4]);
+        });
+
+        const btnLoop = document.getElementById('btnLoop');
+        btnLoop.addEventListener('click', () => {
+            isLooping = !isLooping;
+            btnLoop.textContent = isLooping ? "∞ Loop: ON" : "∞ Loop: OFF";
+            btnLoop.classList.toggle('active', isLooping);
+        });
+
+        // Ketuk layar mana saja untuk memicu petir tambahan
+        canvas.addEventListener('pointerdown', () => {
+            manualSeed++;
+            BOLTS.push(makeBolt(currentFrame, manualSeed));
+            customSheets.push([currentFrame, 0.35]);
+        });
+
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
