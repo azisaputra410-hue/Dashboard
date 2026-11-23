@@ -123,7 +123,7 @@
     .corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
 
     /* ==========================================================================
-       3. STANDBY SCREEN (LISTENING FOR "JARVIS ONLINE")
+       3. STANDBY SCREEN (LISTENING FOR 2 CLAPS)
        ========================================================================== */
     #standbyScreen {
       position: fixed;
@@ -925,35 +925,35 @@
   <div class="corner-frame corner-br"></div>
 
   <!-- ========================================================================
-       SCREEN 1: STANDBY AUTO-LISTENING ("JARVIS ONLINE")
+       SCREEN 1: STANDBY LISTENING FOR 2 CLAPS
        ======================================================================== -->
   <section id="standbyScreen">
     <div class="standby-top-tag">
       <span id="micStatusDot" class="pulse-dot"></span>
-      <span id="micStatusLabel">INITIALIZING NEURAL AUDIO SENSOR...</span>
+      <span id="micStatusLabel">INITIALIZING ACOUSTIC CLAP SENSOR...</span>
     </div>
 
     <div class="reactor-standby-wrap">
       <div class="ring ring-1"></div>
       <div class="ring ring-2"></div>
       <div class="ring ring-3"></div>
-      <button id="manualWakeBtn" class="reactor-core-btn" title="Klik jika browser menahan auto-mic">
+      <button id="manualWakeBtn" class="reactor-core-btn" title="Klik untuk aktifkan mic / masuk dashboard">
         <span class="reactor-core-title">JARVIS</span>
         <span class="reactor-core-sub">STANDBY</span>
       </button>
     </div>
 
-    <h2 class="standby-headline">VOICE WAKE PROTOCOL ACTIVE</h2>
+    <h2 class="standby-headline">DOUBLE-CLAP WAKE PROTOCOL</h2>
     <p class="standby-sub">
-      Sistem mendengarkan secara otomatis. Ucapkan kata kunci
-      <span class="wake-phrase-highlight">"Jarvis online"</span>
-      untuk masuk ke Tactical HUD Dashboard.
+      Sensor suara mendengarkan tepukan tangan. Lakukan
+      <span class="wake-phrase-highlight">2x Tepuk Tangan</span>
+      untuk langsung masuk ke JARVIS HUD Dashboard.
     </p>
 
     <canvas id="standbyWaveCanvas" width="340" height="54"></canvas>
 
     <div class="live-heard-box" id="liveHeardBox">
-      Menunggu suara Anda...
+      Menunggu 2x tepukan tangan...
     </div>
 
     <div class="standby-actions">
@@ -964,7 +964,7 @@
 
   <!-- ========================================================================
        SCREEN 2: BOOT SEQUENCE TRANSITION
-       ======================================================================== -->
+       ========================================================================== -->
   <section id="bootOverlay">
     <div class="boot-box">
       <div class="boot-title">J.A.R.V.I.S. // TACTICAL OS BOOT SEQUENCE</div>
@@ -977,7 +977,7 @@
 
   <!-- ========================================================================
        SCREEN 3: MAIN JARVIS TACTICAL DASHBOARD
-       ======================================================================== -->
+       ========================================================================== -->
   <main id="jarvisDashboard">
     <header class="topbar">
       <div class="brand-cluster">
@@ -1046,11 +1046,11 @@
 
           <div class="metric-row">
             <div class="metric-head">
-              <span>VOICE RECOGNITION CONFIDENCE</span>
-              <strong id="confVal">96%</strong>
+              <span>CLAP SENSOR SENSITIVITY</span>
+              <strong id="confVal">88%</strong>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" id="confBar" style="width: 96%;"></div>
+              <div class="progress-fill" id="confBar" style="width: 88%;"></div>
             </div>
           </div>
 
@@ -1065,7 +1065,7 @@
             </div>
             <div class="diag-card">
               <span>MIC ENGINE</span>
-              <b id="hwMicState">ACTIVE</b>
+              <b id="hwMicState">STANDBY</b>
             </div>
             <div class="diag-card">
               <span>SECURITY</span>
@@ -1088,7 +1088,7 @@
         <section class="panel center-core-panel">
           <div class="panel-header" style="width: 100%;">
             <span class="panel-title">J.A.R.V.I.S. Neural Core</span>
-            <span class="panel-badge" id="voiceLoopBadge">VOICE LISTENING</span>
+            <span class="panel-badge" id="voiceLoopBadge">CORE ACTIVE</span>
           </div>
 
           <div class="core-canvas-wrap">
@@ -1105,10 +1105,10 @@
               <span id="speakingIndicator">IDLE</span>
             </div>
             <div class="jarvis-reply-text" id="jarvisReplyText">
-              Siap, ada yang lagi dikerjain atau mau dicek? Tinggal bilang atau ketik aja.
+              Siap, ada yang lagi dikerjain atau mau dicek? Tinggal ketik atau klik menu aja.
             </div>
             <div class="user-transcript-line" id="dashTranscriptLine">
-              Lagi nyimak suara kamu...
+              Mode 2 tepukan aktif di awal. Tekan "Standby" kalau mau tes tepuk tangan lagi.
             </div>
           </div>
 
@@ -1117,7 +1117,7 @@
               type="text"
               id="commandInput"
               class="command-input"
-              placeholder="Ngomong atau ketik aja, misal: jam berapa, tema emas, catat..."
+              placeholder="Ketik perintah (misal: jam berapa, tema emas, catat, hitung 12 kali 3)..."
               autocomplete="off"
             />
             <button type="submit" class="hud-btn">Kirim</button>
@@ -1195,10 +1195,7 @@
 
   <script>
     /* ==========================================================================
-       JARVIS MARK-LXXXV CORE ENGINE
-       - Auto-init Continuous SpeechRecognition ("Jarvis online" + variasi)
-       - Safe Audio Visualizer (tanpa bentrok dengan SpeechRecognition)
-       - Respon natural ala manusia + dukungan localStorage
+       JARVIS MARK-LXXXV CORE ENGINE (2-CLAP WAKE + FULL DASHBOARD)
        ========================================================================== */
 
     (function () {
@@ -1259,21 +1256,26 @@
       const calcDisplay = document.getElementById("calcDisplay");
       const calcGrid = document.getElementById("calcGrid");
 
-      // ---------- SYSTEM STATE ----------
+      // ---------- SYSTEM & 2-CLAP STATE ----------
       let currentMode = "STANDBY"; // STANDBY | BOOTING | DASHBOARD
       let audioCtx = null;
       let analyser = null;
       let freqData = null;
       let timeData = null;
       let micStreamReady = false;
+      let micLoopRunning = false;
 
-      let recognition = null;
-      let recognitionActive = false;
-      let shouldKeepListening = true;
+      // Parameter deteksi 2x tepuk tangan
+      const CLAP_THRESHOLD = 0.36;      // naikkan jika sering ke-trigger suara sekitar, turunkan jika kurang peka
+      const CLAP_COOLDOWN_MS = 230;     // cegah pantulan 1 tepukan keitung ganda
+      const DOUBLE_CLAP_MAX_MS = 1250;  // jeda maksimal antara tepuk ke-1 dan ke-2
+
+      let clapCount = 0;
+      let lastClapTimestamp = 0;
+
       let isSpeaking = false;
       let coreRotation = 0;
       let audioEnergy = 0;
-      let lastWakeTriggerTime = 0;
 
       const STORAGE_KEY_MISSIONS = "jarvis_hud_missions_v1";
       const STORAGE_KEY_THEME = "jarvis_hud_theme_v1";
@@ -1366,177 +1368,99 @@
         }
       }
 
-      // ---------- OPTIONAL AUDIO VISUALIZER STREAM ----------
-      async function initAudioVisualizerStream() {
-        if (micStreamReady) return true;
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true
-            }
-          });
+      // ---------- 2-CLAP MICROPHONE SENSOR ----------
+      function handleClapHit(nowMs) {
+        if (currentMode !== "STANDBY") return;
+        if (nowMs - lastClapTimestamp < CLAP_COOLDOWN_MS) return;
 
-          if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (nowMs - lastClapTimestamp <= DOUBLE_CLAP_MAX_MS) {
+          clapCount += 1;
+        } else {
+          clapCount = 1;
+        }
+        lastClapTimestamp = nowMs;
+
+        if (clapCount === 1) {
+          liveHeardBox.textContent = "Tepukan ke-1 kedetek... tepuk 1x lagi.";
+          playHudBeep(660, 0.05, "sine", 0.05);
+        } else if (clapCount >= 2) {
+          clapCount = 0;
+          lastClapTimestamp = 0;
+          liveHeardBox.textContent = "2x Tepukan kedetek! Masuk ke JARVIS...";
+          triggerBootToDashboard();
+        }
+      }
+
+      function startClapSampleLoop() {
+        if (micLoopRunning) return;
+        micLoopRunning = true;
+
+        function pollMic() {
+          if (analyser && timeData) {
+            analyser.getByteTimeDomainData(timeData);
+            let peak = 0;
+            for (let i = 0; i < timeData.length; i++) {
+              const norm = Math.abs(timeData[i] - 128) / 128;
+              if (norm > peak) peak = norm;
+            }
+            if (peak >= CLAP_THRESHOLD) {
+              handleClapHit(performance.now());
+            }
           }
-          if (audioCtx.state === "suspended") {
+          requestAnimationFrame(pollMic);
+        }
+
+        requestAnimationFrame(pollMic);
+      }
+
+      async function initClapMicrophone() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          micStatusDot.classList.add("warn");
+          micStatusLabel.textContent = "BROWSER TIDAK MENDUKUNG AKSES MIKROFON";
+          liveHeardBox.textContent = "Gunakan tombol 'Masuk Dashboard Manual' di bawah.";
+          return false;
+        }
+
+        try {
+          if (!micStreamReady) {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: {
+                echoCancellation: false,
+                noiseSuppression: false, // penting: jangan matikan transient tepukan tangan
+                autoGainControl: false
+              }
+            });
+
+            if (!audioCtx) {
+              audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === "suspended") {
+              await audioCtx.resume();
+            }
+
+            const source = audioCtx.createMediaStreamSource(stream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            freqData = new Uint8Array(analyser.frequencyBinCount);
+            timeData = new Uint8Array(analyser.fftSize);
+            source.connect(analyser);
+            micStreamReady = true;
+          } else if (audioCtx && audioCtx.state === "suspended") {
             await audioCtx.resume();
           }
 
-          const source = audioCtx.createMediaStreamSource(stream);
-          analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 128;
-          freqData = new Uint8Array(analyser.frequencyBinCount);
-          timeData = new Uint8Array(analyser.fftSize);
-          source.connect(analyser);
-
-          micStreamReady = true;
-          hwMicState.textContent = "STREAMING";
+          micStatusDot.classList.remove("warn");
+          micStatusLabel.textContent = "MIC STANDBY — MENUNGGU 2X TEPUK TANGAN";
+          liveHeardBox.textContent = "Mic aktif. Silakan tepuk tangan 2 kali.";
+          hwMicState.textContent = "CLAP READY";
+          startClapSampleLoop();
           return true;
         } catch (err) {
-          hwMicState.textContent = "VOICE ONLY";
-          return false;
-        }
-      }
-
-      // ---------- CONTINUOUS SPEECH RECOGNITION ----------
-      function startRecognitionSafely() {
-        if (!recognition || recognitionActive || !shouldKeepListening) return;
-        try {
-          recognition.start();
-        } catch (e) {}
-      }
-
-      function initSpeechRecognition() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
           micStatusDot.classList.add("warn");
-          micStatusLabel.textContent = "GUNAKAN CHROME ATAU EDGE UNTUK DETEKSI SUARA";
-          liveHeardBox.textContent = "Browser ini belum mendukung pengenalan suara otomatis.";
-          return;
-        }
-
-        if (recognition) {
-          shouldKeepListening = false;
-          try { recognition.abort(); } catch (e) {}
-        }
-
-        shouldKeepListening = true;
-        recognition = new SpeechRecognition();
-        recognition.lang = "id-ID";
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 3;
-
-        recognition.onstart = () => {
-          recognitionActive = true;
-          micStatusDot.classList.remove("warn");
-          micStatusLabel.textContent = "MIC STANDBY — MENUNGGU 'JARVIS ONLINE'";
-          voiceLoopBadge.textContent = "VOICE LISTENING";
-          hwMicState.textContent = micStreamReady ? "STREAMING" : "LISTENING";
-        };
-
-        recognition.onresult = (event) => {
-          let interimTranscript = "";
-          let finalTranscript = "";
-          const candidatePhrases = [];
-
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            const res = event.results[i];
-            for (let a = 0; a < res.length; a++) {
-              const altText = (res[a].transcript || "").trim();
-              if (altText) candidatePhrases.push(altText);
-            }
-            const mainText = (res[0].transcript || "").trim();
-            if (res.isFinal) {
-              finalTranscript += " " + mainText;
-              if (res[0].confidence) {
-                const pct = Math.min(99, Math.max(75, Math.round(res[0].confidence * 100)));
-                confVal.textContent = `${pct}%`;
-                confBar.style.width = `${pct}%`;
-              }
-            } else {
-              interimTranscript += " " + mainText;
-            }
-          }
-
-          const liveText = (finalTranscript || interimTranscript).trim();
-          if (!liveText && candidatePhrases.length === 0) return;
-
-          if (currentMode === "STANDBY") {
-            liveHeardBox.textContent = `Kedengeran: "${liveText || candidatePhrases[0]}"`;
-            checkWakePhrase(candidatePhrases.concat(liveText));
-          } else if (currentMode === "DASHBOARD") {
-            dashTranscriptLine.textContent = `Kamu bilang: "${liveText || candidatePhrases[0]}"`;
-            if (finalTranscript.trim() && !isSpeaking) {
-              processJarvisCommand(finalTranscript.trim());
-            }
-          }
-        };
-
-        recognition.onerror = (event) => {
-          recognitionActive = false;
-          if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-            micStatusDot.classList.add("warn");
-            micStatusLabel.textContent = "IZIN MIC BELUM AKTIF — KLIK TOMBOL DI BAWAH";
-            liveHeardBox.textContent = "Klik 'Aktifkan / Reset Mic' atau tekan inti JARVIS.";
-          }
-        };
-
-        recognition.onend = () => {
-          recognitionActive = false;
-          if (!shouldKeepListening) return;
-          setTimeout(() => {
-            startRecognitionSafely();
-          }, 220);
-        };
-
-        startRecognitionSafely();
-      }
-
-      // ---------- FLEXIBLE WAKE WORD DETECTOR ("JARVIS ONLINE" & VARIASI) ----------
-      function normalizeSpoken(text) {
-        return String(text || "")
-          .toLowerCase()
-          .replace(/[^a-z0-9\s]/g, " ")
-          .replace(/\s+/g, " ")
-          .trim();
-      }
-
-      function isWakeMatch(phrase) {
-        const clean = normalizeSpoken(phrase);
-        if (!clean) return false;
-
-        // Harus ada bunyi mirip "jarvis" (atau "jarwis" / "jarfis" / "jarvis")
-        const hasJarvis = /\b(jarvis|jarwis|jarfis|jarvisz|jarvisss)\b/.test(clean) ||
-          clean.includes("jarvi") ||
-          clean.includes("jarwis");
-
-        if (!hasJarvis) return false;
-
-        // Cocokkan berbagai pelafalan "online" / "on line" / "onlen" / "on lain" / "unlen" / "aktif"
-        const hasOnlineVariant =
-          /\b(online|onlen|onlain|on lain|unlen|unlain|on line|aktif|active|nyala|bangun|masuk)\b/.test(clean) ||
-          /\bon\s*l[aei]n/.test(clean) ||
-          /\bjarvis\s+on\b/.test(clean);
-
-        return hasOnlineVariant;
-      }
-
-      function checkWakePhrase(phrasesInput) {
-        if (currentMode !== "STANDBY") return;
-        const now = Date.now();
-        if (now - lastWakeTriggerTime < 1500) return;
-
-        const list = Array.isArray(phrasesInput) ? phrasesInput : [phrasesInput];
-        const matched = list.some((p) => isWakeMatch(p));
-
-        if (matched) {
-          lastWakeTriggerTime = now;
-          triggerBootToDashboard();
+          micStatusLabel.textContent = "IZIN MIC MENUNGGU KLIK — TEKAN AKTIFKAN MIC";
+          liveHeardBox.textContent = "Klik 'Aktifkan / Reset Mic' atau inti JARVIS untuk menyalakan sensor.";
+          hwMicState.textContent = "STANDBY";
+          return false;
         }
       }
 
@@ -1544,6 +1468,8 @@
       function triggerBootToDashboard() {
         if (currentMode !== "STANDBY") return;
         currentMode = "BOOTING";
+        clapCount = 0;
+        lastClapTimestamp = 0;
         playActivationChord();
 
         standbyScreen.classList.add("hidden");
@@ -1552,10 +1478,10 @@
         bootBarFill.style.width = "0%";
 
         const sequence = [
-          "> WAKE SIGNAL DETECTED: 'JARVIS ONLINE'",
+          "> DOUBLE-CLAP ACOUSTIC SIGNAL CONFIRMED",
           "> INITIALIZING MARK-LXXXV TACTICAL HUD KERNEL...",
-          "> ESTABLISHING NEURAL AUDIO & TELEMETRY CHANNELS...",
-          "> LOADING MISSION DATABASE & DIAGNOSTIC MODULES...",
+          "> ESTABLISHING TELEMETRY & DIAGNOSTIC CHANNELS...",
+          "> LOADING MISSION DATABASE & CALCULATOR MODULES...",
           "> ALL SYSTEMS NOMINAL. WELCOME BACK."
         ];
 
@@ -1573,18 +1499,20 @@
           bootOverlay.classList.remove("active");
           jarvisDashboard.classList.add("active");
           currentMode = "DASHBOARD";
-          addLog("SYSTEM", "Dashboard aktif.");
+          addLog("SYSTEM", "Dashboard aktif setelah 2x tepukan.");
           jarvisSpeak("Oke, udah masuk. Mau cek apa atau ada yang mau dikerjain?");
         }, sequence.length * 320 + 350);
       }
 
       function returnToStandby() {
         currentMode = "STANDBY";
+        clapCount = 0;
+        lastClapTimestamp = 0;
         jarvisDashboard.classList.remove("active");
         standbyScreen.classList.remove("hidden");
-        liveHeardBox.textContent = "Lagi nunggu di standby... bilang 'Jarvis online' aja.";
+        liveHeardBox.textContent = "Lagi nunggu di standby... tepuk tangan 2 kali aja.";
         playHudBeep(420, 0.14, "sine", 0.08);
-        startRecognitionSafely();
+        initClapMicrophone();
       }
 
       // ---------- JARVIS COMMAND PROCESSOR (GAYA BAHASA NATURAL) ----------
@@ -1593,13 +1521,6 @@
         const lower = cmd.toLowerCase();
         addLog("USER", cmd);
 
-        // Kalau di dashboard user nyebut "jarvis online" lagi
-        if (isWakeMatch(lower)) {
-          jarvisSpeak("Udah aktif nih, gimana?");
-          return;
-        }
-
-        // 1. Cek waktu / jam
         if (lower.includes("jam berapa") || lower.includes("waktu sekarang") || lower.includes("cek waktu")) {
           const now = new Date();
           const jam = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
@@ -1607,7 +1528,6 @@
           return;
         }
 
-        // 2. Cek tanggal
         if (lower.includes("tanggal berapa") || lower.includes("hari apa")) {
           const now = new Date();
           const tgl = now.toLocaleDateString("id-ID", {
@@ -1620,7 +1540,6 @@
           return;
         }
 
-        // 3. Ganti tema HUD
         if (lower.includes("tema emas") || lower.includes("tema gold") || lower.includes("warna emas")) {
           applyTheme("gold");
           jarvisSpeak("Oke, gua ubah ke warna emas.");
@@ -1637,7 +1556,6 @@
           return;
         }
 
-        // 4. Tambah catatan / agenda
         if (lower.startsWith("catat ") || lower.startsWith("tambah misi ") || lower.startsWith("ingatkan ")) {
           const noteText = cmd.replace(/^(catat|tambah misi|ingatkan)\s+/i, "").trim();
           if (noteText) {
@@ -1649,7 +1567,6 @@
           return;
         }
 
-        // 5. Status sistem
         if (lower.includes("status sistem") || lower.includes("laporan sistem") || lower.includes("diagnosa")) {
           jarvisSpeak(
             `Aman semua. Beban inti sekitar ${cpuVal.textContent}, baterai ${hudBattery.textContent}, dan koneksi ${hudNet.textContent.toLowerCase()}.`
@@ -1657,7 +1574,6 @@
           return;
         }
 
-        // 6. Kalkulator suara sederhana ("hitung 25 kali 4")
         if (lower.startsWith("hitung ")) {
           const exprRaw = lower
             .replace(/^hitung\s+/, "")
@@ -1677,11 +1593,10 @@
               }
             }
           } catch (e) {}
-          jarvisSpeak("Hmm, hitungan itu agak ngebingungin, coba sebutin angkanya lagi.");
+          jarvisSpeak("Hmm, hitungan itu agak ngebingungin, coba tulis angkanya lagi.");
           return;
         }
 
-        // 7. Buka situs populer
         if (lower.includes("buka youtube")) {
           jarvisSpeak("Sip, gua bukain YouTube.");
           window.open("https://www.youtube.com", "_blank", "noopener");
@@ -1698,21 +1613,18 @@
           return;
         }
 
-        // 8. Kembali ke Standby
         if (lower.includes("mode standby") || lower.includes("standby") || lower.includes("istirahat")) {
-          jarvisSpeak("Oke, gua standby dulu ya. Bilang Jarvis online aja kalau butuh.", () => {
+          jarvisSpeak("Oke, gua standby dulu ya. Tepuk tangan 2 kali aja kalau butuh.", () => {
             returnToStandby();
           });
           return;
         }
 
-        // 9. Sapaan umum
         if (lower.includes("halo") || lower.includes("hai") || lower.includes("pagi") || lower.includes("siang") || lower.includes("sore") || lower.includes("malam")) {
           jarvisSpeak("Halo! Gimana, ada yang mau dicek atau dibantu?");
           return;
         }
 
-        // Respons obrolan santai tanpa embel-embel kaku
         jarvisSpeak(`Oke, soal "${cmd}" gua denger kok. Bisa sekalian cek jam, ganti tema, nyatet agenda, atau ngitung.`);
       }
 
@@ -1736,7 +1648,7 @@
       function loadMissions() {
         try {
           return JSON.parse(localStorage.getItem(STORAGE_KEY_MISSIONS)) || [
-            { text: "Cek voice wake Jarvis online", done: true },
+            { text: "Tes 2x tepukan buat masuk JARVIS", done: true },
             { text: "Rapihin tampilan dashboard", done: false }
           ];
         } catch (e) {
@@ -1897,7 +1809,7 @@
           for (let i = 0; i < freqData.length; i++) sum += freqData[i];
           audioEnergy = sum / (freqData.length * 255);
         } else {
-          audioEnergy = isSpeaking || recognitionActive ? 0.22 + Math.random() * 0.14 : 0.06;
+          audioEnergy = isSpeaking || micStreamReady ? 0.22 + Math.random() * 0.14 : 0.06;
         }
 
         if (currentMode === "STANDBY") {
@@ -1918,9 +1830,8 @@
             }
           } else {
             const t = performance.now() * 0.005;
-            const amp = recognitionActive ? 11 : 4;
             for (let x = 0; x < w; x += 4) {
-              const y = h / 2 + Math.sin(x * 0.045 + t) * amp;
+              const y = h / 2 + Math.sin(x * 0.045 + t) * 4;
               if (x === 0) standbyCtx.moveTo(x, y);
               else standbyCtx.lineTo(x, y);
             }
@@ -2018,34 +1929,27 @@
         });
       });
 
-      async function activateAudioSystems() {
-        // Jalankan speech recognition lebih dulu supaya deteksi suara tidak tertahan
-        initSpeechRecognition();
-        // Visualizer menyusul secara aman
-        setTimeout(() => {
-          initAudioVisualizerStream();
-        }, 500);
-      }
-
-      enableMicFallbackBtn.addEventListener("click", () => {
-        activateAudioSystems();
+      enableMicFallbackBtn.addEventListener("click", async () => {
+        await initClapMicrophone();
         playHudBeep(720, 0.08);
       });
 
-      manualWakeBtn.addEventListener("click", () => {
-        activateAudioSystems();
+      manualWakeBtn.addEventListener("click", async () => {
+        if (!micStreamReady) {
+          await initClapMicrophone();
+          return;
+        }
         triggerBootToDashboard();
       });
 
       bypassBootBtn.addEventListener("click", () => {
-        activateAudioSystems();
         triggerBootToDashboard();
       });
 
       returnStandbyBtn.addEventListener("click", returnToStandby);
 
-      // ---------- AUTO-BOOT ON PAGE LOAD ----------
-      window.addEventListener("DOMContentLoaded", () => {
+      // ---------- AUTO-INIT ON PAGE LOAD ----------
+      window.addEventListener("DOMContentLoaded", async () => {
         const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
         if (savedTheme) applyTheme(savedTheme);
 
@@ -2056,7 +1960,7 @@
 
         addLog("BOOT", "Siap.");
         renderAnimations();
-        activateAudioSystems();
+        await initClapMicrophone();
       });
     })();
   </script>
