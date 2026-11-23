@@ -3,192 +3,2039 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Clap to JARVIS Mode</title>
+  <title>J.A.R.V.I.S. // MARK-LXXXV NEURAL HUD INTERFACE</title>
   <style>
-    body {
+    /* ==========================================================================
+       1. ROOT VARIABLES & THEME SYSTEM
+       ========================================================================== */
+    :root {
+      --bg-void: #03070d;
+      --bg-deep: #060d18;
+      --bg-panel: rgba(8, 19, 34, 0.78);
+      --bg-panel-solid: #081322;
+      --bg-card: rgba(11, 27, 48, 0.65);
+      --primary: #00f0ff;
+      --primary-dim: rgba(0, 240, 255, 0.25);
+      --primary-faint: rgba(0, 240, 255, 0.08);
+      --secondary: #0088ff;
+      --accent: #ffae00;
+      --danger: #ff3355;
+      --success: #00ff9d;
+      --text-main: #e4f7ff;
+      --text-muted: #7ea8c4;
+      --border-glow: rgba(0, 240, 255, 0.35);
+      --shadow-glow: 0 0 24px rgba(0, 240, 255, 0.18);
+      --font-hud: 'Segoe UI', 'Orbitron', 'Rajdhani', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+    }
+
+    body.theme-gold {
+      --primary: #ffbe2e;
+      --primary-dim: rgba(255, 190, 46, 0.25);
+      --primary-faint: rgba(255, 190, 46, 0.08);
+      --secondary: #ff6a00;
+      --accent: #00f0ff;
+      --border-glow: rgba(255, 190, 46, 0.4);
+      --shadow-glow: 0 0 24px rgba(255, 190, 46, 0.2);
+    }
+
+    body.theme-crimson {
+      --primary: #ff3b5c;
+      --primary-dim: rgba(255, 59, 92, 0.25);
+      --primary-faint: rgba(255, 59, 92, 0.08);
+      --secondary: #b80028;
+      --accent: #ffbe2e;
+      --border-glow: rgba(255, 59, 92, 0.42);
+      --shadow-glow: 0 0 24px rgba(255, 59, 92, 0.22);
+    }
+
+    /* ==========================================================================
+       2. GLOBAL RESET & BACKGROUND GRID
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #070b12;
-      color: #e6f1ff;
+      padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-dim) transparent;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-dim);
+      border-radius: 99px;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-hud);
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .hud-grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 50% 45%, rgba(0, 140, 255, 0.12) 0%, transparent 60%),
+        linear-gradient(to right, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 42px 42px, 42px 42px;
+    }
+
+    .scanline-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.28) 50%
+      );
+      background-size: 100% 4px;
+      opacity: 0.45;
+    }
+
+    .corner-frame {
+      position: fixed;
+      width: 34px;
+      height: 34px;
+      border-color: var(--primary);
+      border-style: solid;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+    .corner-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+    .corner-tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+    .corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+    .corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+    /* ==========================================================================
+       3. STANDBY SCREEN (LISTENING FOR "JARVIS ONLINE")
+       ========================================================================== */
+    #standbyScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
       display: flex;
-      min-height: 100vh;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-    }
-    .card {
-      width: 90%;
-      max-width: 460px;
       padding: 24px;
-      border-radius: 16px;
-      background: #0e1624;
-      border: 1px solid #1f334d;
-      box-shadow: 0 0 30px rgba(0, 180, 255, 0.12);
+      background: radial-gradient(circle at center, rgba(6, 20, 38, 0.85) 0%, #02050a 100%);
+      transition: opacity 0.85s ease, transform 0.85s ease, visibility 0.85s ease;
     }
-    .status {
-      font-weight: bold;
-      padding: 6px 12px;
-      border-radius: 999px;
-      display: inline-block;
-      margin-bottom: 14px;
-      background: #172438;
-      color: #8ab4f8;
+
+    #standbyScreen.hidden {
+      opacity: 0;
+      transform: scale(1.06);
+      visibility: hidden;
+      pointer-events: none;
     }
-    .status.active {
-      background: rgba(0, 212, 255, 0.2);
-      color: #38e8ff;
-      box-shadow: 0 0 16px rgba(56, 232, 255, 0.35);
+
+    .standby-top-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--primary);
+      padding: 6px 16px;
+      border: 1px solid var(--border-glow);
+      background: var(--primary-faint);
+      border-radius: 99px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    button {
-      padding: 10px 16px;
-      border: 0;
-      border-radius: 10px;
-      background: #00a8e8;
-      color: #041018;
-      font-weight: bold;
+
+    .pulse-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: pulseAnim 1.4s infinite ease-in-out;
+    }
+
+    .pulse-dot.warn {
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { transform: scale(0.85); opacity: 0.6; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+
+    .reactor-standby-wrap {
+      position: relative;
+      width: 270px;
+      height: 270px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 26px;
+    }
+
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+
+    .ring-1 {
+      width: 260px;
+      height: 260px;
+      border-top: 2px solid var(--primary);
+      border-bottom: 2px solid var(--primary);
+      box-shadow: 0 0 25px var(--primary-dim);
+      animation: spinCW 14s linear infinite;
+    }
+
+    .ring-2 {
+      width: 222px;
+      height: 222px;
+      border-left: 3px dashed var(--secondary);
+      border-right: 3px dashed var(--primary);
+      animation: spinCCW 9s linear infinite;
+    }
+
+    .ring-3 {
+      width: 184px;
+      height: 184px;
+      border: 1px solid var(--border-glow);
+      box-shadow: inset 0 0 20px var(--primary-dim);
+      animation: spinCW 22s linear infinite;
+    }
+
+    .reactor-core-btn {
+      position: relative;
+      z-index: 4;
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.28) 0%, rgba(4, 15, 29, 0.95) 72%);
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 35px var(--primary-dim), inset 0 0 20px var(--primary-dim);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .meter-wrap {
-      height: 10px;
-      background: #172438;
-      border-radius: 999px;
+
+    .reactor-core-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 48px var(--primary), inset 0 0 28px var(--primary-dim);
+    }
+
+    .reactor-core-title {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: var(--primary);
+      text-shadow: 0 0 10px var(--primary);
+    }
+
+    .reactor-core-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    @keyframes spinCW {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinCCW {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .standby-headline {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .standby-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .wake-phrase-highlight {
+      color: var(--primary);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      background: var(--primary-faint);
+      padding: 2px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border-glow);
+    }
+
+    #standbyWaveCanvas {
+      width: 340px;
+      max-width: 90vw;
+      height: 54px;
+      border-radius: 10px;
+      background: rgba(6, 17, 32, 0.7);
+      border: 1px solid var(--border-glow);
+      margin-bottom: 14px;
+    }
+
+    .live-heard-box {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--primary);
+      background: rgba(0, 18, 34, 0.85);
+      border: 1px solid var(--border-glow);
+      padding: 10px 18px;
+      border-radius: 8px;
+      min-width: 320px;
+      max-width: 90vw;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .standby-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hud-btn {
+      background: var(--primary-faint);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .hud-btn:hover {
+      background: var(--primary);
+      color: #020810;
+      box-shadow: 0 0 18px var(--primary);
+      font-weight: 700;
+    }
+
+    .hud-btn.secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .hud-btn.secondary:hover {
+      border-color: var(--text-main);
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      box-shadow: none;
+    }
+
+    /* ==========================================================================
+       4. BOOT-UP SEQUENCE OVERLAY
+       ========================================================================== */
+    #bootOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: #02060c;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: var(--font-mono);
+    }
+
+    #bootOverlay.active {
+      display: flex;
+    }
+
+    .boot-box {
+      width: 100%;
+      max-width: 600px;
+      border: 1px solid var(--primary);
+      background: rgba(5, 16, 30, 0.92);
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 0 40px var(--primary-dim);
+    }
+
+    .boot-title {
+      color: var(--primary);
+      font-size: 16px;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-glow);
+      padding-bottom: 8px;
+    }
+
+    .boot-lines {
+      font-size: 12px;
+      line-height: 1.8;
+      color: #9be8ff;
+      min-height: 150px;
+    }
+
+    .boot-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
       overflow: hidden;
-      margin: 14px 0;
+      margin-top: 16px;
     }
-    .meter-bar {
-      height: 100%;
+
+    .boot-bar-fill {
       width: 0%;
-      background: #38e8ff;
-      transition: width 60ms linear;
+      height: 100%;
+      background: var(--primary);
+      box-shadow: 0 0 12px var(--primary);
+      transition: width 0.2s linear;
     }
-    small { color: #9bb0c9; }
+
+    /* ==========================================================================
+       5. MAIN JARVIS DASHBOARD LAYOUT
+       ========================================================================== */
+    #jarvisDashboard {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
+      padding: 16px 20px 22px;
+      gap: 14px;
+      animation: fadeInDash 0.8s ease forwards;
+    }
+
+    #jarvisDashboard.active {
+      display: flex;
+    }
+
+    @keyframes fadeInDash {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top Header Bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 18px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      box-shadow: var(--shadow-glow);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-emblem {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--primary);
+      box-shadow: inset 0 0 12px var(--primary-dim), 0 0 12px var(--primary-dim);
+      font-size: 14px;
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: var(--primary);
+      text-shadow: 0 0 10px var(--primary-dim);
+    }
+
+    .brand-text span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    .telemetry-strip {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .tele-item {
+      display: flex;
+      flex-direction: column;
+      padding: 4px 10px;
+      border-left: 2px solid var(--primary);
+      background: var(--primary-faint);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .tele-label {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .tele-val {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-pill {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .theme-pill:hover { transform: scale(1.18); }
+    .theme-pill.cyan { background: #00f0ff; }
+    .theme-pill.gold { background: #ffbe2e; }
+    .theme-pill.crimson { background: #ff3b5c; }
+
+    /* Main 3-Column Grid */
+    .hud-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr 340px;
+      gap: 14px;
+      flex: 1;
+    }
+
+    @media (max-width: 1180px) {
+      .hud-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hud-column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow-glow);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    .panel-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--primary-faint);
+      border: 1px solid var(--border-glow);
+      color: var(--primary);
+    }
+
+    /* Left Column Widgets */
+    .metric-row {
+      margin-bottom: 12px;
+    }
+
+    .metric-head {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      margin-bottom: 5px;
+      color: var(--text-muted);
+    }
+
+    .metric-head strong {
+      color: var(--text-main);
+    }
+
+    .progress-track {
+      height: 7px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      border-radius: 99px;
+      transition: width 0.5s ease;
+    }
+
+    #spectrumCanvas {
+      width: 100%;
+      height: 110px;
+      background: rgba(2, 8, 18, 0.75);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      display: block;
+    }
+
+    .diag-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .diag-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-family: var(--font-mono);
+    }
+
+    .diag-card span {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .diag-card b {
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    /* Center Core Panel */
+    .center-core-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 430px;
+    }
+
+    .core-canvas-wrap {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 6px 0;
+    }
+
+    #coreCanvas {
+      width: 280px;
+      height: 280px;
+    }
+
+    .core-center-readout {
+      position: absolute;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .core-center-readout .mode-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+    }
+
+    .core-center-readout .state-lbl {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--primary);
+      text-shadow: 0 0 12px var(--primary);
+    }
+
+    .jarvis-dialogue-box {
+      width: 100%;
+      background: rgba(3, 11, 22, 0.85);
+      border: 1px solid var(--border-glow);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 8px;
+    }
+
+    .dialogue-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .jarvis-reply-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-main);
+      min-height: 42px;
+    }
+
+    .user-transcript-line {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .command-input-row {
+      display: flex;
+      width: 100%;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .command-input {
+      flex: 1;
+      background: rgba(4, 14, 28, 0.9);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .command-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-dim);
+    }
+
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .chip-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 99px;
+      background: var(--primary-faint);
+      border: 1px solid var(--border-glow);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .chip-btn:hover {
+      background: var(--primary);
+      color: #020810;
+      font-weight: 700;
+    }
+
+    /* Right Column Widgets: Notes / Missions & Terminal */
+    .mission-input-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .mission-list {
+      list-style: none;
+      max-height: 155px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mission-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 12px;
+    }
+
+    .mission-item.done span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .mission-actions button {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    .mission-actions button.del {
+      color: var(--danger);
+    }
+
+    /* Mini Tactical Calculator */
+    .calc-display {
+      width: 100%;
+      background: rgba(2, 8, 18, 0.9);
+      border: 1px solid var(--border-glow);
+      border-radius: 7px;
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      text-align: right;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .calc-btn {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .calc-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-dim);
+    }
+
+    .calc-btn.op {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Terminal Console Log */
+    .terminal-log {
+      background: rgba(2, 7, 15, 0.92);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      padding: 10px;
+      height: 150px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.55;
+      color: #8fd3f4;
+    }
+
+    .log-entry {
+      margin-bottom: 4px;
+    }
+    .log-time {
+      color: var(--text-muted);
+    }
+    .log-tag {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .log-warn {
+      color: var(--accent);
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div id="statusBadge" class="status">STANDBY — Tunggu Tepuk Tangan</div>
-    <h2>JARVIS Clap Trigger</h2>
-    <p id="infoText">Klik mulai, lalu tepuk tangan 2 kali untuk masuk ke mode JARVIS.</p>
+  <div class="hud-grid-bg"></div>
+  <div class="scanline-overlay"></div>
+  <div class="corner-frame corner-tl"></div>
+  <div class="corner-frame corner-tr"></div>
+  <div class="corner-frame corner-bl"></div>
+  <div class="corner-frame corner-br"></div>
 
-    <div class="meter-wrap">
-      <div id="meterBar" class="meter-bar"></div>
+  <!-- ========================================================================
+       SCREEN 1: STANDBY AUTO-LISTENING ("JARVIS ONLINE")
+       ======================================================================== -->
+  <section id="standbyScreen">
+    <div class="standby-top-tag">
+      <span id="micStatusDot" class="pulse-dot"></span>
+      <span id="micStatusLabel">INITIALIZING NEURAL AUDIO SENSOR...</span>
     </div>
 
-    <button id="startBtn">Aktifkan Mic</button>
-    <p><small id="logText">Log: belum aktif</small></p>
-  </div>
+    <div class="reactor-standby-wrap">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+      <button id="manualWakeBtn" class="reactor-core-btn" title="Klik jika browser menahan auto-mic">
+        <span class="reactor-core-title">JARVIS</span>
+        <span class="reactor-core-sub">STANDBY</span>
+      </button>
+    </div>
+
+    <h2 class="standby-headline">VOICE WAKE PROTOCOL ACTIVE</h2>
+    <p class="standby-sub">
+      Sistem mendengarkan secara otomatis. Ucapkan kata kunci
+      <span class="wake-phrase-highlight">"Jarvis online"</span>
+      untuk masuk ke Tactical HUD Dashboard.
+    </p>
+
+    <canvas id="standbyWaveCanvas" width="340" height="54"></canvas>
+
+    <div class="live-heard-box" id="liveHeardBox">
+      [AUDIO STREAM]: Menunggu input suara Anda...
+    </div>
+
+    <div class="standby-actions">
+      <button id="enableMicFallbackBtn" class="hud-btn">Aktifkan / Reset Mic</button>
+      <button id="bypassBootBtn" class="hud-btn secondary">Masuk Dashboard Manual</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 2: BOOT SEQUENCE TRANSITION
+       ======================================================================== -->
+  <section id="bootOverlay">
+    <div class="boot-box">
+      <div class="boot-title">J.A.R.V.I.S. // TACTICAL OS BOOT SEQUENCE</div>
+      <div class="boot-lines" id="bootLines"></div>
+      <div class="boot-bar-wrap">
+        <div class="boot-bar-fill" id="bootBarFill"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 3: MAIN JARVIS TACTICAL DASHBOARD
+       ======================================================================== -->
+  <main id="jarvisDashboard">
+    <!-- Top Telemetry Bar -->
+    <header class="topbar">
+      <div class="brand-cluster">
+        <div class="brand-emblem">J-AI</div>
+        <div class="brand-text">
+          <h1>J.A.R.V.I.S. HUD</h1>
+          <span>MARK-LXXXV NEURAL COMMAND INTERFACE</span>
+        </div>
+      </div>
+
+      <div class="telemetry-strip">
+        <div class="tele-item">
+          <span class="tele-label">LOCAL TIME</span>
+          <span class="tele-val" id="hudClock">--:--:--</span>
+        </div>
+        <div class="tele-item">
+          <span class="tele-label">DATE</span>
+          <span class="tele-val" id="hudDate">-- --- ----</span>
+        </div>
+        <div class="tele-item">
+          <span class="tele-label">POWER CELL</span>
+          <span class="tele-val" id="hudBattery">100% AC</span>
+        </div>
+        <div class="tele-item">
+          <span class="tele-label">NETWORK LINK</span>
+          <span class="tele-val" id="hudNet">ONLINE</span>
+        </div>
+      </div>
+
+      <div class="topbar-controls">
+        <button class="theme-pill cyan" data-theme="cyan" title="Tema Cyan Tactical"></button>
+        <button class="theme-pill gold" data-theme="gold" title="Tema Gold Mark-85"></button>
+        <button class="theme-pill crimson" data-theme="crimson" title="Tema Crimson Combat"></button>
+        <button id="returnStandbyBtn" class="hud-btn secondary">Standby</button>
+      </div>
+    </header>
+
+    <!-- Main 3-Column HUD Grid -->
+    <div class="hud-grid">
+      <!-- LEFT COLUMN: DIAGNOSTICS & AUDIO SPECTRUM -->
+      <div class="hud-column">
+        <section class="panel">
+          <div class="panel-header">
+            <span class="panel-title">System Telemetry</span>
+            <span class="panel-badge">OPTIMAL</span>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-head">
+              <span>NEURAL CORE LOAD</span>
+              <strong id="cpuVal">24%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="cpuBar" style="width: 24%;"></div>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-head">
+              <span>MEMORY ALLOCATION</span>
+              <strong id="ramVal">41%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="ramBar" style="width: 41%;"></div>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <div class="metric-head">
+              <span>VOICE RECOGNITION CONFIDENCE</span>
+              <strong id="confVal">96%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="confBar" style="width: 96%;"></div>
+            </div>
+          </div>
+
+          <div class="diag-grid">
+            <div class="diag-card">
+              <span>LOGICAL CORES</span>
+              <b id="hwCores">--</b>
+            </div>
+            <div class="diag-card">
+              <span>PLATFORM</span>
+              <b id="hwPlatform">WEB-OS</b>
+            </div>
+            <div class="diag-card">
+              <span>MIC ENGINE</span>
+              <b id="hwMicState">ACTIVE</b>
+            </div>
+            <div class="diag-card">
+              <span>SECURITY</span>
+              <b>ENCRYPTED</b>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Acoustic Frequency</span>
+            <span class="panel-badge">LIVE FFT</span>
+          </div>
+          <canvas id="spectrumCanvas" width="280" height="110"></canvas>
+        </section>
+      </div>
+
+      <!-- CENTER COLUMN: AI ARC CORE & INTERACTIVE COMMAND -->
+      <div class="hud-column">
+        <section class="panel center-core-panel">
+          <div class="panel-header" style="width: 100%;">
+            <span class="panel-title">J.A.R.V.I.S. Neural Core</span>
+            <span class="panel-badge" id="voiceLoopBadge">VOICE LISTENING</span>
+          </div>
+
+          <div class="core-canvas-wrap">
+            <canvas id="coreCanvas" width="280" height="280"></canvas>
+            <div class="core-center-readout">
+              <div class="mode-lbl">STATUS</div>
+              <div class="state-lbl" id="coreStateText">ONLINE</div>
+            </div>
+          </div>
+
+          <div class="jarvis-dialogue-box">
+            <div class="dialogue-header">
+              <span>J.A.R.V.I.S. RESPONSE</span>
+              <span id="speakingIndicator">IDLE</span>
+            </div>
+            <div class="jarvis-reply-text" id="jarvisReplyText">
+              Selamat datang kembali, Sir. Seluruh sistem taktis siap digunakan. Silakan ucapkan atau ketik perintah Anda.
+            </div>
+            <div class="user-transcript-line" id="dashTranscriptLine">
+              [VOICE INPUT]: Mendengarkan perintah suara Anda...
+            </div>
+          </div>
+
+          <form class="command-input-row" id="commandForm">
+            <input
+              type="text"
+              id="commandInput"
+              class="command-input"
+              placeholder="Ketik perintah (misal: jam berapa, tema emas, catat rapat)..."
+              autocomplete="off"
+            />
+            <button type="submit" class="hud-btn">Kirim</button>
+          </form>
+
+          <div class="quick-chips">
+            <button type="button" class="chip-btn" data-cmd="status sistem">Status Sistem</button>
+            <button type="button" class="chip-btn" data-cmd="jam berapa sekarang">Cek Waktu</button>
+            <button type="button" class="chip-btn" data-cmd="ganti tema emas">Tema Gold</button>
+            <button type="button" class="chip-btn" data-cmd="ganti tema merah">Tema Crimson</button>
+            <button type="button" class="chip-btn" data-cmd="ganti tema biru">Tema Cyan</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: MISSIONS, CALCULATOR & TERMINAL -->
+      <div class="hud-column">
+        <section class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Mission & Task Log</span>
+            <span class="panel-badge" id="missionCountBadge">0 TASK</span>
+          </div>
+          <div class="mission-input-row">
+            <input
+              type="text"
+              id="missionInput"
+              class="command-input"
+              placeholder="Tambah misi / catatan..."
+            />
+            <button type="button" id="addMissionBtn" class="hud-btn">+</button>
+          </div>
+          <ul class="mission-list" id="missionList"></ul>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Tactical Calculator</span>
+            <span class="panel-badge">ALU-85</span>
+          </div>
+          <div class="calc-display" id="calcDisplay">0</div>
+          <div class="calc-grid" id="calcGrid">
+            <button class="calc-btn op" data-val="C">C</button>
+            <button class="calc-btn op" data-val="(">(</button>
+            <button class="calc-btn op" data-val=")">)</button>
+            <button class="calc-btn op" data-val="/">/</button>
+            <button class="calc-btn" data-val="7">7</button>
+            <button class="calc-btn" data-val="8">8</button>
+            <button class="calc-btn" data-val="9">9</button>
+            <button class="calc-btn op" data-val="*">*</button>
+            <button class="calc-btn" data-val="4">4</button>
+            <button class="calc-btn" data-val="5">5</button>
+            <button class="calc-btn" data-val="6">6</button>
+            <button class="calc-btn op" data-val="-">-</button>
+            <button class="calc-btn" data-val="1">1</button>
+            <button class="calc-btn" data-val="2">2</button>
+            <button class="calc-btn" data-val="3">3</button>
+            <button class="calc-btn op" data-val="+">+</button>
+            <button class="calc-btn" data-val="0">0</button>
+            <button class="calc-btn" data-val=".">.</button>
+            <button class="calc-btn op" data-val="DEL">DEL</button>
+            <button class="calc-btn op" data-val="=">=</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <span class="panel-title">System Event Terminal</span>
+            <span class="panel-badge">LIVE</span>
+          </div>
+          <div class="terminal-log" id="terminalLog"></div>
+        </section>
+      </div>
+    </div>
+  </main>
 
   <script>
-    const startBtn = document.getElementById("startBtn");
-    const statusBadge = document.getElementById("statusBadge");
-    const infoText = document.getElementById("infoText");
-    const meterBar = document.getElementById("meterBar");
-    const logText = document.getElementById("logText");
+    /* ==========================================================================
+       JARVIS MARK-LXXXV CORE ENGINE
+       - Auto-init Microphone & Continuous SpeechRecognition ("Jarvis online")
+       - Canvas Audio Visualizer + Animated Arc Reactor Core
+       - Voice & Text Command Processor + LocalStorage Missions + Tactical Calc
+       ========================================================================== */
 
-    let audioCtx, analyser, dataArray;
-    let listening = false;
-    let jarvisActive = false;
+    (function () {
+      "use strict";
 
-    // Parameter tuning deteksi tepuk tangan
-    const PEAK_THRESHOLD = 0.45; // naikkan jika terlalu sensitif, turunkan jika kurang peka
-    const COOLDOWN_MS = 220;     // cegah 1 tepuk terhitung ganda
-    const DOUBLE_CLAP_WINDOW = 1200; // batas waktu tepukan ke-2 (ms)
+      // ---------- DOM REFERENCES ----------
+      const standbyScreen = document.getElementById("standbyScreen");
+      const bootOverlay = document.getElementById("bootOverlay");
+      const bootLines = document.getElementById("bootLines");
+      const bootBarFill = document.getElementById("bootBarFill");
+      const jarvisDashboard = document.getElementById("jarvisDashboard");
 
-    let lastClapTime = 0;
-    let clapCount = 0;
+      const micStatusDot = document.getElementById("micStatusDot");
+      const micStatusLabel = document.getElementById("micStatusLabel");
+      const liveHeardBox = document.getElementById("liveHeardBox");
+      const manualWakeBtn = document.getElementById("manualWakeBtn");
+      const enableMicFallbackBtn = document.getElementById("enableMicFallbackBtn");
+      const bypassBootBtn = document.getElementById("bypassBootBtn");
+      const returnStandbyBtn = document.getElementById("returnStandbyBtn");
 
-    function speak(text) {
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "en-US"; // bisa diganti "id-ID"
-      utter.rate = 1.05;
-      window.speechSynthesis.speak(utter);
-    }
+      const standbyWaveCanvas = document.getElementById("standbyWaveCanvas");
+      const standbyCtx = standbyWaveCanvas.getContext("2d");
+      const spectrumCanvas = document.getElementById("spectrumCanvas");
+      const spectrumCtx = spectrumCanvas.getContext("2d");
+      const coreCanvas = document.getElementById("coreCanvas");
+      const coreCtx = coreCanvas.getContext("2d");
 
-    function enterJarvisMode() {
-      if (jarvisActive) return;
-      jarvisActive = true;
-      statusBadge.textContent = "JARVIS MODE ACTIVE";
-      statusBadge.classList.add("active");
-      infoText.textContent = "Mode JARVIS aktif! Siap menerima perintah.";
-      logText.textContent = "Log: Double clap terdeteksi -> JARVIS ON";
-      speak("JARVIS online. How can I help?");
+      const hudClock = document.getElementById("hudClock");
+      const hudDate = document.getElementById("hudDate");
+      const hudBattery = document.getElementById("hudBattery");
+      const hudNet = document.getElementById("hudNet");
 
-      // Otomatis balik ke standby setelah 8 detik (contoh saja)
-      setTimeout(() => {
-        jarvisActive = false;
-        statusBadge.textContent = "STANDBY — Tunggu Tepuk Tangan";
-        statusBadge.classList.remove("active");
-        infoText.textContent = "Kembali ke standby. Tepuk tangan 2 kali untuk mengaktifkan.";
-      }, 8000);
-    }
+      const cpuVal = document.getElementById("cpuVal");
+      const cpuBar = document.getElementById("cpuBar");
+      const ramVal = document.getElementById("ramVal");
+      const ramBar = document.getElementById("ramBar");
+      const confVal = document.getElementById("confVal");
+      const confBar = document.getElementById("confBar");
+      const hwCores = document.getElementById("hwCores");
+      const hwPlatform = document.getElementById("hwPlatform");
+      const hwMicState = document.getElementById("hwMicState");
 
-    function onClapDetected(now) {
-      if (now - lastClapTime < COOLDOWN_MS) return;
+      const coreStateText = document.getElementById("coreStateText");
+      const speakingIndicator = document.getElementById("speakingIndicator");
+      const jarvisReplyText = document.getElementById("jarvisReplyText");
+      const dashTranscriptLine = document.getElementById("dashTranscriptLine");
+      const voiceLoopBadge = document.getElementById("voiceLoopBadge");
 
-      if (now - lastClapTime <= DOUBLE_CLAP_WINDOW) {
-        clapCount += 1;
-      } else {
-        clapCount = 1;
+      const commandForm = document.getElementById("commandForm");
+      const commandInput = document.getElementById("commandInput");
+      const terminalLog = document.getElementById("terminalLog");
+
+      const missionInput = document.getElementById("missionInput");
+      const addMissionBtn = document.getElementById("addMissionBtn");
+      const missionList = document.getElementById("missionList");
+      const missionCountBadge = document.getElementById("missionCountBadge");
+
+      const calcDisplay = document.getElementById("calcDisplay");
+      const calcGrid = document.getElementById("calcGrid");
+
+      // ---------- SYSTEM STATE ----------
+      let currentMode = "STANDBY"; // STANDBY | BOOTING | DASHBOARD
+      let audioCtx = null;
+      let analyser = null;
+      let freqData = null;
+      let timeData = null;
+      let micStreamReady = false;
+
+      let recognition = null;
+      let recognitionActive = false;
+      let isSpeaking = false;
+      let coreRotation = 0;
+      let audioEnergy = 0;
+
+      const STORAGE_KEY_MISSIONS = "jarvis_hud_missions_v1";
+      const STORAGE_KEY_THEME = "jarvis_hud_theme_v1";
+
+      // ---------- TERMINAL LOGGING ----------
+      function addLog(tag, message, isWarn = false) {
+        const now = new Date();
+        const ts = now.toTimeString().split(" ")[0];
+        const row = document.createElement("div");
+        row.className = "log-entry";
+        row.innerHTML = `<span class="log-time">[${ts}]</span> <span class="log-tag ${isWarn ? "log-warn" : ""}">[${tag}]</span> ${escapeHtml(message)}`;
+        terminalLog.appendChild(row);
+        terminalLog.scrollTop = terminalLog.scrollHeight;
       }
-      lastClapTime = now;
 
-      logText.textContent = `Log: Tepukan ke-${clapCount} terdeteksi`;
-
-      if (clapCount >= 2) {
-        clapCount = 0;
-        lastClapTime = 0;
-        enterJarvisMode();
-      }
-    }
-
-    function loop() {
-      if (!listening) return;
-      analyser.getByteTimeDomainData(dataArray);
-
-      // Hitung puncak amplitudo ternormalisasi (0.0 - 1.0)
-      let maxAmp = 0;
-      for (let i = 0; i < dataArray.length; i++) {
-        const norm = Math.abs(dataArray[i] - 128) / 128;
-        if (norm > maxAmp) maxAmp = norm;
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
       }
 
-      meterBar.style.width = `${Math.min(100, Math.round(maxAmp * 100))}%`;
-
-      if (maxAmp >= PEAK_THRESHOLD) {
-        onClapDetected(performance.now());
-      }
-
-      requestAnimationFrame(loop);
-    }
-
-    startBtn.addEventListener("click", async () => {
-      if (listening) return;
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: false, // kadang noiseSuppression memotong transient tepuk tangan
-            autoGainControl: false
+      // ---------- SOUND EFFECTS (WEB AUDIO SYNTH) ----------
+      function playHudBeep(freq = 780, duration = 0.09, type = "sine", vol = 0.08) {
+        try {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           }
+          if (audioCtx.state === "suspended") audioCtx.resume();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {
+          // Abaikan jika audio context belum diizinkan
+        }
+      }
+
+      function playActivationChord() {
+        playHudBeep(520, 0.12, "triangle", 0.1);
+        setTimeout(() => playHudBeep(780, 0.14, "sine", 0.1), 90);
+        setTimeout(() => playHudBeep(1040, 0.22, "sine", 0.11), 180);
+      }
+
+      // ---------- TEXT-TO-SPEECH (JARVIS VOICE) ----------
+      function jarvisSpeak(text, onDone) {
+        jarvisReplyText.textContent = text;
+        addLog("JARVIS", text);
+
+        if (!("speechSynthesis" in window)) {
+          if (onDone) onDone();
+          return;
+        }
+
+        try {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = "id-ID";
+          utter.rate = 1.04;
+          utter.pitch = 0.95;
+
+          utter.onstart = () => {
+            isSpeaking = true;
+            speakingIndicator.textContent = "SPEAKING...";
+            coreStateText.textContent = "VOCALIZING";
+          };
+
+          utter.onend = () => {
+            isSpeaking = false;
+            speakingIndicator.textContent = "IDLE";
+            coreStateText.textContent = "ONLINE";
+            if (onDone) onDone();
+          };
+
+          utter.onerror = () => {
+            isSpeaking = false;
+            speakingIndicator.textContent = "IDLE";
+            coreStateText.textContent = "ONLINE";
+            if (onDone) onDone();
+          };
+
+          window.speechSynthesis.speak(utter);
+        } catch (e) {
+          isSpeaking = false;
+          if (onDone) onDone();
+        }
+      }
+
+      // ---------- MICROPHONE AUDIO STREAM (FOR VISUALIZER) ----------
+      async function initAudioVisualizerStream() {
+        if (micStreamReady) return true;
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }
+          });
+
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx.state === "suspended") {
+            await audioCtx.resume();
+          }
+
+          const source = audioCtx.createMediaStreamSource(stream);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 128;
+          freqData = new Uint8Array(analyser.frequencyBinCount);
+          timeData = new Uint8Array(analyser.fftSize);
+          source.connect(analyser);
+
+          micStreamReady = true;
+          hwMicState.textContent = "STREAMING";
+          addLog("AUDIO", "Sensor mikrofon & spektrum FFT berhasil terhubung.");
+          return true;
+        } catch (err) {
+          hwMicState.textContent = "BLOCKED";
+          addLog("AUDIO", `Akses audio tertahan browser: ${err.message}`, true);
+          return false;
+        }
+      }
+
+      // ---------- CONTINUOUS SPEECH RECOGNITION (WAKE WORD + COMMANDS) ----------
+      function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          micStatusDot.classList.add("warn");
+          micStatusLabel.textContent = "BROWSER TIDAK MENDUKUNG SPEECH RECOGNITION";
+          liveHeardBox.textContent = "[ERROR]: Gunakan Google Chrome / Microsoft Edge terbaru.";
+          addLog("SPEECH", "Web Speech API tidak tersedia di browser ini.", true);
+          return;
+        }
+
+        if (recognition) {
+          try { recognition.abort(); } catch (e) {}
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "id-ID";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          recognitionActive = true;
+          micStatusDot.classList.remove("warn");
+          micStatusLabel.textContent = "MIC STANDBY — MENUNGGU 'JARVIS ONLINE'";
+          voiceLoopBadge.textContent = "VOICE LISTENING";
+        };
+
+        recognition.onresult = (event) => {
+          let interimTranscript = "";
+          let finalTranscript = "";
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const res = event.results[i];
+            const text = res[0].transcript;
+            if (res.isFinal) {
+              finalTranscript += text;
+              if (res[0].confidence) {
+                const pct = Math.min(99, Math.max(72, Math.round(res[0].confidence * 100)));
+                confVal.textContent = `${pct}%`;
+                confBar.style.width = `${pct}%`;
+              }
+            } else {
+              interimTranscript += text;
+            }
+          }
+
+          const liveText = (finalTranscript || interimTranscript).trim();
+          if (!liveText) return;
+
+          if (currentMode === "STANDBY") {
+            liveHeardBox.textContent = `[TERDETEKSI]: "${liveText}"`;
+            checkWakePhrase(liveText);
+          } else if (currentMode === "DASHBOARD") {
+            dashTranscriptLine.textContent = `[VOICE INPUT]: "${liveText}"`;
+            if (finalTranscript.trim() && !isSpeaking) {
+              processJarvisCommand(finalTranscript.trim());
+            }
+          }
+        };
+
+        recognition.onerror = (event) => {
+          recognitionActive = false;
+          if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+            micStatusDot.classList.add("warn");
+            micStatusLabel.textContent = "IZIN MIC DIBLOKIR BROWSER — KLIK TOMBOL DI BAWAH";
+            liveHeardBox.textContent = "[PERLU IZIN]: Klik 'Aktifkan / Reset Mic' atau inti reaktor.";
+            addLog("SPEECH", "Izin mikrofon ditolak browser. Menunggu klik pengguna.", true);
+          } else if (event.error !== "aborted" && event.error !== "no-speech") {
+            addLog("SPEECH", `Gangguan pengenalan suara: ${event.error}`, true);
+          }
+        };
+
+        recognition.onend = () => {
+          recognitionActive = false;
+          // Auto-restart agar tetap standby 24/7 selama halaman terbuka
+          setTimeout(() => {
+            if (!recognitionActive) {
+              try {
+                recognition.start();
+              } catch (e) {}
+            }
+          }, 350);
+        };
+
+        try {
+          recognition.start();
+        } catch (err) {
+          micStatusDot.classList.add("warn");
+          micStatusLabel.textContent = "KLIK INTI JARVIS UNTUK MENGAKTIFKAN AUDIO";
+        }
+      }
+
+      // ---------- WAKE WORD DETECTOR ("JARVIS ONLINE") ----------
+      function checkWakePhrase(spokenText) {
+        const clean = spokenText.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+
+        const wakeTriggers = [
+          "jarvis online",
+          "jarvis on line",
+          "hey jarvis online",
+          "aktifkan jarvis",
+          "jarvis aktif"
+        ];
+
+        const matched = wakeTriggers.some((phrase) => clean.includes(phrase));
+        if (matched && currentMode === "STANDBY") {
+          triggerBootToDashboard();
+        }
+      }
+
+      // ---------- TRANSITION: STANDBY -> BOOT -> DASHBOARD ----------
+      function triggerBootToDashboard() {
+        if (currentMode !== "STANDBY") return;
+        currentMode = "BOOTING";
+        playActivationChord();
+
+        standbyScreen.classList.add("hidden");
+        bootOverlay.classList.add("active");
+        bootLines.innerHTML = "";
+        bootBarFill.style.width = "0%";
+
+        const sequence = [
+          "> VOICE SIGNATURE VERIFIED: 'JARVIS ONLINE'",
+          "> INITIALIZING MARK-LXXXV TACTICAL HUD KERNEL...",
+          "> ESTABLISHING NEURAL AUDIO & TELEMETRY CHANNELS...",
+          "> LOADING MISSION DATABASE & DIAGNOSTIC MODULES...",
+          "> ALL SYSTEMS NOMINAL. WELCOME BACK, SIR."
+        ];
+
+        sequence.forEach((line, idx) => {
+          setTimeout(() => {
+            const p = document.createElement("div");
+            p.textContent = line;
+            bootLines.appendChild(p);
+            bootBarFill.style.width = `${((idx + 1) / sequence.length) * 100}%`;
+            playHudBeep(600 + idx * 110, 0.06, "sine", 0.05);
+          }, idx * 340);
         });
 
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(stream);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024;
-        dataArray = new Uint8Array(analyser.fftSize);
-
-        source.connect(analyser);
-        listening = true;
-        startBtn.textContent = "Mic Aktif";
-        startBtn.disabled = true;
-        logText.textContent = "Log: Mendengarkan tepuk tangan...";
-        loop();
-      } catch (err) {
-        logText.textContent = `Error akses mic: ${err.message}`;
+        setTimeout(() => {
+          bootOverlay.classList.remove("active");
+          jarvisDashboard.classList.add("active");
+          currentMode = "DASHBOARD";
+          addLog("SYSTEM", "Perintah 'Jarvis online' diterima. Masuk ke Tactical HUD.");
+          jarvisSpeak("Jarvis online. Seluruh sistem siap, Sir. Apa perintah Anda?");
+        }, sequence.length * 340 + 380);
       }
-    });
+
+      function returnToStandby() {
+        currentMode = "STANDBY";
+        jarvisDashboard.classList.remove("active");
+        standbyScreen.classList.remove("hidden");
+        liveHeardBox.textContent = "[AUDIO STREAM]: Kembali ke mode standby. Ucapkan 'Jarvis online'...";
+        playHudBeep(420, 0.14, "sine", 0.08);
+        addLog("SYSTEM", "Sistem kembali ke mode Standby.");
+      }
+
+      // ---------- JARVIS COMMAND PROCESSOR (VOICE & TEXT) ----------
+      function processJarvisCommand(rawCmd) {
+        const cmd = rawCmd.trim();
+        const lower = cmd.toLowerCase();
+        addLog("USER", cmd);
+
+        // 1. Cek waktu / jam
+        if (lower.includes("jam berapa") || lower.includes("waktu sekarang") || lower.includes("cek waktu")) {
+          const now = new Date();
+          const jam = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+          jarvisSpeak(`Sekarang pukul ${jam} waktu lokal, Sir.`);
+          return;
+        }
+
+        // 2. Cek tanggal
+        if (lower.includes("tanggal berapa") || lower.includes("hari apa")) {
+          const now = new Date();
+          const tgl = now.toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          });
+          jarvisSpeak(`Hari ini adalah ${tgl}, Sir.`);
+          return;
+        }
+
+        // 3. Ganti tema HUD
+        if (lower.includes("tema emas") || lower.includes("tema gold") || lower.includes("warna emas")) {
+          applyTheme("gold");
+          jarvisSpeak("Mengaktifkan skema warna Gold Mark-85, Sir.");
+          return;
+        }
+        if (lower.includes("tema merah") || lower.includes("tema crimson") || lower.includes("combat mode")) {
+          applyTheme("crimson");
+          jarvisSpeak("Mengaktifkan mode tempur Crimson Tactical, Sir.");
+          return;
+        }
+        if (lower.includes("tema biru") || lower.includes("tema cyan") || lower.includes("tema normal")) {
+          applyTheme("cyan");
+          jarvisSpeak("Mengembalikan tampilan ke skema Cyan Tactical standar.");
+          return;
+        }
+
+        // 4. Tambah catatan / misi via suara atau teks
+        if (lower.startsWith("catat ") || lower.startsWith("tambah misi ") || lower.startsWith("ingatkan ")) {
+          const noteText = cmd.replace(/^(catat|tambah misi|ingatkan)\s+/i, "").trim();
+          if (noteText) {
+            addMission(noteText);
+            jarvisSpeak(`Siap, Sir. Misi "${noteText}" telah ditambahkan ke log tugas.`);
+          } else {
+            jarvisSpeak("Silakan sebutkan isi catatan yang ingin disimpan.");
+          }
+          return;
+        }
+
+        // 5. Status sistem
+        if (lower.includes("status sistem") || lower.includes("laporan sistem") || lower.includes("diagnosa")) {
+          jarvisSpeak(
+            `Seluruh sistem beroperasi optimal. Beban inti saat ini ${cpuVal.textContent}, daya ${hudBattery.textContent}, dan jaringan dalam kondisi ${hudNet.textContent}.`
+          );
+          return;
+        }
+
+        // 6. Kalkulator suara sederhana ("hitung 25 kali 4")
+        if (lower.startsWith("hitung ")) {
+          const exprRaw = lower
+            .replace(/^hitung\s+/, "")
+            .replace(/kali|x/g, "*")
+            .replace(/bagi/g, "/")
+            .replace(/tambah/g, "+")
+            .replace(/kurang/g, "-")
+            .replace(/[^0-9+\-*/().\s]/g, "")
+            .trim();
+          try {
+            if (exprRaw) {
+              const result = Function(`"use strict"; return (${exprRaw})`)();
+              if (Number.isFinite(result)) {
+                calcDisplay.textContent = String(result);
+                jarvisSpeak(`Hasil kalkulasi dari ${exprRaw} adalah ${result}, Sir.`);
+                return;
+              }
+            }
+          } catch (e) {}
+          jarvisSpeak("Maaf Sir, format perhitungan tersebut belum dapat saya proses.");
+          return;
+        }
+
+        // 7. Buka situs populer
+        if (lower.includes("buka youtube")) {
+          jarvisSpeak("Membuka YouTube di tab baru, Sir.");
+          window.open("https://www.youtube.com", "_blank", "noopener");
+          return;
+        }
+        if (lower.includes("buka google")) {
+          jarvisSpeak("Membuka mesin pencari Google, Sir.");
+          window.open("https://www.google.com", "_blank", "noopener");
+          return;
+        }
+        if (lower.includes("buka github")) {
+          jarvisSpeak("Membuka GitHub workspace Anda, Sir.");
+          window.open("https://github.com", "_blank", "noopener");
+          return;
+        }
+
+        // 8. Kembali ke Standby
+        if (lower.includes("mode standby") || lower.includes("standby") || lower.includes("istirahat")) {
+          jarvisSpeak("Memasuki mode standby. Ucapkan Jarvis online kapan pun Anda membutuhkan saya.", () => {
+            returnToStandby();
+          });
+          return;
+        }
+
+        // 9. Sapaan umum
+        if (lower.includes("halo") || lower.includes("hai jarvis") || lower.includes("jarvis")) {
+          jarvisSpeak("Ya, Sir? Saya mendengarkan. Ada yang bisa saya bantu?");
+          return;
+        }
+
+        // Default fallback
+        jarvisSpeak(`Perintah "${cmd}" tercatat. Anda dapat meminta cek waktu, status sistem, tema warna, kalkulasi, atau mencatat misi.`);
+      }
+
+      // ---------- THEME MANAGER ----------
+      function applyTheme(themeName) {
+        document.body.classList.remove("theme-gold", "theme-crimson");
+        if (themeName === "gold") document.body.classList.add("theme-gold");
+        if (themeName === "crimson") document.body.classList.add("theme-crimson");
+        localStorage.setItem(STORAGE_KEY_THEME, themeName);
+        playHudBeep(880, 0.08, "sine", 0.07);
+      }
+
+      document.querySelectorAll(".theme-pill").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          applyTheme(btn.dataset.theme);
+          addLog("THEME", `Skema warna HUD diubah ke ${btn.dataset.theme.toUpperCase()}.`);
+        });
+      });
+
+      // ---------- MISSIONS / TASKS (LOCALSTORAGE) ----------
+      function loadMissions() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY_MISSIONS)) || [
+            { text: "Kalibrasi sensor suara JARVIS", done: true },
+            { text: "Sinkronisasi modul HUD GitHub Pages", done: false }
+          ];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveMissions(items) {
+        localStorage.setItem(STORAGE_KEY_MISSIONS, JSON.stringify(items));
+      }
+
+      function renderMissions() {
+        const items = loadMissions();
+        missionList.innerHTML = "";
+        missionCountBadge.textContent = `${items.length} TASK`;
+
+        items.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = `mission-item ${item.done ? "done" : ""}`;
+          li.innerHTML = `
+            <span>${escapeHtml(item.text)}</span>
+            <div class="mission-actions">
+              <button type="button" data-act="toggle" data-idx="${index}">${item.done ? "UNDO" : "DONE"}</button>
+              <button type="button" class="del" data-act="del" data-idx="${index}">X</button>
+            </div>
+          `;
+          missionList.appendChild(li);
+        });
+      }
+
+      function addMission(text) {
+        const items = loadMissions();
+        items.unshift({ text, done: false });
+        saveMissions(items);
+        renderMissions();
+      }
+
+      addMissionBtn.addEventListener("click", () => {
+        const val = missionInput.value.trim();
+        if (!val) return;
+        addMission(val);
+        missionInput.value = "";
+        playHudBeep(740, 0.07);
+      });
+
+      missionInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          addMissionBtn.click();
+        }
+      });
+
+      missionList.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const idx = Number(btn.dataset.idx);
+        const act = btn.dataset.act;
+        const items = loadMissions();
+        if (!items[idx]) return;
+
+        if (act === "toggle") {
+          items[idx].done = !items[idx].done;
+        } else if (act === "del") {
+          items.splice(idx, 1);
+        }
+        saveMissions(items);
+        renderMissions();
+        playHudBeep(620, 0.06);
+      });
+
+      // ---------- TACTICAL CALCULATOR ----------
+      let calcExpr = "";
+      calcGrid.addEventListener("click", (e) => {
+        const btn = e.target.closest(".calc-btn");
+        if (!btn) return;
+        const val = btn.dataset.val;
+        playHudBeep(680, 0.04, "sine", 0.04);
+
+        if (val === "C") {
+          calcExpr = "";
+          calcDisplay.textContent = "0";
+          return;
+        }
+        if (val === "DEL") {
+          calcExpr = calcExpr.slice(0, -1);
+          calcDisplay.textContent = calcExpr || "0";
+          return;
+        }
+        if (val === "=") {
+          try {
+            if (!calcExpr) return;
+            const sanitized = calcExpr.replace(/[^0-9+\-*/().]/g, "");
+            const ans = Function(`"use strict"; return (${sanitized})`)();
+            calcDisplay.textContent = Number.isFinite(ans) ? String(ans) : "ERR";
+            calcExpr = Number.isFinite(ans) ? String(ans) : "";
+          } catch (err) {
+            calcDisplay.textContent = "ERR";
+            calcExpr = "";
+          }
+          return;
+        }
+
+        calcExpr += val;
+        calcDisplay.textContent = calcExpr;
+      });
+
+      // ---------- TELEMETRY CLOCK, BATTERY & HARDWARE ----------
+      function updateTelemetry() {
+        const now = new Date();
+        hudClock.textContent = now.toTimeString().split(" ")[0];
+        hudDate.textContent = now.toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }).toUpperCase();
+
+        hudNet.textContent = navigator.onLine ? "ONLINE" : "OFFLINE";
+
+        // Simulasi fluktuasi telemetry halus
+        const simCpu = Math.floor(18 + Math.random() * 19);
+        const simRam = Math.floor(38 + Math.random() * 14);
+        cpuVal.textContent = `${simCpu}%`;
+        cpuBar.style.width = `${simCpu}%`;
+        ramVal.textContent = `${simRam}%`;
+        ramBar.style.width = `${simRam}%`;
+      }
+
+      async function initHardwareInfo() {
+        hwCores.textContent = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} THREADS` : "MULTI-CORE";
+        hwPlatform.textContent = (navigator.platform || "WEB-HUD").toUpperCase().slice(0, 12);
+
+        if ("getBattery" in navigator) {
+          try {
+            const bat = await navigator.getBattery();
+            const updateBat = () => {
+              const pct = Math.round(bat.level * 100);
+              hudBattery.textContent = `${pct}% ${bat.charging ? "CHG" : "BAT"}`;
+            };
+            updateBat();
+            bat.addEventListener("levelchange", updateBat);
+            bat.addEventListener("chargingchange", updateBat);
+          } catch (e) {}
+        }
+      }
+
+      // ---------- CANVAS ANIMATIONS (STANDBY WAVE, SPECTRUM, CORE) ----------
+      function getPrimaryColor() {
+        return getComputedStyle(document.body).getPropertyValue("--primary").trim() || "#00f0ff";
+      }
+
+      function renderAnimations() {
+        const primary = getPrimaryColor();
+
+        // Update data audio jika analyser aktif
+        if (analyser && freqData && timeData) {
+          analyser.getByteFrequencyData(freqData);
+          analyser.getByteTimeDomainData(timeData);
+
+          let sum = 0;
+          for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+          audioEnergy = sum / (freqData.length * 255);
+        } else {
+          audioEnergy = isSpeaking ? 0.35 + Math.random() * 0.25 : 0.06;
+        }
+
+        // 1. Standby Waveform Canvas
+        if (currentMode === "STANDBY") {
+          const w = standbyWaveCanvas.width;
+          const h = standbyWaveCanvas.height;
+          standbyCtx.clearRect(0, 0, w, h);
+          standbyCtx.strokeStyle = primary;
+          standbyCtx.lineWidth = 2;
+          standbyCtx.beginPath();
+
+          if (timeData) {
+            const slice = w / timeData.length;
+            for (let i = 0; i < timeData.length; i++) {
+              const v = timeData[i] / 128.0;
+              const y = (v * h) / 2;
+              if (i === 0) standbyCtx.moveTo(0, y);
+              else standbyCtx.lineTo(i * slice, y);
+            }
+          } else {
+            const t = performance.now() * 0.004;
+            for (let x = 0; x < w; x += 4) {
+              const y = h / 2 + Math.sin(x * 0.04 + t) * 6;
+              if (x === 0) standbyCtx.moveTo(x, y);
+              else standbyCtx.lineTo(x, y);
+            }
+          }
+          standbyCtx.stroke();
+        }
+
+        // 2. Dashboard Acoustic Spectrum Canvas
+        if (currentMode === "DASHBOARD") {
+          const sw = spectrumCanvas.width;
+          const sh = spectrumCanvas.height;
+          spectrumCtx.clearRect(0, 0, sw, sh);
+
+          const bars = 32;
+          const gap = 3;
+          const barW = (sw - gap * (bars - 1)) / bars;
+
+          for (let i = 0; i < bars; i++) {
+            const val = freqData
+              ? freqData[i] / 255
+              : (Math.sin(performance.now() * 0.005 + i * 0.4) + 1) * 0.22;
+            const barH = Math.max(4, val * (sh - 12));
+            const x = i * (barW + gap);
+            const y = sh - barH;
+
+            spectrumCtx.fillStyle = primary;
+            spectrumCtx.globalAlpha = 0.35 + val * 0.65;
+            spectrumCtx.fillRect(x, y, barW, barH);
+          }
+          spectrumCtx.globalAlpha = 1;
+
+          // 3. Center Arc Reactor Canvas
+          const cw = coreCanvas.width;
+          const ch = coreCanvas.height;
+          const cx = cw / 2;
+          const cy = ch / 2;
+          coreCtx.clearRect(0, 0, cw, ch);
+
+          coreRotation += 0.012 + audioEnergy * 0.04;
+          const pulseRadius = 56 + audioEnergy * 24;
+
+          // Outer segmented ring
+          coreCtx.save();
+          coreCtx.translate(cx, cy);
+          coreCtx.rotate(coreRotation);
+          coreCtx.strokeStyle = primary;
+          coreCtx.lineWidth = 3;
+          for (let s = 0; s < 6; s++) {
+            coreCtx.beginPath();
+            coreCtx.arc(0, 0, 114, (s * Math.PI) / 3 + 0.1, ((s + 1) * Math.PI) / 3 - 0.1);
+            coreCtx.stroke();
+          }
+          coreCtx.restore();
+
+          // Counter-rotating dashed ring
+          coreCtx.save();
+          coreCtx.translate(cx, cy);
+          coreCtx.rotate(-coreRotation * 1.4);
+          coreCtx.strokeStyle = primary;
+          coreCtx.globalAlpha = 0.65;
+          coreCtx.setLineDash([8, 6]);
+          coreCtx.lineWidth = 2;
+          coreCtx.beginPath();
+          coreCtx.arc(0, 0, 92, 0, Math.PI * 2);
+          coreCtx.stroke();
+          coreCtx.restore();
+
+          // Dynamic audio reactive halo
+          coreCtx.save();
+          coreCtx.beginPath();
+          coreCtx.arc(cx, cy, pulseRadius, 0, Math.PI * 2);
+          coreCtx.fillStyle = primary;
+          coreCtx.globalAlpha = 0.14 + audioEnergy * 0.25;
+          coreCtx.fill();
+          coreCtx.lineWidth = 2;
+          coreCtx.globalAlpha = 0.9;
+          coreCtx.strokeStyle = primary;
+          coreCtx.stroke();
+          coreCtx.restore();
+        }
+
+        requestAnimationFrame(renderAnimations);
+      }
+
+      // ---------- EVENT LISTENERS ----------
+      commandForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = commandInput.value.trim();
+        if (!text) return;
+        commandInput.value = "";
+        dashTranscriptLine.textContent = `[TEXT INPUT]: "${text}"`;
+        processJarvisCommand(text);
+      });
+
+      document.querySelectorAll(".chip-btn").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const cmd = chip.dataset.cmd;
+          dashTranscriptLine.textContent = `[QUICK CMD]: "${cmd}"`;
+          processJarvisCommand(cmd);
+        });
+      });
+
+      async function activateAudioSystems() {
+        await initAudioVisualizerStream();
+        initSpeechRecognition();
+        playHudBeep(720, 0.08);
+      }
+
+      enableMicFallbackBtn.addEventListener("click", activateAudioSystems);
+      manualWakeBtn.addEventListener("click", async () => {
+        await activateAudioSystems();
+        triggerBootToDashboard();
+      });
+      bypassBootBtn.addEventListener("click", () => {
+        activateAudioSystems();
+        triggerBootToDashboard();
+      });
+      returnStandbyBtn.addEventListener("click", returnToStandby);
+
+      // ---------- AUTO-BOOT ON PAGE LOAD ----------
+      window.addEventListener("DOMContentLoaded", async () => {
+        const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+        if (savedTheme) applyTheme(savedTheme);
+
+        renderMissions();
+        initHardwareInfo();
+        updateTelemetry();
+        setInterval(updateTelemetry, 1000);
+
+        addLog("BOOT", "Standby Neural Listener dimuat. Mencoba aktivasi otomatis...");
+        renderAnimations();
+
+        // Langsung jalankan mic & speech recognition otomatis saat halaman dibuka
+        await activateAudioSystems();
+      });
+    })();
   </script>
 </body>
 </html>
